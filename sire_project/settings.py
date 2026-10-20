@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Para implantação real, revisar DEBUG, SECRET_KEY e ALLOWED_HOSTS.
 SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
-    "sire-local-Fja_zwEZOBMr9h2buoXg-ngRqnjG3nThdGoR7ALtATmglqNmJIs",
+    "somente-desenvolvimento-local-sire-nao-usar-em-producao",
 )
 DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
@@ -58,6 +58,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        # Serializa gravações antes da leitura da capacidade (SQLite).
+        "OPTIONS": {"transaction_mode": "IMMEDIATE", "timeout": 10},
     }
 }
 
@@ -75,3 +77,6 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+LOGIN_URL = "sire:login"
+LOGIN_REDIRECT_URL = "sire:catalogo"
+LOGOUT_REDIRECT_URL = "sire:catalogo"
