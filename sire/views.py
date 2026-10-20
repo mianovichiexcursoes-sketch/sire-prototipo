@@ -144,3 +144,11 @@ def realizar_reserva(request, id):
                 raise
             form.add_error(None, 'O banco está ocupado. Tente novamente; a reserva não foi confirmada.')
     return render(request, 'sire/detalhe_excursao.html', {'excursao': excursao, 'form': form})
+
+
+@login_required
+def minhas_reservas(request):
+    exigir_perfil(request, TipoPerfil.PASSAGEIRO)
+    reservas = Reserva.objects.filter(passageiro=request.user).select_related(
+        'excursao', 'excursao__agencia', 'ponto_embarque')
+    return render(request, 'sire/minhas_reservas.html', {'reservas': reservas})
