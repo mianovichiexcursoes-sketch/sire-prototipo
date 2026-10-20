@@ -1,9 +1,5 @@
-"""View inicial provisória; o catálogo real será feito no Bloco 5."""
+"""Views do protótipo SIRE, rastreadas por UC no documento docs/RASTREABILIDADE.md."""
 from django.shortcuts import render
-
-
-def pagina_inicial(request):
-    return render(request, "sire/catalogo.html")
 
 from django.contrib import messages
 from django.shortcuts import redirect
