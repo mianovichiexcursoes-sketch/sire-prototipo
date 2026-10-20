@@ -152,3 +152,19 @@ def minhas_reservas(request):
     reservas = Reserva.objects.filter(passageiro=request.user).select_related(
         'excursao', 'excursao__agencia', 'ponto_embarque')
     return render(request, 'sire/minhas_reservas.html', {'reservas': reservas})
+
+
+@login_required
+def reservas_excursao(request, id):
+    perfil = exigir_perfil(request, TipoPerfil.AGENTE)
+    excursao = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+    reservas = excursao.reservas.select_related('passageiro', 'ponto_embarque')
+    return render(request, 'sire/reservas_excursao.html', {'excursao': excursao, 'reservas': reservas})
+
+
+@login_required
+def passageiros_excursao(request, id):
+    perfil = exigir_perfil(request, TipoPerfil.AGENTE)
+    excursao = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+    reservas = excursao.reservas.select_related('passageiro', 'ponto_embarque')
+    return render(request, 'sire/passageiros_excursao.html', {'excursao': excursao, 'reservas': reservas})
