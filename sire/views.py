@@ -115,3 +115,32 @@ def buscar_excursoes(request):
 def detalhe_excursao(request, id):
     excursao = get_object_or_404(Excursao, pk=id, status=StatusExcursao.PUBLICADA)
     return render(request, 'sire/detalhe_excursao.html', {'excursao': excursao})
+
+from .forms import ReservaForm
+from .models import Reserva
+
+
+@login_required
+def realizar_reserva(request, id):
+    exigir_perfil(request, TipoPerfil.PASSAGEIRO)
+    excursao = get_object_or_404(Excursao, pk=id, status=StatusExcursao.PUBLICADA)
+    form = ReservaForm(request.POST or None, excursao=excursao)
+    if request.method == 'POST' and form.is_valid():
+        try:
+            # BEGIN IMMEDIATE obtém o bloqueio de escrita ANTES de reler as vagas.
+            # Não usar select_for_update: esse recurso não bloqueia linhas no SQLite.
+            with transaction.atomic():
+                excursao = get_object_or_404(Excursao, pk=id, status=StatusExcursao.PUBLICADA)
+                reserva = Reserva(passageiro=request.user, excursao=excursao,
+                                  ponto_embarque=form.cleaned_data['ponto_embarque'])
+                reserva.full_clean()
+                reserva.save()
+            messages.success(request, 'Reserva realizada com sucesso.')
+            return redirect('sire:minhas_reservas')
+        except ValidationError as erro:
+            form.add_error(None, '; '.join(erro.messages))
+        except OperationalError as erro:
+            if 'locked' not in str(erro).lower() and 'busy' not in str(erro).lower():
+                raise
+            form.add_error(None, 'O banco está ocupado. Tente novamente; a reserva não foi confirmada.')
+    return render(request, 'sire/detalhe_excursao.html', {'excursao': excursao, 'form': form})

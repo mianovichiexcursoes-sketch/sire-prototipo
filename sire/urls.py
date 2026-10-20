@@ -23,3 +23,4 @@ urlpatterns += [
     path('buscar/', views.buscar_excursoes, name='buscar_excursoes'),
     path('excursao/<int:id>/', views.detalhe_excursao, name='detalhe_excursao'),
 ]
+urlpatterns += [path('excursao/<int:id>/reservar/', views.realizar_reserva, name='realizar_reserva')]

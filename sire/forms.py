@@ -38,3 +38,14 @@ class PontoEmbarqueForm(forms.ModelForm):
         model = PontoEmbarque
         fields = ('local', 'horario')
         widgets = {'horario': forms.TimeInput(format='%H:%M', attrs={'type': 'time'})}
+
+from .models import Reserva
+
+
+class ReservaForm(forms.Form):
+    ponto_embarque = forms.ModelChoiceField(queryset=PontoEmbarque.objects.none(),
+                                            label='Ponto de embarque', empty_label='Selecione o embarque')
+
+    def __init__(self, *args, excursao, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['ponto_embarque'].queryset = excursao.pontos_embarque.all()

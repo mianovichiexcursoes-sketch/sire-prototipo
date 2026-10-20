@@ -107,3 +107,28 @@ class PontoEmbarque(models.Model):
 
     def __str__(self):
         return f'{self.local} — {self.horario:%H:%M}'
+
+
+class Reserva(models.Model):
+    data_reserva = models.DateTimeField(auto_now_add=True)
+    passageiro = models.ForeignKey(User, on_delete=models.PROTECT, related_name='reservas_sire')
+    excursao = models.ForeignKey(Excursao, on_delete=models.PROTECT, related_name='reservas')
+    ponto_embarque = models.ForeignKey(PontoEmbarque, on_delete=models.PROTECT)
+
+    class Meta:
+        db_table = 'sire_reserva'
+        ordering = ('-data_reserva', '-id')
+
+    def clean(self):
+        perfil = getattr(self.passageiro, 'perfil', None) if self.passageiro_id else None
+        if not perfil or perfil.tipo != TipoPerfil.PASSAGEIRO:
+            raise ValidationError('Reserva exige perfil Passageiro.')
+        if self.ponto_embarque_id and self.ponto_embarque.excursao_id != self.excursao_id:
+            raise ValidationError({'ponto_embarque': 'Escolha um embarque desta excursão.'})
+        if self.excursao_id and self.excursao.status != StatusExcursao.PUBLICADA:
+            raise ValidationError('A excursão não está publicada.')
+        if not self.pk and self.excursao_id and not self.excursao.possui_vaga():
+            raise ValidationError('Não há vagas disponíveis.')
+
+    def __str__(self):
+        return f'Reserva {self.pk} — {self.excursao}'
