@@ -39,3 +39,58 @@ class PerfilUsuario(models.Model):
 
     def __str__(self):
         return f'{self.usuario} — {self.get_tipo_display()}'
+
+
+class StatusExcursao(models.TextChoices):
+    RASCUNHO = 'RASCUNHO', 'Rascunho'
+    PUBLICADA = 'PUBLICADA', 'Publicada'
+
+
+class Excursao(models.Model):
+    titulo = models.CharField(max_length=200)
+    destino = models.CharField(max_length=150)
+    data_saida = models.DateField()
+    data_retorno = models.DateField(null=True, blank=True)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    capacidade = models.PositiveIntegerField()
+    status = models.CharField(max_length=20, choices=StatusExcursao.choices,
+                              default=StatusExcursao.RASCUNHO)
+    agencia = models.ForeignKey(Agencia, on_delete=models.PROTECT)
+
+    class Meta:
+        db_table = 'sire_excursao'
+        ordering = ('data_saida', 'id')
+        constraints = [
+            models.CheckConstraint(condition=models.Q(capacidade__gt=0), name='capacidade_positiva'),
+            models.CheckConstraint(condition=models.Q(valor__gte=0), name='valor_nao_negativo'),
+            models.CheckConstraint(condition=models.Q(status__in=['RASCUNHO', 'PUBLICADA']), name='status_excursao_valido'),
+        ]
+
+    def clean(self):
+        erros = {}
+        if self.data_retorno and self.data_saida and self.data_retorno < self.data_saida:
+            erros['data_retorno'] = 'Retorno não pode ser anterior à saída.'
+        if self.capacidade is not None and self.capacidade <= 0:
+            erros['capacidade'] = 'Informe capacidade maior que zero.'
+        if self.valor is not None and self.valor < 0:
+            erros['valor'] = 'Valor não pode ser negativo.'
+        if self.pk and self.capacidade is not None and self.capacidade < self.reservas.count():
+            erros['capacidade'] = 'Capacidade não pode ser menor que as reservas existentes.'
+        if erros:
+            raise ValidationError(erros)
+
+    def calcular_disponibilidade(self):
+        return self.capacidade - self.reservas.count()
+
+    def possui_vaga(self):
+        return self.calcular_disponibilidade() > 0
+
+    def pode_publicar(self):
+        try:
+            self.full_clean()
+        except ValidationError:
+            return False
+        return self.status == StatusExcursao.RASCUNHO and self.pontos_embarque.exists()
+
+    def __str__(self):
+        return self.titulo

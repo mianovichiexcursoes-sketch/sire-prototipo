@@ -9,3 +9,8 @@ urlpatterns = [
     path('login/', LoginView.as_view(template_name='sire/login.html'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
 ]
+urlpatterns += [
+    path('agente/excursoes/', views.agente_excursoes, name='agente_excursoes'),
+    path('agente/excursoes/nova/', views.cadastrar_excursao, name='cadastrar_excursao'),
+    path('agente/excursoes/<int:id>/editar/', views.editar_excursao, name='editar_excursao'),
+]

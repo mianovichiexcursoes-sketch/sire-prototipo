@@ -1,0 +1,1 @@
+{% extends 'sire/base.html' %}{% block conteudo %}<h1>{% if excursao %}Editar excursão{% else %}Nova excursão{% endif %}</h1><form method="post">{% csrf_token %}{{ form.as_p }}<button>Salvar excursão</button></form><a href="{% url 'sire:agente_excursoes' %}">Voltar</a>{% endblock %}
