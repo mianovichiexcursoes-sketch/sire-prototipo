@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titulo %}SIRE — Sistema de Reserva de Excursões{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'sire/css/style.css' %}">
+</head>
+<body>
+    <header class="cabecalho">
+        <div class="conteudo">
+            <strong>SIRE</strong>
+            <span>Sistema de Reserva de Excursões</span>
+        </div>
+    </header>
+    <main class="conteudo" id="conteudo-principal">
+        {% block conteudo %}{% endblock %}
+    </main>
+    <footer class="rodape conteudo">Protótipo acadêmico — 2026</footer>
+</body>
+</html>

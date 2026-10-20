@@ -1,0 +1,7 @@
+# Ambiente e arquivos locais
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+.vscode/
+.env
