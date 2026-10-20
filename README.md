@@ -134,3 +134,11 @@ React, Vue, microserviços ou JavaScript adicional.
 O projeto usa DEBUG e chave pública de desenvolvimento local. Para uma futura
 implantação, é necessário configurar ambiente, chave privada própria, hosts,
 HTTPS e recursos estáticos; essa implantação não foi realizada.
+
+## Revisão posterior da entrega
+
+A revisão de 20/10/2026 e seus limites estão em
+[docs/REVISAO_20-10-2026.md](docs/REVISAO_20-10-2026.md).
+As correções documentais foram feitas diretamente no documento principal do
+Drive. O código funcional não foi alterado nesta revisão. O bundle inclui um
+commit adicional com este registro; os dez commits originais foram preservados.
