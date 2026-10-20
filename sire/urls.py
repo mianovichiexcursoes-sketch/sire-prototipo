@@ -4,7 +4,7 @@ from . import views
 
 app_name = 'sire'
 urlpatterns = [
-    path('', views.pagina_inicial, name='catalogo'),
+    path('', views.catalogo, name='catalogo'),
     path('cadastro/', views.cadastro_passageiro, name='cadastro_passageiro'),
     path('login/', LoginView.as_view(template_name='sire/login.html'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
@@ -17,4 +17,9 @@ urlpatterns += [
 urlpatterns += [
     path('agente/excursoes/<int:id>/embarques/novo/', views.cadastrar_ponto_embarque, name='cadastrar_ponto_embarque'),
     path('agente/excursoes/<int:id>/publicar/', views.publicar_excursao, name='publicar_excursao'),
+]
+
+urlpatterns += [
+    path('buscar/', views.buscar_excursoes, name='buscar_excursoes'),
+    path('excursao/<int:id>/', views.detalhe_excursao, name='detalhe_excursao'),
 ]

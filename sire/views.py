@@ -97,3 +97,21 @@ def publicar_excursao(request, id):
         else:
             messages.error(request, 'Publicação exige RASCUNHO, dados válidos e ao menos um ponto de embarque.')
     return redirect('sire:agente_excursoes')
+
+
+def catalogo(request):
+    excursoes = Excursao.objects.filter(status=StatusExcursao.PUBLICADA).select_related('agencia')
+    return render(request, 'sire/catalogo.html', {'excursoes': excursoes})
+
+
+def buscar_excursoes(request):
+    destino = request.GET.get('destino', '').strip()
+    excursoes = Excursao.objects.filter(status=StatusExcursao.PUBLICADA).select_related('agencia')
+    if destino:
+        excursoes = excursoes.filter(destino__icontains=destino)
+    return render(request, 'sire/catalogo.html', {'excursoes': excursoes, 'destino': destino})
+
+
+def detalhe_excursao(request, id):
+    excursao = get_object_or_404(Excursao, pk=id, status=StatusExcursao.PUBLICADA)
+    return render(request, 'sire/detalhe_excursao.html', {'excursao': excursao})
