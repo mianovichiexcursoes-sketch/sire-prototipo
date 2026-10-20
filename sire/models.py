@@ -94,3 +94,16 @@ class Excursao(models.Model):
 
     def __str__(self):
         return self.titulo
+
+
+class PontoEmbarque(models.Model):
+    local = models.CharField(max_length=200)
+    horario = models.TimeField()
+    excursao = models.ForeignKey(Excursao, on_delete=models.CASCADE, related_name='pontos_embarque')
+
+    class Meta:
+        db_table = 'sire_ponto_embarque'
+        ordering = ('horario', 'id')
+
+    def __str__(self):
+        return f'{self.local} — {self.horario:%H:%M}'

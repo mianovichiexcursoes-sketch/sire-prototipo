@@ -66,3 +66,34 @@ def editar_excursao(request, id):
             messages.success(request, 'Excursão atualizada.')
             return redirect('sire:agente_excursoes')
     return render(request, 'sire/excursao_form.html', {'form': form, 'excursao': excursao})
+
+from .forms import PontoEmbarqueForm
+
+
+@login_required
+def cadastrar_ponto_embarque(request, id):
+    perfil = exigir_perfil(request, TipoPerfil.AGENTE)
+    excursao = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+    form = PontoEmbarqueForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        ponto = form.save(commit=False)
+        ponto.excursao = excursao
+        ponto.save()
+        messages.success(request, 'Ponto de embarque cadastrado.')
+        return redirect('sire:agente_excursoes')
+    return render(request, 'sire/ponto_embarque_form.html', {'form': form, 'excursao': excursao})
+
+
+@login_required
+@require_POST
+def publicar_excursao(request, id):
+    perfil = exigir_perfil(request, TipoPerfil.AGENTE)
+    with transaction.atomic():
+        excursao = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+        if excursao.pode_publicar():
+            excursao.status = StatusExcursao.PUBLICADA
+            excursao.save(update_fields=['status'])
+            messages.success(request, 'Excursão publicada no catálogo.')
+        else:
+            messages.error(request, 'Publicação exige RASCUNHO, dados válidos e ao menos um ponto de embarque.')
+    return redirect('sire:agente_excursoes')

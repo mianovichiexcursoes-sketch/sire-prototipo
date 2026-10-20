@@ -14,3 +14,7 @@ urlpatterns += [
     path('agente/excursoes/nova/', views.cadastrar_excursao, name='cadastrar_excursao'),
     path('agente/excursoes/<int:id>/editar/', views.editar_excursao, name='editar_excursao'),
 ]
+urlpatterns += [
+    path('agente/excursoes/<int:id>/embarques/novo/', views.cadastrar_ponto_embarque, name='cadastrar_ponto_embarque'),
+    path('agente/excursoes/<int:id>/publicar/', views.publicar_excursao, name='publicar_excursao'),
+]

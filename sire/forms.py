@@ -29,3 +29,12 @@ class ExcursaoForm(forms.ModelForm):
             'data_saida': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
             'data_retorno': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
         }
+
+from .models import PontoEmbarque
+
+
+class PontoEmbarqueForm(forms.ModelForm):
+    class Meta:
+        model = PontoEmbarque
+        fields = ('local', 'horario')
+        widgets = {'horario': forms.TimeInput(format='%H:%M', attrs={'type': 'time'})}
