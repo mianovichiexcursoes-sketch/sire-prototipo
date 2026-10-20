@@ -1,1 +1,43 @@
-{% extends 'sire/base.html' %}{% block conteudo %}<p class="sobretitulo">EXCURSÕES DE DIFERENTES AGÊNCIAS</p><h1>Encontre sua próxima excursão</h1><form method="get" action="{% url 'sire:buscar_excursoes' %}" class="busca"><label for="destino">Destino</label><input id="destino" name="destino" value="{{ destino }}" placeholder="Para onde você quer ir?"><button>Pesquisar</button></form><div class="grade">{% for excursao in excursoes %}<article><p class="sobretitulo">{{ excursao.agencia }}</p><h2>{{ excursao.titulo }}</h2><p>{{ excursao.destino }} · {{ excursao.data_saida|date:'d/m/Y' }}</p><p>R$ {{ excursao.valor|floatformat:2 }}</p><a class="botao" href="{% url 'sire:detalhe_excursao' excursao.id %}">Ver detalhes</a></article>{% empty %}<p>Nenhuma excursão publicada encontrada.</p>{% endfor %}</div>{% endblock %}
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+    <p class="sobretitulo">
+        EXCURSÕES DE DIFERENTES AGÊNCIAS
+    </p>
+    <h1>
+        Encontre sua próxima excursão
+    </h1>
+    <form method="get" action="{% url 'sire:buscar_excursoes' %}" class="busca">
+        <label for="destino">
+            Destino
+        </label>
+        <input id="destino" name="destino" value="{{ destino }}" placeholder="Para onde você quer ir?">
+        <button>
+            Pesquisar
+        </button>
+    </form>
+    <div class="grade">
+        {% for excursao in excursoes %}
+            <article>
+                <p class="sobretitulo">
+                    {{ excursao.agencia }}
+                </p>
+                <h2>
+                    {{ excursao.titulo }}
+                </h2>
+                <p>
+                    {{ excursao.destino }} · {{ excursao.data_saida|date:'d/m/Y' }}
+                </p>
+                <p>
+                    R$ {{ excursao.valor|floatformat:2 }}
+                </p>
+                <a class="botao" href="{% url 'sire:detalhe_excursao' excursao.id %}">
+                    Ver detalhes
+                </a>
+            </article>
+        {% empty %}
+            <p>
+                Nenhuma excursão publicada encontrada.
+            </p>
+        {% endfor %}
+    </div>
+{% endblock %}

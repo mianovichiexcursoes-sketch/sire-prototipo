@@ -7,27 +7,59 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sire', '0001_initial'),
+        ("sire", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Excursao',
+            name="Excursao",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('titulo', models.CharField(max_length=200)),
-                ('destino', models.CharField(max_length=150)),
-                ('data_saida', models.DateField()),
-                ('data_retorno', models.DateField(blank=True, null=True)),
-                ('valor', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('capacidade', models.PositiveIntegerField()),
-                ('status', models.CharField(choices=[('RASCUNHO', 'Rascunho'), ('PUBLICADA', 'Publicada')], default='RASCUNHO', max_length=20)),
-                ('agencia', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sire.agencia')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("titulo", models.CharField(max_length=200)),
+                ("destino", models.CharField(max_length=150)),
+                ("data_saida", models.DateField()),
+                ("data_retorno", models.DateField(blank=True, null=True)),
+                ("valor", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("capacidade", models.PositiveIntegerField()),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[("RASCUNHO", "Rascunho"), ("PUBLICADA", "Publicada")],
+                        default="RASCUNHO",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "agencia",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="sire.agencia"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'sire_excursao',
-                'ordering': ('data_saida', 'id'),
-                'constraints': [models.CheckConstraint(condition=models.Q(('capacidade__gt', 0)), name='capacidade_positiva'), models.CheckConstraint(condition=models.Q(('valor__gte', 0)), name='valor_nao_negativo'), models.CheckConstraint(condition=models.Q(('status__in', ['RASCUNHO', 'PUBLICADA'])), name='status_excursao_valido')],
+                "db_table": "sire_excursao",
+                "ordering": ("data_saida", "id"),
+                "constraints": [
+                    models.CheckConstraint(
+                        condition=models.Q(("capacidade__gt", 0)),
+                        name="capacidade_positiva",
+                    ),
+                    models.CheckConstraint(
+                        condition=models.Q(("valor__gte", 0)), name="valor_nao_negativo"
+                    ),
+                    models.CheckConstraint(
+                        condition=models.Q(("status__in", ["RASCUNHO", "PUBLICADA"])),
+                        name="status_excursao_valido",
+                    ),
+                ],
             },
         ),
     ]

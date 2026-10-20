@@ -1,151 +1,136 @@
 # SIRE — Sistema de Reserva de Excursões
 
 Protótipo acadêmico do PFC/TCC de Engenharia Elétrica do IFSP Câmpus Sertãozinho.
-Engenharia de Requisitos: baseline **ER-SIRE 2.1**.
+Baseline de requisitos: **ER-SIRE 2.1**. Implementação assistida por IA/Codex,
+autorizada pela autora nesta sessão, com histórico incremental e mapa do código.
+O uso de IA não deve ser apresentado como desenvolvimento sem assistência.
 
-## Estado do código
+## Entrega
 
-**Bloco 1 — estrutura inicial do Django.** Este pacote **não** contém ainda o fluxo
-funcional de cadastro, autenticação, gestão de excursões ou reservas. Esses
-recursos serão desenvolvidos nos Blocos 2 a 9, conforme o guia de implementação.
+Os Blocos 1 a 9 estão implementados. Os 16 cenários VF foram exercitados por
+requisições HTTP reais, com CSRF e sessões, no ambiente Work. O relato completo
+está em [docs/VERIFICACAO.md](docs/VERIFICACAO.md). Não foi criada suíte de testes.
+A conferência visual em navegador e a execução no Windows permanecem pendentes.
 
-## Tecnologias previstas
+## Versões efetivamente utilizadas
 
-- Python: referência **3.14.8** (conferir versão real instalada antes de registrar no TCC);
-- Django: **6.1.2**, registrado em `requirements.txt`;
-- SQLite: versão incluída no ambiente Python do computador;
-- Django Templates, HTML e CSS;
-- Django ORM e migrations para a criação do banco;
-- Git e GitHub para controle de versão.
+| Componente | Referência dos documentos | Executado no Work |
+| --- | --- | --- |
+| Python | 3.14.8 | 3.12.14 |
+| Django | 6.1.2 | 6.1.2 |
+| SQLite | disponível no Python | 3.53.1 |
+| asgiref | dependência do Django | 3.12.1 |
+| sqlparse | dependência do Django | 0.6.0 |
 
-**Atenção:** O código foi preparado a partir do planejamento consolidado. Na máquina
-que gerou os arquivos, o Django não estava instalado. É preciso validar a execução
-localmente antes de declarar o Bloco 1 concluído de forma funcional.
+A versão Python de referência não foi instalada nem verificada nesta entrega.
+Nenhum comando foi executado no computador Windows da autora. VS Code é a IDE
+prevista para abrir e estudar estes arquivos localmente.
 
-## 1. Preparar e executar no Windows
+## Executar no Windows
 
-Abra a pasta **sire-prototipo** no Visual Studio Code. No menu **Terminal → Novo Terminal**,
-certifique-se de estar na pasta que contém `manage.py`.
-
-Confira o Python instalado:
+Extraia o ZIP e abra a pasta `sire-prototipo`, que contém `manage.py`, no VS Code.
+No terminal PowerShell:
 
 ```powershell
 py --version
-```
-
-Crie um ambiente virtual:
-
-```powershell
 py -m venv .venv
-```
-
-Se estiver usando **PowerShell**, ative com:
-
-```powershell
 .\.venv\Scripts\Activate.ps1
-```
-
-Se estiver usando **Prompt de Comando (cmd)**, use em vez disso:
-
-```bat
-.venv\Scripts\activate.bat
-```
-
-Instale a dependência definida no projeto:
-
-```powershell
-python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m django --version
-```
-
-## 2. Preparar o banco SQLite
-
-Execute na mesma pasta, com o ambiente virtual ativado:
-
-```powershell
 python manage.py check
-python manage.py makemigrations
 python manage.py migrate
-```
-
-No Bloco 1, `makemigrations` deve indicar que **não há mudanças** para a app `sire`.
-O `migrate` aplica somente as migrations internas do Django (autenticação, sessões,
-admin etc.), necessárias para preparar o banco SQLite.
-
-Crie um superusuário de demonstração para o Django Admin interno:
-
-```powershell
 python manage.py createsuperuser
-```
-
-Inicie o servidor local:
-
-```powershell
 python manage.py runserver
 ```
 
-Abra no navegador:
+Se a ativação não estiver disponível, execute os comandos com
+`.\.venv\Scripts\python.exe` no lugar de `python`, sem mudar a política do sistema.
+No Linux/macOS, crie a venv com `python3 -m venv .venv` e ative com
+`source .venv/bin/activate` antes dos mesmos comandos.
 
-- http://127.0.0.1:8000/ — página inicial provisória;
-- http://127.0.0.1:8000/admin/ — área administrativa interna.
+Acesse <http://127.0.0.1:8000/> e o pré-cadastro interno em
+<http://127.0.0.1:8000/admin/>. Encerre o servidor com Ctrl+C.
+O banco é reconstruído pelas quatro migrations do domínio e pelas migrations
+internas do Django. Nenhum banco ou conta de desenvolvimento acompanha o ZIP.
 
-Para encerrar o servidor, pressione **Ctrl+C** no terminal.
+## Preparar a demonstração
 
-## 3. Registrar o Bloco 1 com Git
+1. Entre no Admin com o superusuário criado localmente e cadastre uma Agência.
+2. Em Usuários, crie a conta do agente, com uma senha escolhida localmente.
+   O agente não precisa de privilégios de equipe ou superusuário.
+3. Em Perfis de usuário, associe esse usuário ao tipo AGENTE e à agência criada.
+4. Saia do Admin e entre pela página `/login/` usando a conta do agente.
+5. Abra “Excursões da agência”, crie uma excursão e observe o estado RASCUNHO.
+6. Cadastre um ponto de embarque e publique a excursão.
+7. Saia, cadastre uma conta de passageiro, entre e consulte o catálogo.
+8. Abra os detalhes, selecione um embarque e confirme a reserva de uma vaga.
+9. Consulte “Minhas reservas”. Depois entre como agente e consulte Reservas e
+   Passageiros. Para demonstrar isolamento, pré-cadastre uma segunda agência.
 
-Se ainda não existe repositório local, execute:
+O superusuário do Admin não recebe perfil de agente automaticamente. Passageiros
+são cadastrados na interface pública e ficam sem agência. Agentes e agências
+possuem somente pré-cadastro interno. As senhas ficam sob o mecanismo de hash do
+Django; a entrega não contém senhas de demonstração.
 
-```powershell
-git init
-git add .
-git commit -m "Estrutura inicial do projeto Django"
-git branch -M main
+## Código e rastreabilidade
+
+- `sire/models.py`: cinco models do domínio; `User` padrão é a sexta entidade.
+- `sire/forms.py`: cadastro e validação de entradas.
+- `sire/views.py`: funções do fluxo; login/logout usam as views do Django.
+- `sire/urls.py`: rotas correspondentes aos 14 UC.
+- `sire/templates/sire/`: telas com herança de `base.html`.
+- `sire/static/sire/css/style.css`: apresentação sem framework front-end.
+- [docs/RASTREABILIDADE.md](docs/RASTREABILIDADE.md): UC → função → tela → VF.
+- [docs/ANDAMENTO.md](docs/ANDAMENTO.md): decisões, etapas e limites das evidências.
+
+## Recuperar o histórico Git incluído no ZIP
+
+O ZIP contém `historico-sire.bundle`, que preserva os commits desta execução.
+Na pasta extraída, se ela ainda não tiver um repositório Git:
+
+```bash
+git init -b main
+git fetch historico-sire.bundle main
+git reset --mixed FETCH_HEAD
+git log --oneline
+git show <hash-do-commit>
+git diff <hash-anterior> <hash-seguinte>
 ```
 
-**Não há repositório GitHub criado por este pacote.** A conexão ao GitHub será
-realizada somente depois de decidir nome e visibilidade do repositório.
+Os commits estão identificados como desenvolvimento assistido; não foram
+atribuídos à autora como se fossem trabalho sem assistência. O primeiro preserva
+o ZIP recebido. Não foram fabricados commits retroativos de desenvolvimento.
+O arquivo `historico-commits.txt` permite consultar a sequência sem importar Git.
 
-## Estrutura principal
+Não houve envio ao GitHub. A busca não identificou `sire-prototipo` da autora com
+permissão de escrita. O repositório local usa `main`; um remoto poderá ser
+associado quando sua URL estiver disponível. Torná-lo público exige autorização.
 
-```text
-sire-prototipo/
-  manage.py
-  requirements.txt
-  .gitignore
-  README.md
-  sire_project/
-    __init__.py
-    settings.py
-    urls.py
-    asgi.py
-    wsgi.py
-  sire/
-    __init__.py
-    admin.py
-    apps.py
-    forms.py
-    models.py
-    urls.py
-    views.py
-    migrations/
-      __init__.py
-    templates/sire/
-      base.html
-      catalogo.html
-    static/sire/css/
-      style.css
-```
+## Funcionalidades e limites
 
-## O que será implementado nos próximos blocos
+Implementados UC01–UC14: cadastro de passageiro, autenticação, catálogo,
+pesquisa por destino, detalhes, cadastro/edição de excursões da agência,
+embarques, publicação, reserva com seleção de embarque, Minhas reservas,
+consulta de reservas e passageiros pelo agente.
 
-- Agência e PerfilUsuario, com relação ao `django.contrib.auth.models.User`;
-- cadastro e autenticação de Passageiro; pré-cadastro de Agente via Admin;
-- Excursão, PontoEmbarque, Reserva e regras de acesso;
-- catálogo, pesquisa, detalhes, reservas e consultas.
+Cada Reserva ocupa uma vaga. Não existe status de reserva, quantidade de
+passageiros por reserva, campo de disponibilidade ou cancelamento. Não foi
+acrescentada regra de unicidade passageiro/excursão ausente da baseline; cada
+confirmação válida cria uma reserva enquanto houver capacidade.
 
-Não fazem parte do protótipo: pagamentos, cancelamentos, veículos, assentos,
-vouchers, hospedagem, notificações, lista de espera ou funcionalidades comerciais adicionais.
+A disponibilidade é `capacidade - reservas.count()`. A gravação de reserva e a
+edição da capacidade usam `transaction.atomic()` com SQLite em modo IMMEDIATE:
+o bloqueio de escrita é adquirido antes de consultar novamente a capacidade.
+`select_for_update()` não foi usado como garantia, pois não bloqueia linhas no
+SQLite. Há timeout de 10 segundos; em conflito na reserva, a interface orienta a
+tentar novamente. Não houve ensaio de carga ou de concorrência nesta execução.
+Esse mecanismo é destinado à demonstração local, com limitações de concorrência
+do SQLite; não constitui arquitetura para operação comercial em larga escala.
 
-> Atenção: `settings.py` usa uma `SECRET_KEY` de desenvolvimento e `DEBUG=True`.
-> Não publicar esta configuração em um servidor de produção.
+Não implementados, conforme escopo: pagamento, cancelamento, assentos, veículos,
+vouchers, hospedagem, rooming list, espera e notificações. Não há API separada,
+React, Vue, microserviços ou JavaScript adicional.
+
+O projeto usa DEBUG e chave pública de desenvolvimento local. Para uma futura
+implantação, é necessário configurar ambiente, chave privada própria, hosts,
+HTTPS e recursos estáticos; essa implantação não foi realizada.

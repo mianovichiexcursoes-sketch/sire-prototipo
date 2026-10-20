@@ -1,4 +1,5 @@
 """Ponto de entrada ASGI do projeto SIRE."""
+
 import os
 from django.core.asgi import get_asgi_application
 

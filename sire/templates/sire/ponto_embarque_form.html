@@ -1,1 +1,19 @@
-{% extends 'sire/base.html' %}{% block conteudo %}<h1>Adicionar embarque</h1><p>{{ excursao.titulo }}</p><form method="post">{% csrf_token %}{{ form.as_p }}<button>Salvar embarque</button></form><a href="{% url 'sire:agente_excursoes' %}">Voltar</a>{% endblock %}
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+    <h1>
+        Adicionar embarque
+    </h1>
+    <p>
+        {{ excursao.titulo }}
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>
+            Salvar embarque
+        </button>
+    </form>
+    <a href="{% url 'sire:agente_excursoes' %}">
+        Voltar
+    </a>
+{% endblock %}

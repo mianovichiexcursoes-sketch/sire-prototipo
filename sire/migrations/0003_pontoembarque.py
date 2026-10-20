@@ -7,21 +7,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sire', '0002_excursao'),
+        ("sire", "0002_excursao"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PontoEmbarque',
+            name="PontoEmbarque",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('local', models.CharField(max_length=200)),
-                ('horario', models.TimeField()),
-                ('excursao', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pontos_embarque', to='sire.excursao')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("local", models.CharField(max_length=200)),
+                ("horario", models.TimeField()),
+                (
+                    "excursao",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="pontos_embarque",
+                        to="sire.excursao",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'sire_ponto_embarque',
-                'ordering': ('horario', 'id'),
+                "db_table": "sire_ponto_embarque",
+                "ordering": ("horario", "id"),
             },
         ),
     ]

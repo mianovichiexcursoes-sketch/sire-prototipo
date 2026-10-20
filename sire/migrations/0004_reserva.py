@@ -8,23 +8,51 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sire', '0003_pontoembarque'),
+        ("sire", "0003_pontoembarque"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Reserva',
+            name="Reserva",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data_reserva', models.DateTimeField(auto_now_add=True)),
-                ('excursao', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='reservas', to='sire.excursao')),
-                ('passageiro', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='reservas_sire', to=settings.AUTH_USER_MODEL)),
-                ('ponto_embarque', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sire.pontoembarque')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("data_reserva", models.DateTimeField(auto_now_add=True)),
+                (
+                    "excursao",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="reservas",
+                        to="sire.excursao",
+                    ),
+                ),
+                (
+                    "passageiro",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="reservas_sire",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "ponto_embarque",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="sire.pontoembarque",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'sire_reserva',
-                'ordering': ('-data_reserva', '-id'),
+                "db_table": "sire_reserva",
+                "ordering": ("-data_reserva", "-id"),
             },
         ),
     ]

@@ -15,26 +15,72 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Agencia',
+            name="Agencia",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nome', models.CharField(max_length=150)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nome", models.CharField(max_length=150)),
             ],
             options={
-                'db_table': 'sire_agencia',
+                "db_table": "sire_agencia",
             },
         ),
         migrations.CreateModel(
-            name='PerfilUsuario',
+            name="PerfilUsuario",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo', models.CharField(choices=[('PASSAGEIRO', 'Passageiro'), ('AGENTE', 'Agente')], max_length=20)),
-                ('agencia', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='sire.agencia')),
-                ('usuario', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='perfil', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo",
+                    models.CharField(
+                        choices=[("PASSAGEIRO", "Passageiro"), ("AGENTE", "Agente")],
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "agencia",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="sire.agencia",
+                    ),
+                ),
+                (
+                    "usuario",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="perfil",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'sire_perfil_usuario',
-                'constraints': [models.CheckConstraint(condition=models.Q(models.Q(('agencia__isnull', False), ('tipo', 'AGENTE')), models.Q(('agencia__isnull', True), ('tipo', 'PASSAGEIRO')), _connector='OR'), name='perfil_agencia_compativel')],
+                "db_table": "sire_perfil_usuario",
+                "constraints": [
+                    models.CheckConstraint(
+                        condition=models.Q(
+                            models.Q(("agencia__isnull", False), ("tipo", "AGENTE")),
+                            models.Q(("agencia__isnull", True), ("tipo", "PASSAGEIRO")),
+                            _connector="OR",
+                        ),
+                        name="perfil_agencia_compativel",
+                    )
+                ],
             },
         ),
     ]

@@ -1,0 +1,199 @@
+[
+  {
+    "cenario": "B1",
+    "procedimento": "Servidor Django e GET /",
+    "observado": {
+      "http": 200,
+      "pagina_sire": true
+    }
+  },
+  {
+    "cenario": "VF01",
+    "procedimento": "Cadastro público",
+    "observado": {
+      "http": 200,
+      "usuario": true,
+      "perfil": [
+        [
+          "PASSAGEIRO",
+          null
+        ]
+      ]
+    }
+  },
+  {
+    "cenario": "VF02",
+    "procedimento": "Repetir identificador",
+    "observado": {
+      "http": 200,
+      "contas": 1,
+      "erro_duplicado": true
+    }
+  },
+  {
+    "cenario": "VF03",
+    "procedimento": "Login de Passageiro e Agente e acesso privado",
+    "observado": {
+      "login_http": [
+        200,
+        200
+      ],
+      "passageiro_minhas": 200,
+      "agente_area": 200,
+      "passageiro_area_agente": 403
+    }
+  },
+  {
+    "cenario": "VF04",
+    "procedimento": "Criar excursão com tentativa de forjar agência/status",
+    "observado": {
+      "http": 200,
+      "status": "RASCUNHO",
+      "agencia_correta": true
+    }
+  },
+  {
+    "cenario": "VF05",
+    "procedimento": "Tentar editar excursão de outra agência",
+    "observado": {
+      "http": 404,
+      "titulo_preservado": true
+    }
+  },
+  {
+    "cenario": "VF07",
+    "procedimento": "Publicar sem embarque",
+    "observado": {
+      "http": 200,
+      "status": "RASCUNHO"
+    }
+  },
+  {
+    "cenario": "VF06",
+    "procedimento": "Cadastrar embarque",
+    "observado": {
+      "http": 200,
+      "local": "Terminal A",
+      "excursao_correta": true
+    }
+  },
+  {
+    "cenario": "VF08",
+    "procedimento": "Publicar excursão válida",
+    "observado": {
+      "http": 200,
+      "status": "PUBLICADA"
+    }
+  },
+  {
+    "cenario": "VF09",
+    "procedimento": "Catálogo e pesquisa",
+    "observado": {
+      "http": 200,
+      "publicada_visivel": true,
+      "rascunho_oculto": true,
+      "pesquisa_encontra": true,
+      "pesquisa_vazia": true,
+      "detalhe_rascunho": 404
+    }
+  },
+  {
+    "cenario": "VF11",
+    "procedimento": "Reserva com embarque válido",
+    "observado": {
+      "http": 200,
+      "reservas": 1,
+      "disponibilidade": 1
+    }
+  },
+  {
+    "cenario": "VF10",
+    "procedimento": "Detalhes após reserva",
+    "observado": {
+      "http": 200,
+      "disponibilidade": 1,
+      "exibe_vagas": true,
+      "exibe_embarque": true
+    }
+  },
+  {
+    "cenario": "VF12",
+    "procedimento": "Tentar reservar embarque de outra excursão",
+    "observado": {
+      "http": 200,
+      "reservas_permanecem": 1,
+      "erro_selecao": true
+    }
+  },
+  {
+    "cenario": "VF13",
+    "procedimento": "Tentar reservar excursão lotada",
+    "observado": {
+      "http": 200,
+      "reservas": 2,
+      "capacidade": 2,
+      "erro_sem_vagas": true
+    }
+  },
+  {
+    "cenario": "VF14",
+    "procedimento": "Consultar reservas do primeiro passageiro",
+    "observado": {
+      "http": 200,
+      "propria_visivel": true,
+      "outra_oculta": true
+    }
+  },
+  {
+    "cenario": "VF15",
+    "procedimento": "Reservas da agência e tentativa externa",
+    "observado": {
+      "http_propria": 200,
+      "reserva_visivel": true,
+      "http_outra": 404
+    }
+  },
+  {
+    "cenario": "VF16",
+    "procedimento": "Passageiros da excursão",
+    "observado": {
+      "http": 200,
+      "passageiros_visiveis": true,
+      "http_outra": 404
+    }
+  },
+  {
+    "cenario": "EXTRA",
+    "procedimento": "Redução de capacidade abaixo das reservas",
+    "observado": {
+      "http": 200,
+      "capacidade_preservada": 2,
+      "erro": true
+    }
+  },
+  {
+    "cenario": "EXTRA",
+    "procedimento": "Perfis e autenticação",
+    "observado": {
+      "anonimo_reserva": true,
+      "agente_nao_reserva": 403,
+      "passageiro_nao_publica": 403
+    }
+  },
+  {
+    "cenario": "EXTRA",
+    "procedimento": "Logout POST",
+    "observado": {
+      "http": 200,
+      "sessao_encerrada": true
+    }
+  },
+  {
+    "cenario": "EXTRA",
+    "procedimento": "CSS e login inválido",
+    "observado": {
+      "css_http": 200,
+      "login_invalido_http": 200
+    }
+  }
+]

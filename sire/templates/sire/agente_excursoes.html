@@ -1,1 +1,65 @@
-{% extends 'sire/base.html' %}{% block conteudo %}<p class="sobretitulo">ÁREA DO AGENTE</p><h1>Excursões — {{ agencia }}</h1><a class="botao" href="{% url 'sire:cadastrar_excursao' %}">Nova excursão</a>{% for excursao in excursoes %}<article><span class="etiqueta">{{ excursao.get_status_display }}</span><h2>{{ excursao.titulo }}</h2><p>{{ excursao.destino }} · {{ excursao.data_saida|date:'d/m/Y' }}</p><p>{{ excursao.calcular_disponibilidade }} de {{ excursao.capacidade }} vagas disponíveis</p><div class="acoes"><a href="{% url 'sire:editar_excursao' excursao.id %}">Editar</a><a href="{% url 'sire:cadastrar_ponto_embarque' excursao.id %}">Adicionar embarque</a><a href="{% url 'sire:reservas_excursao' excursao.id %}">Reservas</a><a href="{% url 'sire:passageiros_excursao' excursao.id %}">Passageiros</a>{% if excursao.status == 'RASCUNHO' %}<form method="post" action="{% url 'sire:publicar_excursao' excursao.id %}">{% csrf_token %}<button>Publicar</button></form>{% endif %}</div><ul>{% for ponto in excursao.pontos_embarque.all %}<li>{{ ponto }}</li>{% empty %}<li>Cadastre um ponto de embarque para publicar.</li>{% endfor %}</ul></article>{% empty %}<p>Nenhuma excursão cadastrada.</p>{% endfor %}{% endblock %}
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+    <p class="sobretitulo">
+        ÁREA DO AGENTE
+    </p>
+    <h1>
+        Excursões — {{ agencia }}
+    </h1>
+    <a class="botao" href="{% url 'sire:cadastrar_excursao' %}">
+        Nova excursão
+    </a>
+    {% for excursao in excursoes %}
+        <article>
+            <span class="etiqueta">
+                {{ excursao.get_status_display }}
+            </span>
+            <h2>
+                {{ excursao.titulo }}
+            </h2>
+            <p>
+                {{ excursao.destino }} · {{ excursao.data_saida|date:'d/m/Y' }}
+            </p>
+            <p>
+                {{ excursao.calcular_disponibilidade }} de {{ excursao.capacidade }} vagas disponíveis
+            </p>
+            <div class="acoes">
+                <a href="{% url 'sire:editar_excursao' excursao.id %}">
+                    Editar
+                </a>
+                <a href="{% url 'sire:cadastrar_ponto_embarque' excursao.id %}">
+                    Adicionar embarque
+                </a>
+                <a href="{% url 'sire:reservas_excursao' excursao.id %}">
+                    Reservas
+                </a>
+                <a href="{% url 'sire:passageiros_excursao' excursao.id %}">
+                    Passageiros
+                </a>
+                {% if excursao.status == 'RASCUNHO' %}
+                    <form method="post" action="{% url 'sire:publicar_excursao' excursao.id %}">
+                        {% csrf_token %}
+                        <button>
+                            Publicar
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+            <ul>
+                {% for ponto in excursao.pontos_embarque.all %}
+                    <li>
+                        {{ ponto }}
+                    </li>
+                {% empty %}
+                    <li>
+                        Cadastre um ponto de embarque para publicar.
+                    </li>
+                {% endfor %}
+            </ul>
+        </article>
+    {% empty %}
+        <p>
+            Nenhuma excursão cadastrada.
+        </p>
+    {% endfor %}
+{% endblock %}
