@@ -55,6 +55,44 @@ Dados brutos, com o resultado e os tempos de cada tentativa:
 [resultados-concorrencia-sqlite.json](resultados-concorrencia-sqlite.json).
 O ensaio em SQLite usou um banco descartável, fora do projeto.
 
+## Execução completa de 12/11/2026, 09:54 — Testes A, B, C e VF afetados
+
+SIRE completo (Django + `runserver`) sobre o PostgreSQL 18.6 do Windows, banco
+`sire`, usuário `sire_app`, isolamento READ COMMITTED. Cinco rodadas por teste.
+Saída bruta em `evidencias/2026-11-12_0954_postgresql_windows/`
+(`ambiente.txt`, `relatorio.txt`, `resultados.json`).
+
+| Teste | Situação inicial | Rodadas | Vagas ini→fim | Confirmações | Recusas | Persistidas | Erros | Excesso | Duração (ms) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| A | 2 passageiros distintos, 1 vaga | 5 | 1→0 em todas | 1 em todas | 1 em todas | 1 em todas | 0 | 0 | 613–685 |
+| B | 10 passageiros distintos, 3 vagas | 5 | 3→0 em todas | 3 em todas | 7 em todas | 3 em todas | 0 | 0 | 1843–1919 |
+| C | Mesmo passageiro, 2 sessões, 5 vagas | 5 | 5→3 em todas | 2 em todas | 0 | 2 em todas | 0 | 0 | 700–823 |
+
+No Teste C, o mesmo passageiro ficou com duas reservas em todas as rodadas. É o
+comportamento previsto: a baseline ER-SIRE 2.1 não limita a uma reserva por
+passageiro por excursão, e nenhuma regra de unicidade foi criada.
+
+| Verificação | Esperado | Obtido | Situação |
+| --- | --- | --- | --- |
+| VF10 | Disponibilidade exibida 2 − 1 = 1 | HTTP 200; vagas exibidas: 1 | Conforme |
+| VF11 | Reserva confirmada com vínculos corretos | HTTP 200; 1 reserva; passageiro, excursão e embarque corretos | Conforme |
+| VF12 | Embarque de outra excursão rejeitado; total inalterado | HTTP 200; rejeitado; reservas 1 → 1 | Conforme |
+| VF13 | Excursão lotada: mensagem, sem nova reserva, sem HTTP 500 | HTTP 200; mensagem de lotação; reservas 2 → 2 | Conforme |
+| UC07-E3 | Capacidade 2 → 1 com 2 reservas: recusada | HTTP 200; capacidade permaneceu 2; mensagem de erro exibida | Conforme |
+| Autorização da reserva | Agente: HTTP 403; RASCUNHO: HTTP 404 | Agente: HTTP 403; rascunho: HTTP 404; nenhuma reserva criada | Conforme |
+
+As durações incluem a espera pelo bloqueio e servem só para mostrar que as
+requisições se sobrepuseram; não são medida de desempenho. VF01–VF09 e
+VF14–VF16 não foram reexecutados no PostgreSQL.
+
+## Três evidências distintas
+
+1. **SQLite (20 e 22/10/2026):** VF01–VF16 por HTTP, em `VERIFICACAO.md`.
+2. **Mecanismo de bloqueio no PostgreSQL 16.15 em nuvem (11/11/2026):** ensaio
+   com `pgbench`, sem Django, registrado no Drive. Comprova o comportamento do
+   banco, não o SIRE em execução.
+3. **SIRE completo no PostgreSQL 18.6 do Windows (12/11/2026):** esta seção.
+
 ## Como repetir
 
 ```powershell

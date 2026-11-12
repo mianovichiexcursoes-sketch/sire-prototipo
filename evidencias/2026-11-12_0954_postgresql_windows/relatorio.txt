@@ -1,0 +1,13 @@
+﻿Banco: postgresql — PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35229, 64-bit
+Conexão: banco sire, usuário sire_app, host localhost:5432, isolamento read committed
+Teste A: 5/5 conformes | vagas 1→0, 1→0, 1→0, 1→0, 1→0 | confirmações [1, 1, 1, 1, 1] | recusas [1, 1, 1, 1, 1] | persistidas [1, 1, 1, 1, 1] | mais de uma reserva do mesmo passageiro [0, 0, 0, 0, 0] | erros 0 | excesso 0 | duração ms [671, 647, 685, 641, 613]
+Teste B: 5/5 conformes | vagas 3→0, 3→0, 3→0, 3→0, 3→0 | confirmações [3, 3, 3, 3, 3] | recusas [7, 7, 7, 7, 7] | persistidas [3, 3, 3, 3, 3] | mais de uma reserva do mesmo passageiro [0, 0, 0, 0, 0] | erros 0 | excesso 0 | duração ms [1843, 1919, 1908, 1884, 1865]
+Teste C: 5/5 conformes | vagas 5→3, 5→3, 5→3, 5→3, 5→3 | confirmações [2, 2, 2, 2, 2] | recusas [0, 0, 0, 0, 0] | persistidas [2, 2, 2, 2, 2] | mais de uma reserva do mesmo passageiro [1, 1, 1, 1, 1] | erros 0 | excesso 0 | duração ms [700, 823, 737, 733, 760]
+VF11: CONFORME — http 200; reservas: 1; passageiro, excursão e embarque corretos: True
+VF10: CONFORME — http 200; vagas exibidas: 1
+VF12: CONFORME — http 200; rejeitado: True; reservas 1 → 1
+VF13: CONFORME — http 200; mensagem de lotação: True; reservas 2 → 2 (capacidade 2)
+UC07-E3: CONFORME — http 200; capacidade após a tentativa: 2; mensagem de erro: True
+Autorização da reserva: CONFORME — agente: HTTP 403; rascunho: HTTP 404; nenhuma reserva criada: True
+Evidência: C:\Users\julia\Downloads\sire-prototipo-completo\sire-prototipo\evidencias\2026-11-12_0954_postgresql_windows\resultados.json
+codigo de saida do teste: 0

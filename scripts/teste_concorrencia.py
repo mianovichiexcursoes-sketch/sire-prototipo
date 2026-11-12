@@ -1,17 +1,19 @@
-"""Ensaio de reservas simultâneas do SIRE por HTTP real.
+"""Ensaio de reservas simultâneas e reexecução dos VF afetados, por HTTP real.
 
-Sobe um servidor Django local, autentica passageiros fictícios e dispara os
-POSTs de reserva ao mesmo tempo (threading.Barrier). Depois confere no banco
-quantas reservas foram gravadas. Usa o banco configurado no ambiente/.env.
+Sobe um servidor Django local, autentica usuários fictícios e dispara os POSTs
+de reserva ao mesmo tempo (threading.Barrier). Depois de cada rodada compara as
+respostas HTTP com as reservas gravadas no banco. Usa o banco do ambiente/.env.
 
 Uso (na pasta do manage.py, com a venv):
     python scripts/teste_concorrencia.py
-    python scripts/teste_concorrencia.py --rodadas 20 --porta 8013
+    python scripts/teste_concorrencia.py --rodadas 5 --porta 8013
 
-Cenário A — última vaga: capacidade 2, uma reserva prévia, dois passageiros
-disputam a vaga restante. Esperado: 1 reserva gravada e 1 recusa por lotação.
-Cenário B — disputa ampla: capacidade 3, dez passageiros simultâneos.
-Esperado: 3 reservas gravadas e 7 recusas por lotação.
+Teste A — 2 passageiros distintos disputam 1 vaga: 1 persistida, 1 recusa.
+Teste B — 10 passageiros distintos disputam 3 vagas: 3 persistidas, 7 recusas.
+Teste C — o mesmo passageiro, em 2 sessões, com 5 vagas: sem erro e sem exceder
+          a capacidade. A baseline ER-SIRE 2.1 não limita a uma reserva por
+          passageiro por excursão; portanto o esperado são 2 reservas.
+Verificações funcionais: VF10, VF11, VF12, VF13, UC07-E3 e autorização.
 
 Os dados criados usam um prefixo único e são removidos ao final. Senhas são
 aleatórias e não são gravadas em arquivo.
@@ -20,6 +22,7 @@ aleatórias e não são gravadas em arquivo.
 import argparse
 import json
 import os
+import re
 import secrets
 import socket
 import subprocess
@@ -29,6 +32,7 @@ import time
 from datetime import date, datetime, time as hora, timedelta
 from http.cookiejar import CookieJar
 from pathlib import Path
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import HTTPCookieProcessor, Request, build_opener
 
@@ -42,6 +46,7 @@ django.setup()
 
 from django.contrib.auth.models import User  # noqa: E402
 from django.db import connection  # noqa: E402
+from django.db.models import Count  # noqa: E402
 
 from sire.models import (  # noqa: E402
     Agencia,
@@ -68,16 +73,21 @@ class Sessao:
     def _csrf(self):
         return next(c.value for c in self.cookies if c.name == "csrftoken")
 
+    def _enviar(self, req):
+        try:
+            with self.abrir.open(req, timeout=60) as resp:
+                return resp.status, resp.geturl(), resp.read().decode("utf-8")
+        except HTTPError as erro:  # 403, 404 e 500 também são respostas a registrar
+            return erro.code, erro.url, erro.read().decode("utf-8", "replace")
+
     def get(self, caminho):
-        with self.abrir.open(self.base + caminho, timeout=60) as resp:
-            return resp.status, resp.geturl(), resp.read().decode("utf-8")
+        return self._enviar(Request(self.base + caminho))
 
     def post(self, caminho, dados):
         corpo = urlencode({**dados, "csrfmiddlewaretoken": self._csrf()}).encode()
         req = Request(self.base + caminho, data=corpo)
         req.add_header("Referer", self.base + caminho)
-        with self.abrir.open(req, timeout=60) as resp:
-            return resp.status, resp.geturl(), resp.read().decode("utf-8")
+        return self._enviar(req)
 
 
 def esperar_porta(porta, limite=40):
@@ -91,14 +101,22 @@ def esperar_porta(porta, limite=40):
     raise RuntimeError("O servidor Django não respondeu na porta %d." % porta)
 
 
-def criar_excursao(agencia, prefixo, nome, capacidade):
+def entrar(base, usuario, senha):
+    sessao = Sessao(base)
+    sessao.get("/login/")
+    _, url, _ = sessao.post("/login/", {"username": usuario, "password": senha})
+    assert "/login" not in url, f"login de {usuario} falhou"
+    return sessao
+
+
+def criar_excursao(agencia, prefixo, nome, capacidade, status=StatusExcursao.PUBLICADA):
     excursao = Excursao.objects.create(
         titulo=f"{prefixo} {nome}",
         destino="Destino fictício",
         data_saida=date.today() + timedelta(days=30),
         valor=100,
         capacidade=capacidade,
-        status=StatusExcursao.PUBLICADA,
+        status=status,
         agencia=agencia,
     )
     ponto = PontoEmbarque.objects.create(
@@ -113,18 +131,18 @@ def reservar(sessao, excursao, ponto):
     )
 
 
-def classificar(url_final, corpo):
-    if url_final.rstrip("/").endswith("minhas-reservas"):
+def classificar(http, url_final, corpo):
+    if http == 200 and url_final.rstrip("/").endswith("minhas-reservas"):
         return "RESERVA_GRAVADA"
-    if MSG_LOTADA in corpo:
+    if http == 200 and MSG_LOTADA in corpo:
         return "RECUSADA_LOTACAO"
-    if MSG_OCUPADO in corpo:
+    if http == 200 and MSG_OCUPADO in corpo:
         return "RECUSADA_BANCO_OCUPADO"
-    return "OUTRO"
+    return f"OUTRO_HTTP_{http}"
 
 
 def disputar(participantes, excursao, ponto):
-    """Dispara os POSTs juntos e devolve o que cada passageiro observou."""
+    """Dispara os POSTs juntos e devolve o que cada sessão observou."""
     barreira = threading.Barrier(len(participantes))
     saida = [None] * len(participantes)
 
@@ -133,15 +151,15 @@ def disputar(participantes, excursao, ponto):
         inicio = time.perf_counter()
         try:
             http, url, corpo = reservar(sessao, excursao, ponto)
-            resultado = classificar(url, corpo)
+            resultado = classificar(http, url, corpo)
         except Exception as erro:  # registrado como evidência, não escondido
             http, resultado = None, f"ERRO: {erro!r}"
         saida[i] = {
             "passageiro": usuario,
             "http": http,
             "resultado": resultado,
-            "inicio_ms": round(inicio * 1000, 2),
-            "fim_ms": round(time.perf_counter() * 1000, 2),
+            "inicio_ms": inicio * 1000,
+            "fim_ms": time.perf_counter() * 1000,
         }
 
     threads = [
@@ -159,37 +177,160 @@ def disputar(participantes, excursao, ponto):
     return saida
 
 
-def rodada(nome, n, agencia, prefixo, sessoes, capacidade, previas, disputantes):
-    excursao, ponto = criar_excursao(agencia, prefixo, f"{nome} {n}", capacidade)
-    for usuario, sessao in sessoes[:previas]:
-        _, url, corpo = reservar(sessao, excursao, ponto)
-        assert classificar(url, corpo) == "RESERVA_GRAVADA", "reserva prévia falhou"
-    vagas_antes = capacidade - previas
-    tentativas = disputar(
-        sessoes[previas : previas + disputantes], excursao, ponto
-    )
-    gravadas_bd = Reserva.objects.filter(excursao=excursao).count()
+def rodada(teste, n, agencia, prefixo, capacidade, previas, participantes):
+    """Uma rodada: reservas prévias sequenciais e depois a disputa simultânea."""
+    excursao, ponto = criar_excursao(agencia, prefixo, f"{teste} {n}", capacidade)
+    for _, sessao in previas:
+        http, url, corpo = reservar(sessao, excursao, ponto)
+        assert classificar(http, url, corpo) == "RESERVA_GRAVADA", "prévia falhou"
+    vagas_ini = capacidade - len(previas)
+    esperadas = min(vagas_ini, len(participantes))
+
+    tentativas = disputar(participantes, excursao, ponto)
+
+    persistidas = Reserva.objects.filter(excursao=excursao).count()
     confirmadas = sum(t["resultado"] == "RESERVA_GRAVADA" for t in tentativas)
-    lotadas = sum(t["resultado"] == "RECUSADA_LOTACAO" for t in tentativas)
+    recusas = sum(t["resultado"] == "RECUSADA_LOTACAO" for t in tentativas)
+    erros = len(tentativas) - confirmadas - recusas
+    repetidas = (
+        Reserva.objects.filter(excursao=excursao)
+        .values("passageiro")
+        .annotate(q=Count("id"))
+        .filter(q__gt=1)
+    )
     conforme = (
-        gravadas_bd == capacidade
-        and confirmadas == vagas_antes
-        and lotadas == disputantes - vagas_antes
+        erros == 0
+        and persistidas <= capacidade
+        and confirmadas == esperadas
+        and recusas == len(participantes) - esperadas
+        and persistidas == len(previas) + confirmadas
     )
     return {
-        "cenario": nome,
+        "teste": teste,
         "rodada": n,
         "capacidade": capacidade,
-        "reservas_previas": previas,
-        "vagas_antes_da_disputa": vagas_antes,
-        "passageiros_simultaneos": disputantes,
-        "confirmadas_http": confirmadas,
-        "recusadas_por_lotacao_http": lotadas,
-        "reservas_no_banco": gravadas_bd,
-        "excedeu_capacidade": gravadas_bd > capacidade,
+        "reservas_previas": len(previas),
+        "sessoes_simultaneas": len(participantes),
+        "vagas_inicio": vagas_ini,
+        "vagas_fim": capacidade - persistidas,
+        "confirmacoes_http": confirmadas,
+        "recusas_por_lotacao_http": recusas,
+        "persistidas_na_disputa": persistidas - len(previas),
+        "reservas_no_banco": persistidas,
+        "passageiros_com_mais_de_uma_reserva": sum(r["q"] - 1 for r in repetidas),
+        "erros": erros,
+        "excedeu_capacidade": persistidas > capacidade,
+        "duracao_ms": max(t["fim_ms"] for t in tentativas),
         "conforme": conforme,
         "tentativas": tentativas,
     }
+
+
+def verificacoes_funcionais(agencia, prefixo, passageiros, s_agente):
+    """Reexecuta, no banco em uso, os cenários afetados pela mudança."""
+    (u1, s1), (u2, s2) = passageiros[0], passageiros[1]
+    itens = []
+
+    def registrar(nome, esperado, obtido, ok):
+        itens.append(
+            {"verificacao": nome, "esperado": esperado, "obtido": obtido, "conforme": ok}
+        )
+
+    exc, ponto = criar_excursao(agencia, prefixo, "VF", 2)
+    outra, ponto_outra = criar_excursao(agencia, prefixo, "VF outra", 2)
+
+    # VF11 — reserva confirmada com vínculos corretos
+    http, url, corpo = reservar(s1, exc, ponto)
+    r = Reserva.objects.filter(excursao=exc).select_related("passageiro").first()
+    ok = (
+        classificar(http, url, corpo) == "RESERVA_GRAVADA"
+        and r is not None
+        and r.passageiro.username == u1
+        and r.ponto_embarque_id == ponto.pk
+    )
+    registrar(
+        "VF11",
+        "Reserva confirmada com vínculos corretos",
+        f"http {http}; reservas: {Reserva.objects.filter(excursao=exc).count()}; "
+        f"passageiro, excursão e embarque corretos: {ok}",
+        ok,
+    )
+
+    # VF10 — disponibilidade exibida 2 − 1 = 1
+    http, _, corpo = s1.get(f"/excursao/{exc.pk}/")
+    m = re.search(r"Vagas disponíveis\s*</dt>\s*<dd>\s*(\d+)", corpo)
+    exibida = int(m.group(1)) if m else None
+    registrar(
+        "VF10",
+        "Disponibilidade exibida 2 − 1 = 1",
+        f"http {http}; vagas exibidas: {exibida}",
+        http == 200 and exibida == 1,
+    )
+
+    # VF12 — embarque de outra excursão rejeitado
+    antes = Reserva.objects.filter(excursao=exc).count()
+    http, url, corpo = reservar(s2, exc, ponto_outra)
+    depois = Reserva.objects.filter(excursao=exc).count()
+    recusou = classificar(http, url, corpo) != "RESERVA_GRAVADA"
+    registrar(
+        "VF12",
+        "Embarque de outra excursão rejeitado; total inalterado",
+        f"http {http}; rejeitado: {recusou}; reservas {antes} → {depois}",
+        http == 200 and recusou and antes == depois,
+    )
+
+    # VF13 — excursão lotada
+    reservar(s2, exc, ponto)  # ocupa a segunda vaga
+    antes = Reserva.objects.filter(excursao=exc).count()
+    http, url, corpo = reservar(s1, exc, ponto)
+    depois = Reserva.objects.filter(excursao=exc).count()
+    registrar(
+        "VF13",
+        "Excursão lotada: mensagem, sem nova reserva, sem HTTP 500",
+        f"http {http}; mensagem de lotação: {MSG_LOTADA in corpo}; "
+        f"reservas {antes} → {depois} (capacidade 2)",
+        http == 200 and MSG_LOTADA in corpo and antes == depois == 2,
+    )
+
+    # UC07-E3 — reduzir capacidade abaixo das reservas existentes
+    s_agente.get(f"/agente/excursoes/{exc.pk}/editar/")
+    http, _, corpo = s_agente.post(
+        f"/agente/excursoes/{exc.pk}/editar/",
+        {
+            "titulo": exc.titulo,
+            "destino": exc.destino,
+            "data_saida": exc.data_saida.isoformat(),
+            "data_retorno": "",
+            "valor": "100.00",
+            "capacidade": "1",
+        },
+    )
+    exc.refresh_from_db()
+    registrar(
+        "UC07-E3",
+        "Capacidade 2 → 1 com 2 reservas: recusada",
+        f"http {http}; capacidade após a tentativa: {exc.capacidade}; "
+        f"mensagem de erro: {'Capacidade não pode ser menor' in corpo}",
+        http == 200 and exc.capacidade == 2,
+    )
+
+    # Autorização da reserva
+    http_agente, _, _ = reservar(s_agente, outra, ponto_outra)
+    rasc, ponto_rasc = criar_excursao(
+        agencia, prefixo, "VF rascunho", 2, StatusExcursao.RASCUNHO
+    )
+    http_rasc, _, _ = reservar(s1, rasc, ponto_rasc)
+    sem_reserva = (
+        Reserva.objects.filter(excursao__in=[outra, rasc]).count() == 0
+    )
+    registrar(
+        "Autorização da reserva",
+        "Agente: HTTP 403; RASCUNHO: HTTP 404",
+        f"agente: HTTP {http_agente}; rascunho: HTTP {http_rasc}; "
+        f"nenhuma reserva criada: {sem_reserva}",
+        http_agente == 403 and http_rasc == 404 and sem_reserva,
+    )
+    return itens
 
 
 def limpar(prefixo):
@@ -201,18 +342,22 @@ def limpar(prefixo):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument("--rodadas", type=int, default=20, help="rodadas do cenário A")
-    parser.add_argument("--rodadas-b", type=int, default=5, help="rodadas do cenário B")
+    parser.add_argument("--rodadas", type=int, default=5, help="rodadas por teste")
     parser.add_argument("--porta", type=int, default=8013)
     parser.add_argument("--saida", default="", help="arquivo JSON de evidência")
     args = parser.parse_args()
 
     banco = connection.vendor
+    cfg = connection.settings_dict
     with connection.cursor() as cur:
         cur.execute(
             "select version()" if banco == "postgresql" else "select sqlite_version()"
         )
         versao_banco = cur.fetchone()[0]
+        isolamento = None
+        if banco == "postgresql":
+            cur.execute("show transaction_isolation")
+            isolamento = cur.fetchone()[0]
     saida = Path(
         args.saida or BASE_DIR / "docs" / f"resultados-concorrencia-{banco}.json"
     )
@@ -231,29 +376,40 @@ def main():
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    rodadas = []
+    rodadas, funcionais = [], []
     try:
         esperar_porta(args.porta)
         agencia = Agencia.objects.create(nome=f"{prefixo} Agência fictícia")
-        sessoes = []
+
+        passageiros, senhas = [], {}
         for i in range(10):
             usuario, senha = f"{prefixo}_p{i:02d}", secrets.token_urlsafe(16)
             conta = User.objects.create_user(username=usuario, password=senha)
             PerfilUsuario.objects.create(usuario=conta, tipo=TipoPerfil.PASSAGEIRO)
-            sessao = Sessao(base)
-            sessao.get("/login/")
-            _, url, _ = sessao.post("/login/", {"username": usuario, "password": senha})
-            assert "/login" not in url, "login do passageiro fictício falhou"
-            sessoes.append((usuario, sessao))
+            senhas[usuario] = senha
+            passageiros.append((usuario, entrar(base, usuario, senha)))
+
+        agente, senha_agente = f"{prefixo}_agente", secrets.token_urlsafe(16)
+        conta = User.objects.create_user(username=agente, password=senha_agente)
+        PerfilUsuario.objects.create(
+            usuario=conta, tipo=TipoPerfil.AGENTE, agencia=agencia
+        )
+        s_agente = entrar(base, agente, senha_agente)
+
+        # Teste C: o MESMO passageiro em duas sessões (dois navegadores).
+        u0 = passageiros[0][0]
+        mesmo = [passageiros[0], (u0, entrar(base, u0, senhas[u0]))]
 
         for n in range(1, args.rodadas + 1):
             rodadas.append(
-                rodada("A-ultima-vaga", n, agencia, prefixo, sessoes, 2, 1, 2)
+                rodada("A", n, agencia, prefixo, 2, passageiros[:1], passageiros[1:3])
             )
-        for n in range(1, args.rodadas_b + 1):
-            rodadas.append(
-                rodada("B-disputa-ampla", n, agencia, prefixo, sessoes, 3, 0, 10)
-            )
+        for n in range(1, args.rodadas + 1):
+            rodadas.append(rodada("B", n, agencia, prefixo, 3, [], passageiros))
+        for n in range(1, args.rodadas + 1):
+            rodadas.append(rodada("C", n, agencia, prefixo, 5, [], mesmo))
+
+        funcionais = verificacoes_funcionais(agencia, prefixo, passageiros, s_agente)
     finally:
         servidor.terminate()
         servidor.wait(timeout=15)
@@ -262,16 +418,32 @@ def main():
     resumo = {}
     for r in rodadas:
         c = resumo.setdefault(
-            r["cenario"],
-            {"rodadas": 0, "conformes": 0, "rodadas_com_excesso": 0, "outros": 0},
+            r["teste"],
+            {
+                "rodadas": 0,
+                "conformes": 0,
+                "vagas_inicio_fim": [],
+                "confirmacoes": [],
+                "recusas": [],
+                "persistidas": [],
+                "passageiros_com_mais_de_uma_reserva": [],
+                "erros": 0,
+                "rodadas_com_excesso": 0,
+                "duracao_ms": [],
+            },
         )
         c["rodadas"] += 1
         c["conformes"] += r["conforme"]
-        c["rodadas_com_excesso"] += r["excedeu_capacidade"]
-        c["outros"] += sum(
-            t["resultado"] not in ("RESERVA_GRAVADA", "RECUSADA_LOTACAO")
-            for t in r["tentativas"]
+        c["vagas_inicio_fim"].append(f"{r['vagas_inicio']}→{r['vagas_fim']}")
+        c["confirmacoes"].append(r["confirmacoes_http"])
+        c["recusas"].append(r["recusas_por_lotacao_http"])
+        c["persistidas"].append(r["persistidas_na_disputa"])
+        c["passageiros_com_mais_de_uma_reserva"].append(
+            r["passageiros_com_mais_de_uma_reserva"]
         )
+        c["erros"] += r["erros"]
+        c["rodadas_com_excesso"] += r["excedeu_capacidade"]
+        c["duracao_ms"].append(round(r["duracao_ms"]))
 
     evidencia = {
         "executado_em": datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -281,6 +453,10 @@ def main():
             "django": django.get_version(),
             "banco": banco,
             "versao_banco": versao_banco,
+            "isolamento": isolamento,
+            "nome_do_banco": str(cfg.get("NAME")) if banco == "postgresql" else "sqlite",
+            "usuario_do_banco": cfg.get("USER") or None,
+            "host": cfg.get("HOST") or None,
             "servidor": "manage.py runserver --noreload (multithread)",
         },
         "metodo": (
@@ -288,21 +464,40 @@ def main():
             "threading.Barrier; contagem final lida do banco pelo ORM."
         ),
         "resumo": resumo,
+        "verificacoes_funcionais": funcionais,
         "rodadas": rodadas,
     }
+    saida.parent.mkdir(parents=True, exist_ok=True)
     saida.write_text(
         json.dumps(evidencia, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
     print(f"Banco: {banco} — {versao_banco}")
+    if banco == "postgresql":
+        print(
+            f"Conexão: banco {cfg['NAME']}, usuário {cfg['USER']}, "
+            f"host {cfg['HOST']}:{cfg['PORT']}, isolamento {isolamento}"
+        )
     for nome, c in resumo.items():
         print(
-            f"{nome}: {c['conformes']}/{c['rodadas']} rodadas conformes; "
-            f"rodadas com excesso de capacidade: {c['rodadas_com_excesso']}; "
-            f"respostas fora do esperado: {c['outros']}"
+            f"Teste {nome}: {c['conformes']}/{c['rodadas']} conformes | "
+            f"vagas {', '.join(c['vagas_inicio_fim'])} | "
+            f"confirmações {c['confirmacoes']} | recusas {c['recusas']} | "
+            f"persistidas {c['persistidas']} | "
+            f"mais de uma reserva do mesmo passageiro {c['passageiros_com_mais_de_uma_reserva']} | "
+            f"erros {c['erros']} | excesso {c['rodadas_com_excesso']} | "
+            f"duração ms {c['duracao_ms']}"
+        )
+    for f in funcionais:
+        print(
+            f"{f['verificacao']}: {'CONFORME' if f['conforme'] else 'NÃO CONFORME'} "
+            f"— {f['obtido']}"
         )
     print(f"Evidência: {saida}")
-    return 0 if all(r["conforme"] for r in rodadas) else 1
+    tudo_ok = all(r["conforme"] for r in rodadas) and all(
+        f["conforme"] for f in funcionais
+    )
+    return 0 if tudo_ok else 1
 
 
 if __name__ == "__main__":
