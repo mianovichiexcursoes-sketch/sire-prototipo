@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import path, reverse_lazy
 from . import views
@@ -10,7 +11,10 @@ urlpatterns = [
     path(
         "login/",
         auth_views.LoginView.as_view(
-            template_name="sire/login.html", authentication_form=LoginSireForm
+            template_name="sire/login.html",
+            authentication_form=LoginSireForm,
+            # O link de recuperação só aparece com o envio de e-mail configurado.
+            extra_context={"recuperacao_ativa": bool(settings.SIRE_RESET_DOMAIN)},
         ),
         name="login",
     ),
