@@ -1,0 +1,33 @@
+# Demonstração do SIRE para a banca (Render, plano gratuito).
+# Banco PostgreSQL separado, somente dados fictícios. Não é ambiente de produção.
+databases:
+  - name: sire-demo-db
+    plan: free
+    databaseName: sire_demo
+    user: sire_demo
+
+services:
+  - type: web
+    name: sire-demo
+    runtime: python
+    plan: free
+    branch: etapa/postgresql-windows
+    buildCommand: bash build.sh
+    startCommand: gunicorn sire_project.wsgi:application
+    envVars:
+      - key: SIRE_DEBUG
+        value: "0"
+      - key: SIRE_SSL_REDIRECT
+        value: "0" # o Render já redireciona HTTP para HTTPS na borda
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sire-demo-db
+          property: connectionString
+      - key: SIRE_ALLOWED_HOSTS
+        value: .onrender.com,sire.mianovichiexcursoes.com.br
+      - key: SIRE_CSRF_TRUSTED_ORIGINS
+        value: https://*.onrender.com,https://sire.mianovichiexcursoes.com.br
+      - key: SIRE_DEMO_SENHA
+        sync: false # digitada pela autora no painel; não fica no Git
