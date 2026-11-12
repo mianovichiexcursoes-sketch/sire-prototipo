@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     path(
         "recuperar-senha/",
-        auth_views.PasswordResetView.as_view(
+        views.RecuperarSenhaView.as_view(
             form_class=RecuperacaoSenhaForm,
             template_name="sire/recuperar_senha.html",
             email_template_name="sire/recuperar_senha_email.txt",

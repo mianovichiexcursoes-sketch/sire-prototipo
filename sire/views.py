@@ -2,8 +2,11 @@
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import PasswordResetView
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import OperationalError, transaction
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -18,6 +21,35 @@ def cadastro_passageiro(request):
         messages.success(request, "Cadastro concluído. Entre com sua conta.")
         return redirect("sire:login")
     return render(request, "sire/cadastro_passageiro.html", {"form": form})
+
+
+class RecuperarSenhaView(PasswordResetView):
+    """Recuperação de senha (extensão, fora da baseline) com limite de pedidos.
+
+    No máximo LIMITE pedidos por hora para o mesmo endereço IP e para o mesmo
+    e-mail. Acima disso nada é enviado, mas a resposta é a mesma, para não
+    revelar se o e-mail existe nem se o limite foi atingido. O contador fica
+    na memória do processo: basta para a demonstração de instância única.
+    """
+
+    LIMITE = 3
+    JANELA = 60 * 60
+
+    def form_valid(self, form):
+        ip = (
+            self.request.META.get("HTTP_X_FORWARDED_FOR", "").split(",")[0].strip()
+            or self.request.META.get("REMOTE_ADDR", "")
+        )
+        chaves = [
+            f"recuperar:ip:{ip}",
+            f"recuperar:email:{form.cleaned_data['email'].lower()}",
+        ]
+        if any(cache.get(chave, 0) >= self.LIMITE for chave in chaves):
+            return HttpResponseRedirect(self.get_success_url())
+        for chave in chaves:
+            cache.add(chave, 0, self.JANELA)
+            cache.incr(chave)
+        return super().form_valid(form)
 
 
 def exigir_perfil(request, tipo):
