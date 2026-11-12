@@ -1,0 +1,7 @@
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+<h1>Recuperar senha</h1>
+<p>Informe o e-mail cadastrado. Para a conta compartilhada da banca, solicite acesso à responsável pela demonstração.</p>
+<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Enviar link</button></form>
+<p><a href="{% url 'sire:login' %}">Voltar para entrar</a></p>
+{% endblock %}

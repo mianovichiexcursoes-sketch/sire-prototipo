@@ -155,3 +155,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "sire:login"
 LOGIN_REDIRECT_URL = "sire:catalogo"
 LOGOUT_REDIRECT_URL = "sire:catalogo"
+
+
+# A demo gratuita usa uma API HTTPS para enviar links de recuperação.
+SIRE_RESEND_API_KEY = os.environ.get("SIRE_RESEND_API_KEY", "")
+DEFAULT_FROM_EMAIL = os.environ.get("SIRE_EMAIL_FROM", "sire@localhost")
+SIRE_RESET_DOMAIN = (
+    os.environ.get("SIRE_RESET_DOMAIN", "")
+    if SIRE_RESEND_API_KEY and os.environ.get("SIRE_EMAIL_FROM")
+    else ""
+)
+if SIRE_RESEND_API_KEY:
+    EMAIL_BACKEND = "sire.email_backend.ResendBackend"

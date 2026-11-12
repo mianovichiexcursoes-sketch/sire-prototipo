@@ -1,0 +1,6 @@
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+<h1>Solicitação recebida</h1>
+<p>Se o e-mail estiver associado a uma conta que pode usar a recuperação, você receberá um link para redefinir a senha.</p>
+<p><a href="{% url 'sire:login' %}">Voltar para entrar</a></p>
+{% endblock %}

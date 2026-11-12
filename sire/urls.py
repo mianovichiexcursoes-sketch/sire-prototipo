@@ -1,13 +1,53 @@
-from django.contrib.auth.views import LoginView, LogoutView
-from django.urls import path
+from django.contrib.auth import views as auth_views
+from django.urls import path, reverse_lazy
 from . import views
+from .forms import LoginSireForm, RecuperacaoSenhaForm
 
 app_name = "sire"
 urlpatterns = [
     path("", views.catalogo, name="catalogo"),
     path("cadastro/", views.cadastro_passageiro, name="cadastro_passageiro"),
-    path("login/", LoginView.as_view(template_name="sire/login.html"), name="login"),
-    path("logout/", LogoutView.as_view(), name="logout"),
+    path(
+        "login/",
+        auth_views.LoginView.as_view(
+            template_name="sire/login.html", authentication_form=LoginSireForm
+        ),
+        name="login",
+    ),
+    path(
+        "recuperar-senha/",
+        auth_views.PasswordResetView.as_view(
+            form_class=RecuperacaoSenhaForm,
+            template_name="sire/recuperar_senha.html",
+            email_template_name="sire/recuperar_senha_email.txt",
+            subject_template_name="sire/recuperar_senha_assunto.txt",
+            success_url=reverse_lazy("sire:recuperacao_enviada"),
+        ),
+        name="recuperar_senha",
+    ),
+    path(
+        "recuperar-senha/enviado/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="sire/recuperacao_enviada.html",
+        ),
+        name="recuperacao_enviada",
+    ),
+    path(
+        "redefinir-senha/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="sire/redefinir_senha.html",
+            success_url=reverse_lazy("sire:senha_redefinida"),
+        ),
+        name="redefinir_senha",
+    ),
+    path(
+        "redefinir-senha/concluida/",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="sire/senha_redefinida.html",
+        ),
+        name="senha_redefinida",
+    ),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
 ]
 urlpatterns += [
     path("agente/excursoes/", views.agente_excursoes, name="agente_excursoes"),

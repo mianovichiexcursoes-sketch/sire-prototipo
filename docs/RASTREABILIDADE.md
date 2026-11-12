@@ -20,7 +20,7 @@ estão em `sire/urls.py`, os forms em `sire/forms.py` e os templates na pasta
 | UC | Requisitos | Função / componente | Template | VF |
 | --- | --- | --- | --- | --- |
 | UC01 Cadastrar passageiro | RF001, RF003 | cadastro_passageiro; CadastroPassageiroForm | cadastro_passageiro.html | VF01, VF02 |
-| UC02 Autenticar usuário | RF002–RF003 | LoginView e LogoutView do Django; exigir_perfil | login.html; base.html | VF03 |
+| UC02 Autenticar usuário | RF002–RF003 | LoginView com LoginSireForm e LogoutView do Django; exigir_perfil | login.html; base.html | VF03 |
 | UC03 Consultar catálogo | RF012 | catalogo | catalogo.html | VF09 |
 | UC04 Pesquisar excursões | RF013 | buscar_excursoes | catalogo.html | VF09 |
 | UC05 Consultar detalhes | RF015, RF023 | detalhe_excursao; Excursao.calcular_disponibilidade | detalhe_excursao.html | VF10 |

@@ -1,0 +1,5 @@
+Você solicitou a redefinição de senha no SIRE. Use o link abaixo:
+
+{{ protocol }}://{{ domain }}{% url 'sire:redefinir_senha' uidb64=uid token=token %}
+
+Se você não solicitou a redefinição, ignore esta mensagem.

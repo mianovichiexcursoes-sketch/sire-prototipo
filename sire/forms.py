@@ -1,11 +1,46 @@
 """Formulários dos UC01, UC06–UC08 e UC10–UC11."""
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.conf import settings
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.db import transaction
 
 from .models import Excursao, PerfilUsuario, PontoEmbarque, TipoPerfil
+
+
+class LoginSireForm(AuthenticationForm):
+    error_messages = {
+        **AuthenticationForm.error_messages,
+        "invalid_login": "Usuário ou senha inválidos. Confira os dados e tente novamente.",
+    }
+
+    def clean_username(self):
+        username = self.cleaned_data["username"]
+        variantes = User.objects.filter(username__iexact=username).values_list(
+            "username", flat=True
+        )
+        nomes = list(variantes[:2])
+        # Só resolve um nome alternativo se houver uma única conta possível.
+        # Com colisão, o Django ainda pode autenticar a grafia exata.
+        return nomes[0] if len(nomes) == 1 else username
+
+
+class RecuperacaoSenhaForm(PasswordResetForm):
+    def clean_email(self):
+        if not settings.SIRE_RESET_DOMAIN:
+            raise forms.ValidationError("A recuperação por e-mail não está disponível neste ambiente.")
+        return self.cleaned_data["email"]
+
+    def get_users(self, email):
+        return (
+            user for user in super().get_users(email)
+            if user.username.lower() not in {"demo_passageiro", "demo_agente"}
+        )
+
+    def save(self, **kwargs):
+        kwargs.update(domain_override=settings.SIRE_RESET_DOMAIN, use_https=True)
+        super().save(**kwargs)
 
 
 class CadastroPassageiroForm(UserCreationForm):
