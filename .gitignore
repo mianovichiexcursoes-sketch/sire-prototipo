@@ -11,3 +11,5 @@ db.sqlite3
 *.sqlite3-shm
 *.bundle
 .env.*
+!.env.example
+staticfiles/

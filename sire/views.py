@@ -60,9 +60,12 @@ def cadastrar_excursao(request):
 @login_required
 def editar_excursao(request, id):
     perfil = exigir_perfil(request, TipoPerfil.AGENTE)
-    # A mesma transação serializa a redução de capacidade e as reservas no SQLite.
+    # A mesma transação serializa a redução de capacidade e as reservas:
+    # no PostgreSQL pelo bloqueio da linha (FOR UPDATE); no SQLite, BEGIN IMMEDIATE.
     with transaction.atomic():
-        excursao = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+        excursao = get_object_or_404(
+            Excursao.objects.select_for_update(), pk=id, agencia=perfil.agencia
+        )
         form = ExcursaoForm(
             (request.POST if request.method == "POST" else None), instance=excursao
         )
@@ -145,11 +148,16 @@ def realizar_reserva(request, id):
     )
     if request.method == "POST" and form.is_valid():
         try:
-            # BEGIN IMMEDIATE obtém o bloqueio de escrita ANTES de reler as vagas.
-            # Não usar select_for_update: esse recurso não bloqueia linhas no SQLite.
+            # O bloqueio é obtido ANTES de reler as vagas. No PostgreSQL,
+            # select_for_update() trava a linha da excursão (SELECT ... FOR UPDATE):
+            # a segunda reserva espera a primeira confirmar e só então conta as
+            # vagas. No SQLite esse recurso é ignorado e quem serializa as
+            # gravações é o BEGIN IMMEDIATE configurado em settings.py.
             with transaction.atomic():
                 excursao = get_object_or_404(
-                    Excursao, pk=id, status=StatusExcursao.PUBLICADA
+                    Excursao.objects.select_for_update(),
+                    pk=id,
+                    status=StatusExcursao.PUBLICADA,
                 )
                 reserva = Reserva(
                     passageiro=request.user,

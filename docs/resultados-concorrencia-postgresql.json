@@ -1,0 +1,1033 @@
+{
+  "executado_em": "2026-11-12T09:15:49-03:00",
+  "ambiente": {
+    "sistema": "win32",
+    "python": "3.14.8",
+    "django": "6.1.2",
+    "banco": "postgresql",
+    "versao_banco": "PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35229, 64-bit",
+    "servidor": "manage.py runserver --noreload (multithread)"
+  },
+  "metodo": "POSTs HTTP reais com sessão e CSRF, liberados juntos por threading.Barrier; contagem final lida do banco pelo ORM.",
+  "resumo": {
+    "A-ultima-vaga": {
+      "rodadas": 20,
+      "conformes": 20,
+      "rodadas_com_excesso": 0,
+      "outros": 0
+    },
+    "B-disputa-ampla": {
+      "rodadas": 5,
+      "conformes": 5,
+      "rodadas_com_excesso": 0,
+      "outros": 0
+    }
+  },
+  "rodadas": [
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 1,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.5,
+          "fim_ms": 621.32
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 381.82
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 2,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.41,
+          "fim_ms": 372.0
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 594.88
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 3,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.48,
+          "fim_ms": 583.89
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 369.4
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 4,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.67,
+          "fim_ms": 618.39
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 411.9
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 5,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.41,
+          "fim_ms": 372.14
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 606.64
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 6,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.41,
+          "fim_ms": 374.75
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 589.0
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 7,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.44,
+          "fim_ms": 364.76
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 576.74
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 8,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.44,
+          "fim_ms": 609.43
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 383.75
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 9,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.73,
+          "fim_ms": 645.11
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 373.71
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 10,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.49,
+          "fim_ms": 399.0
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 621.98
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 11,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.48,
+          "fim_ms": 414.73
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 630.42
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 12,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.58,
+          "fim_ms": 605.13
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 401.56
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 13,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.42,
+          "fim_ms": 644.37
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 417.07
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 14,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.51,
+          "fim_ms": 422.89
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 625.88
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 15,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.47,
+          "fim_ms": 429.79
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 646.33
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 16,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.4,
+          "fim_ms": 631.44
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 415.81
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 17,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.42,
+          "fim_ms": 617.99
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 382.8
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 18,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.49,
+          "fim_ms": 607.23
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 368.87
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 19,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.42,
+          "fim_ms": 371.67
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 624.37
+        }
+      ]
+    },
+    {
+      "cenario": "A-ultima-vaga",
+      "rodada": 20,
+      "capacidade": 2,
+      "reservas_previas": 1,
+      "vagas_antes_da_disputa": 1,
+      "passageiros_simultaneos": 2,
+      "confirmadas_http": 1,
+      "recusadas_por_lotacao_http": 1,
+      "reservas_no_banco": 2,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.44,
+          "fim_ms": 612.16
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 394.7
+        }
+      ]
+    },
+    {
+      "cenario": "B-disputa-ampla",
+      "rodada": 1,
+      "capacidade": 3,
+      "reservas_previas": 0,
+      "vagas_antes_da_disputa": 3,
+      "passageiros_simultaneos": 10,
+      "confirmadas_http": 3,
+      "recusadas_por_lotacao_http": 7,
+      "reservas_no_banco": 3,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p00",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.56,
+          "fim_ms": 1534.64
+        },
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 4.09,
+          "fim_ms": 1422.88
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 1.21,
+          "fim_ms": 712.8
+        },
+        {
+          "passageiro": "conc_21745f_p03",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 2.05,
+          "fim_ms": 1691.43
+        },
+        {
+          "passageiro": "conc_21745f_p04",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.43,
+          "fim_ms": 828.42
+        },
+        {
+          "passageiro": "conc_21745f_p05",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 1.66,
+          "fim_ms": 1293.75
+        },
+        {
+          "passageiro": "conc_21745f_p06",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.16,
+          "fim_ms": 1062.45
+        },
+        {
+          "passageiro": "conc_21745f_p07",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 2.83,
+          "fim_ms": 1637.08
+        },
+        {
+          "passageiro": "conc_21745f_p08",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.57,
+          "fim_ms": 1176.98
+        },
+        {
+          "passageiro": "conc_21745f_p09",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 942.74
+        }
+      ]
+    },
+    {
+      "cenario": "B-disputa-ampla",
+      "rodada": 2,
+      "capacidade": 3,
+      "reservas_previas": 0,
+      "vagas_antes_da_disputa": 3,
+      "passageiros_simultaneos": 10,
+      "confirmadas_http": 3,
+      "recusadas_por_lotacao_http": 7,
+      "reservas_no_banco": 3,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p00",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.57,
+          "fim_ms": 1072.05
+        },
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 1.46,
+          "fim_ms": 815.23
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.04,
+          "fim_ms": 1201.25
+        },
+        {
+          "passageiro": "conc_21745f_p03",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 1.81,
+          "fim_ms": 1678.08
+        },
+        {
+          "passageiro": "conc_21745f_p04",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 1.0,
+          "fim_ms": 1621.06
+        },
+        {
+          "passageiro": "conc_21745f_p05",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.26,
+          "fim_ms": 710.98
+        },
+        {
+          "passageiro": "conc_21745f_p06",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 4.17,
+          "fim_ms": 1313.94
+        },
+        {
+          "passageiro": "conc_21745f_p07",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.68,
+          "fim_ms": 1423.86
+        },
+        {
+          "passageiro": "conc_21745f_p08",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.37,
+          "fim_ms": 933.85
+        },
+        {
+          "passageiro": "conc_21745f_p09",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 1520.89
+        }
+      ]
+    },
+    {
+      "cenario": "B-disputa-ampla",
+      "rodada": 3,
+      "capacidade": 3,
+      "reservas_previas": 0,
+      "vagas_antes_da_disputa": 3,
+      "passageiros_simultaneos": 10,
+      "confirmadas_http": 3,
+      "recusadas_por_lotacao_http": 7,
+      "reservas_no_banco": 3,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p00",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.59,
+          "fim_ms": 695.54
+        },
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.97,
+          "fim_ms": 1054.63
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.39,
+          "fim_ms": 1289.34
+        },
+        {
+          "passageiro": "conc_21745f_p03",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 1.29,
+          "fim_ms": 1171.1
+        },
+        {
+          "passageiro": "conc_21745f_p04",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.32,
+          "fim_ms": 825.48
+        },
+        {
+          "passageiro": "conc_21745f_p05",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.69,
+          "fim_ms": 1400.02
+        },
+        {
+          "passageiro": "conc_21745f_p06",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 1.62,
+          "fim_ms": 932.04
+        },
+        {
+          "passageiro": "conc_21745f_p07",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 2.04,
+          "fim_ms": 1674.66
+        },
+        {
+          "passageiro": "conc_21745f_p08",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 3.03,
+          "fim_ms": 1518.73
+        },
+        {
+          "passageiro": "conc_21745f_p09",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 1614.88
+        }
+      ]
+    },
+    {
+      "cenario": "B-disputa-ampla",
+      "rodada": 4,
+      "capacidade": 3,
+      "reservas_previas": 0,
+      "vagas_antes_da_disputa": 3,
+      "passageiros_simultaneos": 10,
+      "confirmadas_http": 3,
+      "recusadas_por_lotacao_http": 7,
+      "reservas_no_banco": 3,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p00",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.67,
+          "fim_ms": 1197.39
+        },
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.67,
+          "fim_ms": 1752.56
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.26,
+          "fim_ms": 844.36
+        },
+        {
+          "passageiro": "conc_21745f_p03",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 1.09,
+          "fim_ms": 1671.9
+        },
+        {
+          "passageiro": "conc_21745f_p04",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 1.54,
+          "fim_ms": 732.86
+        },
+        {
+          "passageiro": "conc_21745f_p05",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 1.94,
+          "fim_ms": 1430.58
+        },
+        {
+          "passageiro": "conc_21745f_p06",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.37,
+          "fim_ms": 1316.14
+        },
+        {
+          "passageiro": "conc_21745f_p07",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 2.81,
+          "fim_ms": 1548.57
+        },
+        {
+          "passageiro": "conc_21745f_p08",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 4.14,
+          "fim_ms": 970.21
+        },
+        {
+          "passageiro": "conc_21745f_p09",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.0,
+          "fim_ms": 1085.32
+        }
+      ]
+    },
+    {
+      "cenario": "B-disputa-ampla",
+      "rodada": 5,
+      "capacidade": 3,
+      "reservas_previas": 0,
+      "vagas_antes_da_disputa": 3,
+      "passageiros_simultaneos": 10,
+      "confirmadas_http": 3,
+      "recusadas_por_lotacao_http": 7,
+      "reservas_no_banco": 3,
+      "excedeu_capacidade": false,
+      "conforme": true,
+      "tentativas": [
+        {
+          "passageiro": "conc_21745f_p00",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 0.5,
+          "fim_ms": 740.47
+        },
+        {
+          "passageiro": "conc_21745f_p01",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 1.62,
+          "fim_ms": 1140.65
+        },
+        {
+          "passageiro": "conc_21745f_p02",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 1.27,
+          "fim_ms": 1784.77
+        },
+        {
+          "passageiro": "conc_21745f_p03",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.88,
+          "fim_ms": 1722.95
+        },
+        {
+          "passageiro": "conc_21745f_p04",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.33,
+          "fim_ms": 1004.81
+        },
+        {
+          "passageiro": "conc_21745f_p05",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.64,
+          "fim_ms": 1257.65
+        },
+        {
+          "passageiro": "conc_21745f_p06",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 2.0,
+          "fim_ms": 1369.46
+        },
+        {
+          "passageiro": "conc_21745f_p07",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.01,
+          "fim_ms": 873.15
+        },
+        {
+          "passageiro": "conc_21745f_p08",
+          "http": 200,
+          "resultado": "RECUSADA_LOTACAO",
+          "inicio_ms": 3.36,
+          "fim_ms": 1504.16
+        },
+        {
+          "passageiro": "conc_21745f_p09",
+          "http": 200,
+          "resultado": "RESERVA_GRAVADA",
+          "inicio_ms": 0.0,
+          "fim_ms": 1608.0
+        }
+      ]
+    }
+  ]
+}

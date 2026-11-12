@@ -135,6 +135,14 @@ O projeto usa DEBUG e chave pública de desenvolvimento local. Para uma futura
 implantação, é necessário configurar ambiente, chave privada própria, hosts,
 HTTPS e recursos estáticos; essa implantação não foi realizada.
 
+## Atualização de 12/11/2026 — PostgreSQL e concorrência
+
+O SIRE passou a rodar também com PostgreSQL 18 no Windows da autora, e foi
+executado um ensaio real de reservas simultâneas. As seções anteriores descrevem
+a entrega de 20/10/2026 e foram mantidas como registro. Configuração: copie
+`.env.example` para `.env`. Método, resultados e limites estão em
+[docs/POSTGRESQL_E_CONCORRENCIA.md](docs/POSTGRESQL_E_CONCORRENCIA.md).
+
 ## Revisão posterior da entrega
 
 A revisão de 20/10/2026 e seus limites estão em
