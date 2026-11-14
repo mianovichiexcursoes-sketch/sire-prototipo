@@ -1,5 +1,7 @@
 """Views do SIRE. Correspondência com os UC em docs/RASTREABILIDADE.md."""
 
+import logging
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordResetView
@@ -21,6 +23,9 @@ def cadastro_passageiro(request):
         messages.success(request, "Cadastro concluído. Entre com sua conta.")
         return redirect("sire:login")
     return render(request, "sire/cadastro_passageiro.html", {"form": form})
+
+
+logger = logging.getLogger("sire.recuperacao")
 
 
 class RecuperarSenhaView(PasswordResetView):
@@ -45,11 +50,21 @@ class RecuperarSenhaView(PasswordResetView):
             f"recuperar:email:{form.cleaned_data['email'].lower()}",
         ]
         if any(cache.get(chave, 0) >= self.LIMITE for chave in chaves):
+            logger.warning("Recuperação de senha: limite de pedidos atingido.")
             return HttpResponseRedirect(self.get_success_url())
         for chave in chaves:
             cache.add(chave, 0, self.JANELA)
             cache.incr(chave)
-        return super().form_valid(form)
+        # O registro não guarda o e-mail: só quantas contas podem receber o link.
+        contas = sum(1 for _ in form.get_users(form.cleaned_data["email"]))
+        logger.info("Recuperação de senha: pedido recebido; contas elegíveis: %s.", contas)
+        try:
+            return super().form_valid(form)
+        except Exception:
+            # Falha do provedor de e-mail: o motivo fica no registro do servidor
+            # e o usuário recebe a mesma resposta neutra, sem página de erro.
+            logger.error("Recuperação de senha: o envio falhou; resposta neutra devolvida.")
+            return HttpResponseRedirect(self.get_success_url())
 
 
 def exigir_perfil(request, tipo):

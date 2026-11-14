@@ -44,9 +44,23 @@ class RecuperacaoSenhaForm(PasswordResetForm):
 
 
 class CadastroPassageiroForm(UserCreationForm):
+    # O e-mail é obrigatório e único para que a recuperação de senha (extensão,
+    # fora da baseline) funcione para toda conta nova. Usa o campo email já
+    # existente no User do Django: não há campo, tabela ou migration novos.
+    email = forms.EmailField(
+        label="E-mail",
+        help_text="Obrigatório. Usado para recuperar a senha.",
+    )
+
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("username", "first_name", "last_name", "email")
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Já existe uma conta com este e-mail.")
+        return email
 
     @transaction.atomic
     def save(self, commit=True):

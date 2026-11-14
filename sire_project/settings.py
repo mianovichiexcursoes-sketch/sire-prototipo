@@ -167,3 +167,13 @@ SIRE_RESET_DOMAIN = (
 )
 if SIRE_RESEND_API_KEY:
     EMAIL_BACKEND = "sire.email_backend.ResendBackend"
+
+# Registro do SIRE no console do servidor (visível nos logs da hospedagem).
+# Não grava senhas, chaves nem endereços de e-mail.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"simples": {"format": "[%(name)s] %(levelname)s %(message)s"}},
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "simples"}},
+    "loggers": {"sire": {"handlers": ["console"], "level": "INFO"}},
+}
