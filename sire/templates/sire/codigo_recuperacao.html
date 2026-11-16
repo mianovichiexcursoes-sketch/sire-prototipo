@@ -1,0 +1,56 @@
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+    {% if motivo == 'compartilhada' %}
+        <h1>
+            Código de recuperação
+        </h1>
+        <p>
+            Esta é uma conta compartilhada da demonstração. A senha dela é definida
+            pela responsável pela demonstração e não pode ser trocada por aqui.
+        </p>
+    {% else %}
+        <h1>
+            {% if motivo == 'cadastro' %}
+                Conta criada
+            {% elif motivo == 'redefinicao' %}
+                Senha redefinida
+            {% else %}
+                Código de recuperação
+            {% endif %}
+        </h1>
+        {% if motivo == 'redefinicao' %}
+            <p>
+                A senha nova já está valendo. O código anterior deixou de funcionar:
+                este é o seu novo código de recuperação.
+            </p>
+        {% else %}
+            <p>
+                Este é o seu código de recuperação. Se você esquecer a senha, ele
+                permite criar uma nova.
+            </p>
+        {% endif %}
+        <p class="codigo-recuperacao" aria-label="Código de recuperação">
+            <strong>
+                {{ codigo }}
+            </strong>
+        </p>
+        <p>
+            Anote ou guarde em local seguro. Não compartilhe: quem tiver o usuário
+            e este código consegue trocar a senha da conta. Ao trocar a senha, o
+            código muda.
+        </p>
+        {% if motivo == 'cadastro' or motivo == 'redefinicao' %}
+            <p>
+                Esta página não será mostrada de novo. Depois de entrar, o código
+                atual fica disponível em “Código de recuperação”, no menu.
+            </p>
+        {% endif %}
+    {% endif %}
+    <p>
+        {% if user.is_authenticated %}
+            <a class="botao" href="{% url 'sire:catalogo' %}">Ir ao catálogo</a>
+        {% else %}
+            <a class="botao" href="{% url 'sire:login' %}">Entrar</a>
+        {% endif %}
+    </p>
+{% endblock %}

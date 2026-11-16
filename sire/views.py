@@ -2,6 +2,7 @@
 
 import logging
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordResetView
@@ -12,20 +13,81 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import CadastroPassageiroForm, ExcursaoForm, PontoEmbarqueForm, ReservaForm
+from . import recuperacao
+from .forms import (
+    CadastroPassageiroForm,
+    ExcursaoForm,
+    PontoEmbarqueForm,
+    RecuperacaoPorCodigoForm,
+    ReservaForm,
+)
 from .models import Excursao, Reserva, StatusExcursao, TipoPerfil
 
+logger = logging.getLogger("sire.recuperacao")
 
 def cadastro_passageiro(request):
     form = CadastroPassageiroForm((request.POST if request.method == "POST" else None))
     if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Cadastro concluído. Entre com sua conta.")
-        return redirect("sire:login")
+        usuario = form.save()
+        # O código é mostrado na própria resposta: não passa pela sessão nem
+        # é gravado em lugar algum. Recarregar a página não o exibe de novo.
+        return render(
+            request,
+            "sire/codigo_recuperacao.html",
+            {"codigo": recuperacao.codigo_de(usuario), "motivo": "cadastro"},
+        )
     return render(request, "sire/cadastro_passageiro.html", {"form": form})
 
 
-logger = logging.getLogger("sire.recuperacao")
+@login_required
+def meu_codigo(request):
+    """Código atual da conta, para quem já está autenticado."""
+    if recuperacao.conta_compartilhada(request.user):
+        return render(request, "sire/codigo_recuperacao.html", {"motivo": "compartilhada"})
+    return render(
+        request,
+        "sire/codigo_recuperacao.html",
+        {"codigo": recuperacao.codigo_de(request.user), "motivo": "consulta"},
+    )
+
+
+def recuperar_por_codigo(request):
+    """Cria uma senha nova com usuário + código de recuperação, sem e-mail."""
+    LIMITE, JANELA = 5, 60 * 60
+    form = RecuperacaoPorCodigoForm(request.POST if request.method == "POST" else None)
+    if request.method == "POST":
+        ip = (
+            request.META.get("HTTP_X_FORWARDED_FOR", "").split(",")[0].strip()
+            or request.META.get("REMOTE_ADDR", "")
+        )
+        chaves = [
+            f"codigo:ip:{ip}",
+            f"codigo:usuario:{request.POST.get('username', '').strip().lower()}",
+        ]
+        if any(cache.get(chave, 0) >= LIMITE for chave in chaves):
+            logger.warning("Recuperação por código: limite de tentativas atingido.")
+            form.add_error(None, "Muitas tentativas. Aguarde uma hora e tente de novo.")
+        elif form.is_valid():
+            usuario = form.save()
+            for chave in chaves:
+                cache.delete(chave)
+            logger.info("Recuperação por código: senha redefinida.")
+            return render(
+                request,
+                "sire/codigo_recuperacao.html",
+                {"codigo": recuperacao.codigo_de(usuario), "motivo": "redefinicao"},
+            )
+        else:
+            # Só as tentativas que falham contam para o limite.
+            for chave in chaves:
+                cache.add(chave, 0, JANELA)
+                cache.incr(chave)
+            logger.info("Recuperação por código: tentativa recusada.")
+    return render(
+        request,
+        "sire/recuperar_por_codigo.html",
+        {"form": form, "recuperacao_por_email": bool(settings.SIRE_RESET_DOMAIN)},
+    )
 
 
 class RecuperarSenhaView(PasswordResetView):

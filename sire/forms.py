@@ -2,10 +2,12 @@
 
 from django import forms
 from django.conf import settings
+from django.contrib.auth import password_validation
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.db import transaction
 
+from . import recuperacao
 from .models import Excursao, PerfilUsuario, PontoEmbarque, TipoPerfil
 
 
@@ -35,12 +37,67 @@ class RecuperacaoSenhaForm(PasswordResetForm):
     def get_users(self, email):
         return (
             user for user in super().get_users(email)
-            if user.username.lower() not in {"demo_passageiro", "demo_agente"}
+            if not recuperacao.conta_compartilhada(user)
         )
 
     def save(self, **kwargs):
         kwargs.update(domain_override=settings.SIRE_RESET_DOMAIN, use_https=True)
         super().save(**kwargs)
+
+
+class RecuperacaoPorCodigoForm(forms.Form):
+    """Usuário + código de recuperação + senha nova (sem e-mail)."""
+
+    ERRO = "Usuário ou código de recuperação inválidos."
+
+    username = forms.CharField(label="Usuário", max_length=150)
+    codigo = forms.CharField(
+        label="Código de recuperação",
+        max_length=40,
+        help_text="O código mostrado quando a conta foi criada. Com ou sem hífens.",
+    )
+    new_password1 = forms.CharField(
+        label="Senha nova",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        help_text=password_validation.password_validators_help_text_html(),
+    )
+    new_password2 = forms.CharField(
+        label="Confirmação da senha nova",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+    )
+
+    def clean(self):
+        dados = super().clean()
+        if self.errors:
+            return dados
+        # Mesma regra do login: a grafia alternativa só vale para conta única.
+        contas = list(User.objects.filter(username__iexact=dados["username"])[:2])
+        if len(contas) == 2:
+            contas = [c for c in contas if c.username == dados["username"]]
+        usuario = contas[0] if len(contas) == 1 else None
+        if (
+            usuario is None
+            or not usuario.is_active
+            or recuperacao.conta_compartilhada(usuario)
+            or not recuperacao.confere(usuario, dados["codigo"])
+        ):
+            # Uma única mensagem: não revela se o usuário existe.
+            raise forms.ValidationError(self.ERRO)
+        if dados["new_password1"] != dados["new_password2"]:
+            self.add_error("new_password2", "As duas senhas não são iguais.")
+            return dados
+        try:
+            password_validation.validate_password(dados["new_password1"], usuario)
+        except forms.ValidationError as erro:
+            self.add_error("new_password1", erro)
+            return dados
+        self.usuario = usuario
+        return dados
+
+    def save(self):
+        self.usuario.set_password(self.cleaned_data["new_password1"])
+        self.usuario.save(update_fields=["password"])
+        return self.usuario
 
 
 class CadastroPassageiroForm(UserCreationForm):

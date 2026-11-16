@@ -30,3 +30,60 @@ exclusão da conta demo, redefinição e rejeição de link reutilizado.
 A entrega real de e-mail e a homologação no PostgreSQL do Render
 ficam pendentes. VF03 é a referência para login; o fluxo de recuperação
 deve ser registrado como verificação separada da baseline.
+
+## Ciclo seguinte (16/11/2026): recuperação por código
+
+### Problema observado
+
+A recuperação por e-mail foi ativada na demonstração em 13/11/2026, mas o
+provedor de envio só entrega a qualquer destinatário depois da verificação
+de um domínio próprio. Sem ela, apenas o e-mail da titular da conta do
+provedor recebia o link. A exigência da autora — toda pessoa cadastrada deve
+conseguir recuperar a senha — não era atendida.
+
+### Risco
+
+Manter um recurso que funciona para uma única pessoa e falha em silêncio
+para as demais; e condicionar uma função do protótipo a um serviço externo e
+ao acesso ao DNS do domínio da agência.
+
+### Decisão
+
+Adotar o código de recuperação como mecanismo principal. O código é mostrado
+na criação da conta; quem esquece a senha informa usuário e código e define
+uma senha nova. A recuperação por e-mail permanece no código como opção
+secundária, sem ser pré-requisito.
+
+### Como funciona (`sire/recuperacao.py`)
+
+- O código não é gravado: é calculado por HMAC-SHA256 com a chave secreta do
+  servidor, o identificador da conta e o hash da senha atual. Não há campo,
+  tabela ou migration novos; a baseline ER-SIRE 2.1 e as seis entidades
+  permanecem inalteradas.
+- Formato: 20 caracteres em quatro grupos (100 bits), aceito com ou sem
+  hífens e em minúsculas. A comparação é feita em tempo constante.
+- Ao trocar a senha, o código anterior deixa de valer, um novo é mostrado e
+  as sessões abertas são encerradas.
+- A conta autenticada consulta o código atual em “Código de recuperação”.
+- Uma única mensagem de erro para usuário ou código inválidos.
+- Limite de 5 tentativas recusadas por hora, por IP e por usuário.
+- As contas compartilhadas da banca ficam fora do mecanismo.
+
+### Limites
+
+- Quem perde a senha e o código depende da redefinição pela agência.
+- Se a chave secreta do servidor mudar, ou se uma atualização do Django
+  regravar o hash da senha, os códigos emitidos deixam de valer.
+- O contador de tentativas fica na memória do processo (instância única).
+- Posse do usuário e do código equivale à posse da conta.
+
+### Verificação
+
+`scripts/teste_recuperacao_codigo.py`, em SQLite descartável: 25 verificações
+conformes (emissão no cadastro, ausência do código no banco e na sessão,
+consulta autenticada, código errado, usuário inexistente, senha fraca,
+recuperação válida, troca do código, sessões encerradas, contas
+compartilhadas, nomes em grafias diferentes e limite de tentativas). Saída em
+`evidencias/2026-11-16_recuperacao_por_codigo_local/`. As verificações
+anteriores de login e de recuperação por e-mail foram reexecutadas e
+permaneceram conformes.

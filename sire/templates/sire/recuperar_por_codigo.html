@@ -1,0 +1,28 @@
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+    <h1>
+        Recuperar acesso
+    </h1>
+    <p>
+        Informe seu usuário e o código de recuperação mostrado quando a conta foi
+        criada. Em seguida, escolha uma senha nova.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>
+            Criar senha nova
+        </button>
+    </form>
+    <p>
+        Não tem o código? Peça à agência responsável pela demonstração a
+        redefinição da senha.
+        {% if recuperacao_por_email %}
+            Se a conta tiver e-mail cadastrado, também é possível
+            <a href="{% url 'sire:recuperar_senha' %}">receber um link por e-mail</a>.
+        {% endif %}
+    </p>
+    <p>
+        <a href="{% url 'sire:login' %}">Voltar para entrar</a>
+    </p>
+{% endblock %}

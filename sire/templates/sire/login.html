@@ -11,7 +11,7 @@
             Entrar
         </button>
     </form>
-    {% if recuperacao_ativa %}
-        <p><a href="{% url 'sire:recuperar_senha' %}">Esqueci minha senha</a></p>
-    {% endif %}
+    <p>
+        <a href="{% url 'sire:recuperar_por_codigo' %}">Esqueci minha senha</a>
+    </p>
 {% endblock %}

@@ -1,0 +1,32 @@
+﻿Recuperacao de senha por codigo - conferencia local
+Data/hora: 2026-11-16 13:02:10 -03:00
+Ambiente: Windows 11, Python 3.14.8, Django 6.1.2, SQLite descartavel, cliente de teste do Django
+Comando: python scripts/teste_recuperacao_codigo.py
+Senhas aleatorias, nao gravadas. Nenhum codigo de recuperacao real consta deste arquivo.
+
+OK   cadastro mostra o código de recuperação 
+OK   código tem 20 caracteres em 4 grupos 
+OK   código mostrado é o da conta 
+OK   o código não fica guardado na sessão 
+OK   o código não aparece em nenhuma tabela do banco 
+OK   conta autenticada consulta o próprio código 
+OK   consulta exige login 
+OK   código errado é recusado 
+OK   usuário inexistente: mesma mensagem 
+OK   senha não mudou após tentativas inválidas 
+OK   confirmação diferente é recusada 
+OK   senha fraca é recusada 
+OK   recuperação válida aceita HTTP 200
+OK   senha nova funciona 
+OK   senha antiga deixa de valer 
+OK   o código mudou depois da troca de senha 
+OK   código antigo é recusado 
+OK   após redefinir, o novo código é mostrado 
+OK   sessão aberta com a senha antiga é encerrada 
+OK   conta compartilhada não pode ser recuperada 
+OK   conta compartilhada não vê código 
+OK   grafia ambígua não é resolvida 
+OK   código de uma conta não abre a outra 
+OK   após 5 erros, até o código certo é bloqueado por uma hora 
+OK   login mostra Esqueci minha senha 
+RESULTADO: TODOS CONFORMES

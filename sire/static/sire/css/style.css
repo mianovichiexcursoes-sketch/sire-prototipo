@@ -170,6 +170,15 @@ margin-bottom:24px
 background:#fff0ec;
 border-color:#a22c25
 }
+.codigo-recuperacao {
+font-family:Consolas,"Courier New",monospace;
+font-size:22px;
+letter-spacing:2px;
+padding:16px 20px;
+background:#e0f2e8;
+border-left:4px solid #146d5e;
+overflow-wrap:anywhere
+}
 .etiqueta {
 font-size:12px;
 padding:4px 10px;
