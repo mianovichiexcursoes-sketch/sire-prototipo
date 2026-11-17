@@ -239,38 +239,46 @@ def editar_excursao(request, id):
 @require_POST
 def adicionar_foto(request, id):
     perfil = exigir_perfil(request, TipoPerfil.AGENTE)
-    excursao = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
-    if not drive_fotos.configurado():
-        messages.error(request, "Fotos indisponíveis: falta configurar a conexão com o Google Drive.")
-        return redirect("sire:editar_excursao", id=id)
-    if excursao.fotos.count() >= drive_fotos.LIMITE_FOTOS:
-        messages.error(request, "Limite de seis fotos por excursão.")
-        return redirect("sire:editar_excursao", id=id)
+    # Valida dados do upload antes de adquirir o bloqueio do registro.
     formulario = FotoExcursaoForm(request.POST, request.FILES)
     if not formulario.is_valid():
         messages.error(request, "Foto inválida: envie um arquivo de imagem JPG, PNG ou WebP de até 5 MB.")
         return redirect("sire:editar_excursao", id=id)
+    if not drive_fotos.configurado():
+        messages.error(request, "Fotos indisponíveis: falta configurar a conexão com o Google Drive.")
+        return redirect("sire:editar_excursao", id=id)
     try:
         jpeg = drive_fotos.preparar_jpeg(formulario.cleaned_data["foto"])
-        identificador = drive_fotos.enviar(excursao.id, jpeg)
     except ValueError as erro:
         messages.error(request, str(erro))
         return redirect("sire:editar_excursao", id=id)
-    except drive_fotos.FalhaDrive:
-        messages.error(request, "Não foi possível enviar ao Google Drive. Nenhuma foto foi cadastrada.")
-        return redirect("sire:editar_excursao", id=id)
-    try:
-        FotoExcursao.objects.create(excursao=excursao, drive_id=identificador)
-    except Exception:
-        # Evita foto órfã quando o cadastro da referência falha.
+
+    # PostgreSQL: bloqueia a linha da excursão ANTES de contar e enviar.
+    # Requisições concorrentes à mesma excursão são serializadas até o commit;
+    # sem o bloqueio, dois pedidos podem observar 5 fotos e gravar 7.
+    with transaction.atomic():
+        excursao = get_object_or_404(
+            Excursao.objects.select_for_update(), pk=id, agencia=perfil.agencia
+        )
+        if excursao.fotos.count() >= drive_fotos.LIMITE_FOTOS:
+            messages.error(request, "Limite de seis fotos por excursão.")
+            return redirect("sire:editar_excursao", id=id)
         try:
-            drive_fotos.excluir(identificador)
+            identificador = drive_fotos.enviar(excursao.id, jpeg)
         except drive_fotos.FalhaDrive:
-            pass
-        raise
+            messages.error(request, "Não foi possível enviar ao Google Drive. Nenhuma foto foi cadastrada.")
+            return redirect("sire:editar_excursao", id=id)
+        try:
+            FotoExcursao.objects.create(excursao=excursao, drive_id=identificador)
+        except Exception:
+            # Compensação: arquivo remoto não pode ficar órfão após falha do banco.
+            try:
+                drive_fotos.excluir(identificador)
+            except drive_fotos.FalhaDrive:
+                logger.error("Upload de foto: não foi possível compensar falha de persistência.")
+            raise
     messages.success(request, "Foto enviada ao Google Drive e vinculada à excursão.")
     return redirect("sire:editar_excursao", id=id)
-
 
 @login_required
 @require_POST
@@ -317,7 +325,11 @@ def imagem_excursao(request, foto_id):
         cache.set(chave, dados, 3600)
     resposta = HttpResponse(dados, content_type="image/jpeg")
     resposta["X-Content-Type-Options"] = "nosniff"
-    resposta["Cache-Control"] = "public, max-age=3600" if publicada else "private, no-store"
+    # Mesmo após despublicação ou exclusão, não deixar cópias reutilizáveis
+    # em navegador, CDN, proxy compartilhado ou cache de página.
+    resposta["Cache-Control"] = "private, no-store, no-cache, max-age=0, must-revalidate"
+    resposta["Pragma"] = "no-cache"
+    resposta["Expires"] = "0"
     return resposta
 
 
