@@ -276,3 +276,40 @@ class FotoConcorrenciaPostgreSQL(TransactionTestCase):
         self.assertEqual(respostas, [302, 302])
         self.assertEqual(FotoExcursao.objects.filter(excursao=self.excursao).count(), 6)
         self.assertEqual(envio.call_count, 1)
+
+    @patch("sire.views.drive_fotos.configurado", return_value=True)
+    @patch("sire.views.drive_fotos.preparar_jpeg", return_value=b"jpeg-sintetico")
+    @patch("sire.views.drive_fotos.excluir")
+    @patch("sire.views.drive_fotos.enviar", return_value="drive-compensar-1")
+    def test_foto_17_falha_ao_gravar_compensa_drive(
+        self, enviar, excluir, preparar, configurado
+    ):
+        """Falha na referência do banco deve tentar retirar o arquivo remoto."""
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        self.client.force_login(self.agente_a)
+        with patch("sire.views.FotoExcursao.objects.create", side_effect=RuntimeError("erro fictício")):
+            with self.assertRaisesRegex(RuntimeError, "erro fictício"):
+                self.client.post(
+                    reverse("sire:adicionar_foto", args=[self.excursao.pk]),
+                    {"foto": SimpleUploadedFile(
+                        "foto.jpg", b"x", content_type="image/jpeg"
+                    )},
+                )
+        enviar.assert_called_once()
+        excluir.assert_called_once_with("drive-compensar-1")
+        self.assertEqual(self.excursao.fotos.count(), 1)
+
+    def test_foto_18_drive_id_invalido_recusado_antes_de_chamada_autenticada(self):
+        """IDs de arquivos não podem virar URL, query string ou path traversal."""
+        from . import drive_fotos
+        invalidos = ["../secreto", "abc?alt=media", "abc#segmento", "a b", ""]
+        with patch("sire.drive_fotos._headers", return_value={"Authorization": "Bearer teste"}), \
+             patch("sire.drive_fotos.urlopen") as urlopen:
+            for identificador in invalidos:
+                with self.subTest(identificador=identificador):
+                    with self.assertRaises(drive_fotos.FalhaDrive):
+                        drive_fotos.baixar(identificador)
+                    with self.assertRaises(drive_fotos.FalhaDrive):
+                        drive_fotos.excluir(identificador)
+        urlopen.assert_not_called()
