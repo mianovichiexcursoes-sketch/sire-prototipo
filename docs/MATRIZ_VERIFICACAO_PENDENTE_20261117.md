@@ -31,3 +31,31 @@ Registro documental independente, 17/11/2026 15h55 (Brasília). **Não é result
 3. CPF é extensão EVO-CPF separada, sem coleta real; implementação aguarda finalidade/base legal e reconciliação de branches. Não altera VF históricos retroativamente.
 4. Executar testes isolados e registrar data, SHA, banco, comando, saída, screenshots quando cabíveis e divergências. Não mesclar nem publicar antes de revisão e aceite.
 5. Monografia: futura seção de resultados e rastreabilidade; não afirmar verificações inexistentes.
+
+
+## Conciliação com o registro técnico original — 17/11/2026, 17h (Brasília)
+
+**Leitura primária:** registro de implementação Google Doc ID `1g3MnJfhbMFsDE-x42HemvypzXbAOh0wi3GPK7rwMqaM`, seções **5 RESULTADOS OBSERVADOS** e **10.2 Registros individuais**. Esta seção é uma reconciliação de **evidência histórica**, não uma nova execução. A documentação registra testes HTTP/ORM assistidos por IA em 22/10/2026, Python 3.12.14, Django 6.1.2 e SQLite 3.53.1, em banco separado, com artefatos `VFxx.json` e `execucao-2026-10-22.json`. Os arquivos JSON originais **não foram reabertos nesta rodada**: seus resultados permanecem declarações do registro, não confirmação independente dos anexos.
+
+| VF | Resultado histórico descrito no registro de 22/10 (não reexecutado) | Evidência a recuperar/confirmar |
+|---|---|---|
+| VF01 | cadastro criou User e PerfilUsuario PASSAGEIRO sem agência | VF01.json |
+| VF02 | identificador duplicado recusado, uma conta preservada | VF02.json |
+| VF03 | login dos dois perfis; passageiro recebeu HTTP 403 na gestão | VF03.json |
+| VF04 | excursão criada como RASCUNHO da agência autenticada, ignorando agência/status forjados | VF04.json |
+| VF05 | edição de outra agência recebeu HTTP 404, sem alteração | VF05.json |
+| VF06 | ponto de embarque vinculado à excursão autorizada na URL | VF06.json |
+| VF07 | publicação sem embarque recusada; RASCUNHO preservado | VF07.json |
+| VF08 | excursão válida passou a PUBLICADA | VF08.json |
+| VF09 | catálogo exibiu publicada, ocultou rascunho, filtrou destino; detalhe de rascunho HTTP 404 | VF09.json |
+| VF10 | detalhe exibiu embarque e 1 vaga após reserva em capacidade 2 | VF10.json |
+| VF11 | reserva com embarque válido criada, ocupando uma vaga | VF11.json |
+| VF12 | embarque de outra excursão recusado, sem criar reserva | VF12.json |
+| VF13 | lotação impediu terceira reserva com capacidade 2 | VF13.json |
+| VF14 | passageiro viu apenas reservas próprias | VF14.json |
+| VF15 | agente consultou reservas próprias; agência alheia HTTP 404 | VF15.json |
+| VF16 | agente consultou passageiros próprios; agência alheia HTTP 404 | VF16.json |
+
+**Lacuna identificada:** a tabela anterior rotulava todos os VF como pendentes de nova execução sem distinguir a execução histórica de 22/10. Manter ambos os fatos: (a) há relato histórico individual de conformidade HTTP/ORM; (b) ainda faltam recuperação dos JSON, regressão sobre HEAD atual, PostgreSQL em ensaio isolado, avaliação visual e CAT-VF específicos. Não usar esses relatos para aprovar a PR #2 ou publicar a demo.
+
+**Próxima unidade:** localizar o pacote original de evidências `VFxx.json` no Drive/GitHub e verificar integridade, timestamps, ambiente e associação ao commit original. Em paralelo, reconciliar HEADs das PRs abertas e preservar branch de desenvolvimento em edição pelo Work.
