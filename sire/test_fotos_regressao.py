@@ -115,3 +115,23 @@ class FotoPermissoesRegressao(TestCase):
         self.assertEqual(resposta.status_code, 302)
         self.assertTrue(FotoExcursao.objects.filter(pk=self.foto.pk).exists())
         excluir.assert_called_once_with("drive-ficticio-foto-1")
+
+    @patch("sire.views.drive_fotos.configurado", return_value=False)
+    @patch("sire.views.drive_fotos.baixar")
+    def test_foto_06_drive_nao_configurado_falha_fechado(self, baixar, configurado):
+        """CAT-RF-03: ausência de credenciais não expõe bytes nem IDs remotos."""
+        self.excursao.status = StatusExcursao.PUBLICADA
+        self.excursao.save(update_fields=["status"])
+        resposta = self.client.get(self._imagem())
+        self.assertEqual(resposta.status_code, 404)
+        baixar.assert_not_called()
+
+    @patch("sire.views.drive_fotos.excluir")
+    def test_foto_11_exclusao_exige_post(self, excluir):
+        """Uma navegação GET não deve remover foto nem acionar o Drive."""
+        self.client.force_login(self.agente_a)
+        url = reverse("sire:remover_foto", args=[self.excursao.pk, self.foto.pk])
+        resposta = self.client.get(url)
+        self.assertEqual(resposta.status_code, 405)
+        self.assertTrue(FotoExcursao.objects.filter(pk=self.foto.pk).exists())
+        excluir.assert_not_called()
