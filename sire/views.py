@@ -18,6 +18,7 @@ from . import recuperacao
 from .forms import (
     CadastroPassageiroForm,
     ExcursaoForm,
+    FiltroCatalogoForm,
     PontoEmbarqueForm,
     RecuperacaoPorCodigoForm,
     ReservaForm,
@@ -260,22 +261,29 @@ def publicar_excursao(request, id):
 
 
 def catalogo(request):
+    filtros = FiltroCatalogoForm(request.GET or None)
     excursoes = Excursao.objects.filter(status=StatusExcursao.PUBLICADA).select_related(
         "agencia"
     )
-    return render(request, "sire/catalogo.html", {"excursoes": excursoes})
+    if filtros.is_valid():
+        criterios = {
+            "destino__icontains": filtros.cleaned_data["destino"],
+            "data_saida__gte": filtros.cleaned_data["saida_de"],
+            "data_saida__lte": filtros.cleaned_data["saida_ate"],
+            "tipo_pacote": filtros.cleaned_data["tipo_pacote"],
+        }
+        excursoes = excursoes.filter(
+            **{campo: valor for campo, valor in criterios.items() if valor}
+        )
+    elif filtros.is_bound:
+        excursoes = excursoes.none()
+    return render(
+        request, "sire/catalogo.html", {"excursoes": excursoes, "filtros": filtros}
+    )
 
 
 def buscar_excursoes(request):
-    destino = request.GET.get("destino", "").strip()
-    excursoes = Excursao.objects.filter(status=StatusExcursao.PUBLICADA).select_related(
-        "agencia"
-    )
-    if destino:
-        excursoes = excursoes.filter(destino__icontains=destino)
-    return render(
-        request, "sire/catalogo.html", {"excursoes": excursoes, "destino": destino}
-    )
+    return catalogo(request)
 
 
 def detalhe_excursao(request, id):
