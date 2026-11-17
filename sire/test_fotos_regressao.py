@@ -10,7 +10,7 @@ from decimal import Decimal
 from unittest.mock import patch
 
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 
 from .models import Agencia, Excursao, FotoExcursao, PerfilUsuario, StatusExcursao, TipoPerfil
@@ -210,3 +210,69 @@ class FotoPermissoesRegressao(TestCase):
         self.assertEqual(resposta.status_code, 404)
         preparar.assert_not_called()
         enviar.assert_not_called()
+
+
+class FotoConcorrenciaPostgreSQL(TransactionTestCase):
+    """CAT-RF-03: dois agentes enviando simultaneamente à mesma excursão."""
+
+    def setUp(self):
+        self.agencia = Agencia.objects.create(nome="Agência sintética para concorrência")
+        self.usuario = User.objects.create_user("agente_concorrencia", password="senha-sintetica")
+        PerfilUsuario.objects.create(
+            usuario=self.usuario, tipo=TipoPerfil.AGENTE, agencia=self.agencia
+        )
+        self.excursao = Excursao.objects.create(
+            titulo="Teste concorrência", destino="Destino fictício",
+            data_saida=date(2027, 4, 1), valor=Decimal("100.00"),
+            capacidade=20, agencia=self.agencia, status=StatusExcursao.RASCUNHO,
+        )
+        for n in range(5):
+            FotoExcursao.objects.create(excursao=self.excursao, drive_id=f"pre-{n}")
+
+    def test_foto_16_dois_uploads_mesma_vaga_nao_criam_setima(self):
+        import itertools
+        import threading
+        import time
+        from concurrent.futures import ThreadPoolExecutor
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.db import connection, connections
+        from django.test import Client
+
+        if connection.vendor != "postgresql":
+            self.skipTest("Concorrência de row-lock só é verificável em PostgreSQL.")
+
+        pronto = threading.Barrier(2)
+        proximo = itertools.count(1)
+        ids_lock = threading.Lock()
+
+        def enviar_falso(*args, **kwargs):
+            with ids_lock:
+                identificador = next(proximo)
+            # Sem SELECT FOR UPDATE, duas requisições enxergariam 5 fotos
+            # durante esse intervalo e ambas concluiriam o envio.
+            time.sleep(0.2)
+            return f"upload-concorrente-{identificador}"
+
+        def requisicao(numero):
+            cliente = Client()
+            try:
+                cliente.force_login(self.usuario)
+                pronto.wait(timeout=15)
+                return cliente.post(
+                    reverse("sire:adicionar_foto", args=[self.excursao.pk]),
+                    {"foto": SimpleUploadedFile(
+                        f"imagem-{numero}.jpg", b"x", content_type="image/jpeg"
+                    )},
+                ).status_code
+            finally:
+                connections.close_all()
+
+        with patch("sire.views.drive_fotos.configurado", return_value=True), \
+             patch("sire.views.drive_fotos.preparar_jpeg", return_value=b"jpeg-sintetico"), \
+             patch("sire.views.drive_fotos.enviar", side_effect=enviar_falso) as envio:
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                respostas = list(pool.map(requisicao, (1, 2)))
+
+        self.assertEqual(respostas, [302, 302])
+        self.assertEqual(FotoExcursao.objects.filter(excursao=self.excursao).count(), 6)
+        self.assertEqual(envio.call_count, 1)
