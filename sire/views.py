@@ -239,6 +239,8 @@ def editar_excursao(request, id):
 @require_POST
 def adicionar_foto(request, id):
     perfil = exigir_perfil(request, TipoPerfil.AGENTE)
+    # RN-03: negar URL de outra agência antes de validar/processar qualquer arquivo.
+    get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
     # Valida dados do upload antes de adquirir o bloqueio do registro.
     formulario = FotoExcursaoForm(request.POST, request.FILES)
     if not formulario.is_valid():
