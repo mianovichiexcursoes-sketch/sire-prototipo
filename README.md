@@ -1,152 +1,145 @@
 # SIRE — Sistema de Reserva de Excursões
 
-Protótipo acadêmico do PFC/TCC de Engenharia Elétrica do IFSP Câmpus Sertãozinho.
-Baseline de requisitos: **ER-SIRE 2.1**. Implementação assistida por IA/Codex,
-autorizada pela autora nesta sessão, com histórico incremental e mapa do código.
-O uso de IA não deve ser apresentado como desenvolvimento sem assistência.
+[![Testes](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/workflows/testes.yml/badge.svg)](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/workflows/testes.yml)
 
-## Entrega
+Protótipo acadêmico do PFC/TCC de Engenharia Elétrica do IFSP Câmpus Sertãozinho,
+de Julia Mianovichi. Aplicação web para consulta e reserva de excursões
+rodoviárias. Baseline de requisitos: **ER-SIRE 2.1** (14 casos de uso, três
+atores, seis entidades).
 
-Os Blocos 1 a 9 estão implementados. Os 16 cenários VF foram exercitados por
-requisições HTTP reais, com CSRF e sessões, no ambiente Work. O relato completo
-está em [docs/VERIFICACAO.md](docs/VERIFICACAO.md). Não foi criada suíte de testes.
-A conferência visual em navegador e a execução no Windows permanecem pendentes.
+O desenvolvimento foi **assistido por IA** (Codex e Claude Code), sob orientação
+da autora. Os commits identificam essa assistência; o código não deve ser
+apresentado como escrito sem ela.
 
-## Versões efetivamente utilizadas
+## Situação
 
-| Componente | Referência dos documentos | Executado no Work |
-| --- | --- | --- |
-| Python | 3.14.8 | 3.12.14 |
-| Django | 6.1.2 | 6.1.2 |
-| SQLite | disponível no Python | 3.53.1 |
-| asgiref | dependência do Django | 3.12.1 |
-| sqlparse | dependência do Django | 0.6.0 |
+| Item | Estado |
+| --- | --- |
+| UC01–UC14 da baseline | Implementados |
+| Banco de dados | SQLite (padrão) ou PostgreSQL, por variável de ambiente |
+| Testes automatizados | 50 testes; rodam a cada envio em SQLite e PostgreSQL 18 |
+| Reservas simultâneas | Verificadas no PostgreSQL, sem exceder a capacidade |
+| Demonstração publicada | <https://sire-demo.onrender.com> (dados fictícios) |
+| Extensões fora da baseline | Login sem distinção de maiúsculas; recuperação de senha |
 
-A versão Python de referência não foi instalada nem verificada nesta entrega.
-Nenhum comando foi executado no computador Windows da autora. VS Code é a IDE
-prevista para abrir e estudar estes arquivos localmente.
+## Tecnologias
+
+| Componente | Versão |
+| --- | --- |
+| Python | 3.14 |
+| Django | 6.1.2 |
+| PostgreSQL | 18 (driver psycopg 3.3.9) |
+| SQLite | o que acompanha o Python |
+| Hospedagem da demonstração | Render, plano gratuito (gunicorn + WhiteNoise) |
+
+Sem framework de front-end, API separada ou JavaScript adicional: as telas são
+templates do Django.
 
 ## Executar no Windows
 
-Extraia o ZIP e abra a pasta `sire-prototipo`, que contém `manage.py`, no VS Code.
-No terminal PowerShell:
+Na pasta que contém `manage.py`, no PowerShell:
 
 ```powershell
-py --version
 py -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m django --version
-python manage.py check
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe manage.py migrate
+.\.venv\Scripts\python.exe manage.py createsuperuser
+.\.venv\Scripts\python.exe manage.py runserver
 ```
 
-Se a ativação não estiver disponível, execute os comandos com
-`.\.venv\Scripts\python.exe` no lugar de `python`, sem mudar a política do sistema.
-No Linux/macOS, crie a venv com `python3 -m venv .venv` e ative com
-`source .venv/bin/activate` antes dos mesmos comandos.
+Acesse <http://127.0.0.1:8000/>. Sem nenhuma configuração, o banco é SQLite.
 
-Acesse <http://127.0.0.1:8000/> e o pré-cadastro interno em
-<http://127.0.0.1:8000/admin/>. Encerre o servidor com Ctrl+C.
-O banco é reconstruído pelas quatro migrations do domínio e pelas migrations
-internas do Django. Nenhum banco ou conta de desenvolvimento acompanha o ZIP.
+### Usar PostgreSQL
 
-## Preparar a demonstração
+Copie `.env.example` para `.env` e preencha a senha do banco. O `.env` fica
+fora do Git. As mesmas quatro migrations do domínio criam o esquema; nenhum
+dado do SQLite é transferido.
 
-1. Entre no Admin com o superusuário criado localmente e cadastre uma Agência.
-2. Em Usuários, crie a conta do agente, com uma senha escolhida localmente.
-   O agente não precisa de privilégios de equipe ou superusuário.
-3. Em Perfis de usuário, associe esse usuário ao tipo AGENTE e à agência criada.
-4. Saia do Admin e entre pela página `/login/` usando a conta do agente.
-5. Abra “Excursões da agência”, crie uma excursão e observe o estado RASCUNHO.
-6. Cadastre um ponto de embarque e publique a excursão.
-7. Saia, cadastre uma conta de passageiro, entre e consulte o catálogo.
-8. Abra os detalhes, selecione um embarque e confirme a reserva de uma vaga.
-9. Consulte “Minhas reservas”. Depois entre como agente e consulte Reservas e
-   Passageiros. Para demonstrar isolamento, pré-cadastre uma segunda agência.
+### Dados de demonstração
 
-O superusuário do Admin não recebe perfil de agente automaticamente. Passageiros
-são cadastrados na interface pública e ficam sem agência. Agentes e agências
-possuem somente pré-cadastro interno. As senhas ficam sob o mecanismo de hash do
-Django; a entrega não contém senhas de demonstração.
-
-## Código e rastreabilidade
-
-- `sire/models.py`: cinco models do domínio; `User` padrão é a sexta entidade.
-- `sire/forms.py`: cadastro e validação de entradas.
-- `sire/views.py`: funções do fluxo; login/logout usam as views do Django.
-- `sire/urls.py`: rotas correspondentes aos 14 UC.
-- `sire/templates/sire/`: telas com herança de `base.html`.
-- `sire/static/sire/css/style.css`: apresentação sem framework front-end.
-- [docs/RASTREABILIDADE.md](docs/RASTREABILIDADE.md): UC → função → tela → VF.
-- [docs/ANDAMENTO.md](docs/ANDAMENTO.md): decisões, etapas e limites das evidências.
-
-## Recuperar o histórico Git incluído no ZIP
-
-O ZIP contém `historico-sire.bundle`, que preserva os commits desta execução.
-Na pasta extraída, se ela ainda não tiver um repositório Git:
-
-```bash
-git init -b main
-git fetch historico-sire.bundle main
-git reset --mixed FETCH_HEAD
-git log --oneline
-git show <hash-do-commit>
-git diff <hash-anterior> <hash-seguinte>
+```powershell
+$env:SIRE_DEMO_SENHA = "uma-senha-so-para-a-demo"
+.\.venv\Scripts\python.exe manage.py criar_demo
 ```
 
-Os commits estão identificados como desenvolvimento assistido; não foram
-atribuídos à autora como se fossem trabalho sem assistência. O primeiro preserva
-o ZIP recebido. Não foram fabricados commits retroativos de desenvolvimento.
-O arquivo `historico-commits.txt` permite consultar a sequência sem importar Git.
+Cria uma agência, as contas `demo_agente` e `demo_passageiro` (sem acesso ao
+Admin) e três excursões fictícias. Agências e agentes reais são pré-cadastrados
+pelo Admin; passageiros se cadastram pela interface pública.
 
-Não houve envio ao GitHub. A busca não identificou `sire-prototipo` da autora com
-permissão de escrita. O repositório local usa `main`; um remoto poderá ser
-associado quando sua URL estiver disponível. Torná-lo público exige autorização.
+## Testes
 
-## Funcionalidades e limites
+```powershell
+.\.venv\Scripts\python.exe manage.py test
+```
 
-Implementados UC01–UC14: cadastro de passageiro, autenticação, catálogo,
-pesquisa por destino, detalhes, cadastro/edição de excursões da agência,
-embarques, publicação, reserva com seleção de embarque, Minhas reservas,
-consulta de reservas e passageiros pelo agente.
+| Arquivo em `sire/tests/` | Cobre |
+| --- | --- |
+| `test_cenarios_vf.py` | VF01–VF16 da baseline, UC07-E3 e autorizações |
+| `test_login.py` | Login sem distinção de maiúsculas no usuário |
+| `test_recuperacao.py` | Código de recuperação, cadastro com e-mail, recuperação por e-mail |
+| `test_concorrencia.py` | Reservas simultâneas; executa somente em PostgreSQL |
 
-Cada Reserva ocupa uma vaga. Não existe status de reserva, quantidade de
-passageiros por reserva, campo de disponibilidade ou cancelamento. Não foi
-acrescentada regra de unicidade passageiro/excursão ausente da baseline; cada
-confirmação válida cria uma reserva enquanto houver capacidade.
+A integração contínua (`.github/workflows/testes.yml`) roda a suíte em SQLite e
+em PostgreSQL 18 a cada envio. Em SQLite, os dois testes de concorrência são
+pulados, porque o mecanismo em teste é o bloqueio de linha do PostgreSQL.
 
-A disponibilidade é `capacidade - reservas.count()`. A gravação de reserva e a
-edição da capacidade usam `transaction.atomic()` com SQLite em modo IMMEDIATE:
-o bloqueio de escrita é adquirido antes de consultar novamente a capacidade.
-`select_for_update()` não foi usado como garantia, pois não bloqueia linhas no
-SQLite. Há timeout de 10 segundos; em conflito na reserva, a interface orienta a
-tentar novamente. Não houve ensaio de carga ou de concorrência nesta execução.
-Esse mecanismo é destinado à demonstração local, com limitações de concorrência
-do SQLite; não constitui arquitetura para operação comercial em larga escala.
+`scripts/teste_concorrencia.py` repete o ensaio de concorrência com um servidor
+real e requisições HTTP, e grava a saída em `evidencias/`.
 
-Não implementados, conforme escopo: pagamento, cancelamento, assentos, veículos,
-vouchers, hospedagem, rooming list, espera e notificações. Não há API separada,
-React, Vue, microserviços ou JavaScript adicional.
+## Como a capacidade é protegida
 
-O projeto usa DEBUG e chave pública de desenvolvimento local. Para uma futura
-implantação, é necessário configurar ambiente, chave privada própria, hosts,
-HTTPS e recursos estáticos; essa implantação não foi realizada.
+A disponibilidade é sempre calculada: `capacidade − reservas`. Não há contador
+nem campo de vagas. Na reserva (`sire/views.py`, `realizar_reserva`):
 
-## Atualização de 12/11/2026 — PostgreSQL e concorrência
+1. abre-se uma transação (`transaction.atomic`);
+2. a excursão é lida com `select_for_update()`, que no PostgreSQL bloqueia a
+   linha até o fim da transação;
+3. as vagas são recontadas depois do bloqueio (`Reserva.full_clean`);
+4. a reserva é gravada na mesma transação.
 
-O SIRE passou a rodar também com PostgreSQL 18 no Windows da autora, e foi
-executado um ensaio real de reservas simultâneas. As seções anteriores descrevem
-a entrega de 20/10/2026 e foram mantidas como registro. Configuração: copie
-`.env.example` para `.env`. Método, resultados e limites estão em
-[docs/POSTGRESQL_E_CONCORRENCIA.md](docs/POSTGRESQL_E_CONCORRENCIA.md).
+Uma segunda reserva da mesma excursão espera no passo 2 e, ao prosseguir, já
+enxerga a primeira. No SQLite, `select_for_update()` é ignorado e quem
+serializa as gravações é o modo `IMMEDIATE` configurado em `settings.py`.
 
-## Revisão posterior da entrega
+## Recuperação de senha (extensão)
 
-A revisão de 20/10/2026 e seus limites estão em
-[docs/REVISAO_20-10-2026.md](docs/REVISAO_20-10-2026.md).
-As correções documentais foram feitas diretamente no documento principal do
-Drive. O código funcional não foi alterado nesta revisão. O bundle inclui um
-commit adicional com este registro; os dez commits originais foram preservados.
+Ao criar a conta, o SIRE mostra um **código de recuperação**. Quem esquece a
+senha informa usuário e código e define uma senha nova. O código não é gravado:
+é calculado a partir da chave secreta do servidor, do identificador da conta e
+do hash da senha (`sire/recuperacao.py`), sem campo, tabela ou migration novos.
+Ao trocar a senha, o código muda. O envio de link por e-mail existe como opção
+secundária e depende de um provedor configurado.
+
+## Limites conhecidos
+
+- A capacidade é garantida pela aplicação, não por restrição no banco: uma
+  gravação feita por fora da view de reserva não é impedida.
+- A baseline não limita a uma reserva por passageiro por excursão.
+- Os ensaios de concorrência usam poucas requisições, em uma máquina; não medem
+  carga, desempenho ou escalabilidade.
+- Não há cancelamento, pagamento, assentos, lista de espera nem notificações.
+- Não há tela para o usuário trocar a própria senha ou o e-mail.
+- O limite de tentativas da recuperação fica na memória do processo.
+- A demonstração usa plano gratuito: o serviço hiberna sem uso e o banco tem
+  prazo de validade. Não é ambiente de produção.
+- Não houve avaliação de usabilidade com usuários externos.
+
+## Documentação
+
+| Arquivo | Conteúdo |
+| --- | --- |
+| `docs/RASTREABILIDADE.md` | Caso de uso → função → tela → cenário VF |
+| `docs/VERIFICACAO.md` | Verificação funcional original, em SQLite (20/10/2026) |
+| `docs/POSTGRESQL_E_CONCORRENCIA.md` | Migração para PostgreSQL e ensaios de concorrência |
+| `docs/CICLO_LOGIN_E_RECUPERACAO.md` | Ciclos do login e da recuperação de senha |
+| `docs/ANDAMENTO.md`, `docs/REVISAO_20-10-2026.md` | Registro da primeira entrega |
+| `evidencias/` | Saída bruta dos ensaios e capturas de tela |
+
+Os documentos de outubro descrevem o estado daquela data e foram mantidos como
+registro histórico.
+
+## Histórico
+
+A `main` reúne as três iterações. As etapas ficaram registradas nas branches
+`etapa/postgresql-windows` e `etapa/login-sem-distincao`. Os commits de
+20/10/2026 foram recuperados do arquivo `historico-sire.bundle`, sem alteração.
