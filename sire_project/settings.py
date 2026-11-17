@@ -157,6 +157,12 @@ LOGIN_REDIRECT_URL = "sire:catalogo"
 LOGOUT_REDIRECT_URL = "sire:catalogo"
 
 
+# Google Drive pessoal para imagens das excursões. O token OAuth é secreto,
+# configurado apenas no ambiente; nunca é publicado no GitHub.
+SIRE_DRIVE_CLIENT_ID = os.environ.get("SIRE_DRIVE_CLIENT_ID", "")
+SIRE_DRIVE_CLIENT_SECRET = os.environ.get("SIRE_DRIVE_CLIENT_SECRET", "")
+SIRE_DRIVE_REFRESH_TOKEN = os.environ.get("SIRE_DRIVE_REFRESH_TOKEN", "")
+
 # A demo gratuita usa uma API HTTPS para enviar links de recuperação.
 SIRE_RESEND_API_KEY = os.environ.get("SIRE_RESEND_API_KEY", "")
 DEFAULT_FROM_EMAIL = os.environ.get("SIRE_EMAIL_FROM", "sire@localhost")
