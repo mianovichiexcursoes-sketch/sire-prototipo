@@ -1,0 +1,61 @@
+# Integração contínua do SIRE: a cada envio ao GitHub, a suíte de testes roda
+# sozinha em SQLite e em PostgreSQL. Os testes de reservas simultâneas só
+# executam no PostgreSQL, onde o bloqueio de linha é o mecanismo em teste.
+name: Testes
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  sqlite:
+    name: Testes em SQLite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Conferências do Django
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+      - name: Suíte de testes
+        run: python manage.py test --verbosity 2
+
+  postgresql:
+    name: Testes em PostgreSQL (com concorrência)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          # Banco descartável, criado e destruído a cada execução.
+          POSTGRES_USER: sire_ci
+          POSTGRES_PASSWORD: somente-ci-descartavel
+          POSTGRES_DB: sire_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sire_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      SIRE_DB_ENGINE: postgresql
+      SIRE_DB_NAME: sire_ci
+      SIRE_DB_USER: sire_ci
+      SIRE_DB_PASSWORD: somente-ci-descartavel
+      SIRE_DB_HOST: localhost
+      SIRE_DB_PORT: "5432"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Suíte de testes
+        run: python manage.py test --verbosity 2

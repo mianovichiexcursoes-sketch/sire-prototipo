@@ -1,4 +1,4 @@
 # Somente para a demonstração publicada (servidor Linux da hospedagem).
 -r requirements.txt
-gunicorn>=23
-whitenoise>=6.7
+gunicorn==27.0.1
+whitenoise==6.12.0
