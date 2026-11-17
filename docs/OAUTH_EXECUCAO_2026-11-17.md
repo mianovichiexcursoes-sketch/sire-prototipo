@@ -31,9 +31,18 @@ Python 3.12, ambiente virtual descartável, SQLite de teste; credenciais exclusi
 ## Bloqueios observados, não inferidos
 
 1. Google Cloud Console em https://console.cloud.google.com/ retornou página “Site Unavailable / Unable to access this site.” A mesma resposta persistiu após uma recarga. Não chegou à tela de login. Não há evidência de bloqueio por robô, nem motivo para afirmar indisponibilidade global. Não foi possível criar projeto, ativar API ou configurar consentimento/cliente.
-2. Render listou um workspace “SIRE.”; a consulta de serviços recusou prosseguir sem confirmação explícita do workspace. Nenhum serviço ou segredo foi alterado.
+2. **Resolvido após confirmação da autora:** workspace “SIRE.” autorizado e consultado. Inventário: somente serviço sire-demo e banco sire-demo-db, plano free, PostgreSQL 18, Oregon. Serviço live no commit 7c53134264953908e8884bb588dd123d1d4cb972, branch etapa/postgresql-windows; nenhum serviço ou segredo foi alterado.
 3. Não houve autorização real da conta Google, obtenção de token, configuração de credenciais no Render, upload remoto, inspeção de permissões Drive, exclusão remota ou teste de persistência após redeploy.
 
 ## Continuidade
 
-Confirmar workspace SIRE.; recuperar acesso ao Console, preparar projeto/API/consentimento apenas drive.file e cliente desktop. Solicitar participação da titular no login/consentimento quando a página estiver disponível. Criar ou identificar serviço e banco descartáveis de ensaio, sem banco da demo. Autorizar e configurar segredos por canal protegido. Ensaiar imagem sintética: upload, galeria pública somente após publicação, rascunho restrito à agência, remoção, ausência de compartilhamento público no Drive e persistência após redeploy. Revisar cadeia de PRs antes de qualquer promoção. Tokens de aplicativo externo em Testing podem expirar em sete dias: verificar o estado de publicação antes do aceite de persistência duradoura.
+Workspace confirmado; recuperar acesso ao Console, preparar projeto/API/consentimento apenas drive.file e cliente desktop. Solicitar participação da titular no login/consentimento quando a página estiver disponível. Criar ou identificar serviço e banco descartáveis de ensaio, sem banco da demo. Autorizar e configurar segredos por canal protegido. Ensaiar imagem sintética: upload, galeria pública somente após publicação, rascunho restrito à agência, remoção, ausência de compartilhamento público no Drive e persistência após redeploy. Revisar cadeia de PRs antes de qualquer promoção. Tokens de aplicativo externo em Testing podem expirar em sete dias: verificar o estado de publicação antes do aceite de persistência duradoura.
+
+## Continuidade após confirmação do workspace
+
+- Google Cloud Console novamente indisponível antes do login; não foi solicitada senha nem consentimento fora do Google.
+- CI da PR #7, commit `9b2879ce6cf8639bbae94c133c00641347da7afd`: [suíte SQLite/PostgreSQL](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44084972576) e [regressão fotos](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44084972698) concluídas com sucesso. Job PostgreSQL, incluindo concorrência, confirmado separadamente. Isso não valida Drive real.
+- PR #7 sem conflito com sua base no momento da consulta; continua em rascunho, sem merge.
+- Não há ambiente de ensaio Render. A documentação atual permite apenas um PostgreSQL free ativo por workspace; a vaga já está ocupada pela demo. Referência consultada: https://render.com/docs/free.md (Single-instance limit).
+- Não criar SQLite efêmero como prova de persistência, não compartilhar o banco da demo, não contratar plano pago automaticamente. O ensaio persistente precisa de banco isolado externo já disponível ou decisão explícita de infraestrutura. Nenhuma cobrança ou recurso novo criado.
+- Bloqueios restantes: acesso ao Google Cloud/OAuth e infraestrutura persistente isolada para teste de redeploy. Nenhuma credencial real foi obtida ou armazenada nesta rodada.
