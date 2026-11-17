@@ -69,7 +69,7 @@ class FotoPermissoesRegressao(TestCase):
     @patch("sire.views.drive_fotos.configurado", return_value=True)
     @patch("sire.views.drive_fotos.baixar", return_value=b"jpeg-ficticio")
     def test_foto_05_despublicacao_nao_deixa_cache_publico(self, baixar, configurado):
-        """Deve FALHAR no código auditado se ainda houver public,max-age=3600."""
+        """Imagem publicada não pode permanecer em cache após despublicação."""
         self.excursao.status = StatusExcursao.PUBLICADA
         self.excursao.save(update_fields=["status"])
         primeira = self.client.get(self._imagem())
@@ -198,4 +198,15 @@ class FotoPermissoesRegressao(TestCase):
         )
         self.assertEqual(resposta.status_code, 302)
         self.assertEqual(self.excursao.fotos.count(), 6)
+        enviar.assert_not_called()
+
+    @patch("sire.views.drive_fotos.configurado", return_value=True)
+    @patch("sire.views.drive_fotos.preparar_jpeg")
+    @patch("sire.views.drive_fotos.enviar")
+    def test_foto_15_upload_alheio_nega_antes_de_processar(self, enviar, preparar, configurado):
+        """RN-03: nem mesmo formulário inválido revela ou processa outra agência."""
+        self.client.force_login(self.agente_b)
+        resposta = self.client.post(reverse("sire:adicionar_foto", args=[self.excursao.pk]), data={})
+        self.assertEqual(resposta.status_code, 404)
+        preparar.assert_not_called()
         enviar.assert_not_called()
