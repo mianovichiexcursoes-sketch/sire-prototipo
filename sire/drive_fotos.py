@@ -8,6 +8,7 @@ Nenhuma foto é gravada no disco efêmero do Render ou no PostgreSQL.
 
 import io
 import json
+import re
 import uuid
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -159,7 +160,19 @@ def enviar(excursao_id, imagem_jpeg):
     return resposta["id"]
 
 
+def _validar_drive_id(drive_id):
+    """Fail closed before constructing an authenticated Google API URL.
+
+    Drive file IDs are opaque URL-safe identifiers, not arbitrary URL paths,
+    fragments or query parameters supplied by the database.
+    """
+    if not isinstance(drive_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", drive_id):
+        raise FalhaDrive("Identificador de foto inválido.")
+    return drive_id
+
+
 def baixar(drive_id):
+    drive_id = _validar_drive_id(drive_id)
     requisicao = Request(f"{API}/{drive_id}?alt=media", headers=_headers())
     try:
         with urlopen(requisicao, timeout=20) as resposta:
@@ -173,6 +186,7 @@ def baixar(drive_id):
 
 
 def excluir(drive_id):
+    drive_id = _validar_drive_id(drive_id)
     requisicao = Request(f"{API}/{drive_id}", method="DELETE", headers=_headers())
     try:
         with urlopen(requisicao, timeout=20) as resposta:

@@ -1,0 +1,81 @@
+name: SIRE - regressao de fotos (SQLite e PostgreSQL)
+
+on:
+  pull_request:
+    paths:
+      - 'sire/**'
+      - 'sire_project/**'
+      - 'requirements.txt'
+      - '.github/workflows/fotos-regressao.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fotos-sqlite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SIRE_DEBUG: '1'
+      SIRE_DB_ENGINE: sqlite
+      SIRE_DRIVE_CLIENT_ID: ''
+      SIRE_DRIVE_CLIENT_SECRET: ''
+      SIRE_DRIVE_REFRESH_TOKEN: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Instalar dependencias do projeto
+        run: python -m pip install -r requirements.txt
+      - name: Verificar configuracao Django
+        run: python manage.py check
+      - name: Verificar migracoes pendentes (sem criar ou aplicar em producao)
+        run: python manage.py makemigrations --check --dry-run
+      - name: Executar regressao de fotos com Drive simulado
+        run: python manage.py test sire.test_fotos_regressao --verbosity 2
+
+  fotos-postgresql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: sire_fotos_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d sire_fotos_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      SIRE_DEBUG: '1'
+      SIRE_DB_ENGINE: postgresql
+      SIRE_DB_NAME: sire_fotos_test
+      SIRE_DB_USER: postgres
+      SIRE_DB_PASSWORD: postgres
+      SIRE_DB_HOST: localhost
+      SIRE_DB_PORT: '5432'
+      SIRE_DRIVE_CLIENT_ID: ''
+      SIRE_DRIVE_CLIENT_SECRET: ''
+      SIRE_DRIVE_REFRESH_TOKEN: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Instalar dependencias
+        run: python -m pip install -r requirements.txt
+      - name: Conferir configuracao e migrations
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+      - name: Testar fotos e concorrencia real em PostgreSQL descartavel
+        run: python manage.py test sire.test_fotos_regressao --verbosity 2
