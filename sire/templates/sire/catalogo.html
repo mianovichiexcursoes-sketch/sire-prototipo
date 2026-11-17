@@ -28,6 +28,11 @@
                     <p class="sobretitulo">
                         {{ excursao.agencia }}
                     </p>
+                    {% with capa=excursao.fotos.first %}
+                        {% if capa %}
+                            <img class="capa-excursao" src="{% url 'sire:imagem_excursao' capa.id %}" alt="Foto de {{ excursao.titulo }}" loading="lazy">
+                        {% endif %}
+                    {% endwith %}
                     <h2>
                         {{ excursao.titulo }}
                     </h2>
