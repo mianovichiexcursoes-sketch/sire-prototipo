@@ -93,3 +93,25 @@ class FotoPermissoesRegressao(TestCase):
         self.assertEqual(resposta.status_code, 302)
         self.assertEqual(self.excursao.fotos.count(), 6)
         enviar.assert_not_called()
+
+    @patch("sire.views.drive_fotos.excluir")
+    def test_foto_09_agente_alheio_nao_remove_foto(self, excluir):
+        """RN-03: URL direta de exclusão não autoriza outra agência."""
+        self.client.force_login(self.agente_b)
+        url = reverse("sire:remover_foto", args=[self.excursao.pk, self.foto.pk])
+        resposta = self.client.post(url)
+        self.assertEqual(resposta.status_code, 404)
+        self.assertTrue(FotoExcursao.objects.filter(pk=self.foto.pk).exists())
+        excluir.assert_not_called()
+
+    @patch("sire.views.drive_fotos.excluir")
+    def test_foto_10_falha_drive_preserva_referencia(self, excluir):
+        """CAT-RF-03: erro de exclusão remota não pode apagar referência local."""
+        from . import drive_fotos
+        excluir.side_effect = drive_fotos.FalhaDrive("falha sintética")
+        self.client.force_login(self.agente_a)
+        url = reverse("sire:remover_foto", args=[self.excursao.pk, self.foto.pk])
+        resposta = self.client.post(url)
+        self.assertEqual(resposta.status_code, 302)
+        self.assertTrue(FotoExcursao.objects.filter(pk=self.foto.pk).exists())
+        excluir.assert_called_once_with("drive-ficticio-foto-1")
