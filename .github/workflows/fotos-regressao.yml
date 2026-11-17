@@ -34,5 +34,5 @@ jobs:
         run: python manage.py check
       - name: Verificar migracoes pendentes (sem criar ou aplicar em producao)
         run: python manage.py makemigrations --check --dry-run
-      - name: Executar 11 cenarios de fotos com Drive simulado
+      - name: Executar regressao de fotos com Drive simulado
         run: python manage.py test sire.test_fotos_regressao --verbosity 2
