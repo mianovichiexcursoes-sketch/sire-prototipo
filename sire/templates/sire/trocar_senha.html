@@ -1,0 +1,20 @@
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+    <h1>
+        Trocar senha
+    </h1>
+    <p>
+        Informe a senha atual e escolha uma nova. Ao trocar a senha, o código de
+        recuperação também muda; o novo código é mostrado em seguida.
+    </p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>
+            Salvar senha nova
+        </button>
+    </form>
+    <p>
+        <a href="{% url 'sire:minha_conta' %}">Voltar para Minha conta</a>
+    </p>
+{% endblock %}

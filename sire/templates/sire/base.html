@@ -37,8 +37,8 @@
                                 Excursões da agência
                             </a>
                         {% endif %}
-                        <a href="{% url 'sire:meu_codigo' %}">
-                            Código de recuperação
+                        <a href="{% url 'sire:minha_conta' %}">
+                            Minha conta
                         </a>
                         <span>
                             {{ user.username }}
@@ -70,7 +70,9 @@
             {% endblock %}
         </main>
         <footer>
-            Protótipo acadêmico · IFSP Sertãozinho · ER-SIRE 2.1 · 2026
+            Protótipo acadêmico · IFSP Sertãozinho · ER-SIRE 2.1 · 2026 ·
+            <a href="{% url 'sire:privacidade' %}">Aviso de privacidade</a>
         </footer>
+        <script src="{% static 'sire/js/mostrar-senha.js' %}" defer></script>
     </body>
 </html>

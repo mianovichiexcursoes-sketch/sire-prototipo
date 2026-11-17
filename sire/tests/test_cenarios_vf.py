@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from sire.models import Excursao, PerfilUsuario, PontoEmbarque, Reserva, StatusExcursao
 
 from .base import (
-    SENHA,
     CasoSire,
+    dados_cadastro,
     criar_agencia,
     criar_agente,
     criar_excursao,
@@ -22,17 +22,7 @@ from .base import (
 
 class CadastroEAutenticacao(CasoSire):
     def cadastrar(self, usuario="novo", email="novo@example.com"):
-        return self.client.post(
-            "/cadastro/",
-            {
-                "username": usuario,
-                "first_name": "Nome",
-                "last_name": "Sobrenome",
-                "email": email,
-                "password1": SENHA,
-                "password2": SENHA,
-            },
-        )
+        return self.client.post("/cadastro/", dados_cadastro(usuario, email))
 
     def test_vf01_cadastro_publico_cria_passageiro_sem_agencia(self):
         resposta = self.cadastrar()

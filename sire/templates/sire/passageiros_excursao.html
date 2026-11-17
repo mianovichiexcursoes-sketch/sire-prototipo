@@ -17,6 +17,9 @@
                         Usuário
                     </th>
                     <th>
+                        Nascimento
+                    </th>
+                    <th>
                         Embarque
                     </th>
                     <th>
@@ -34,6 +37,9 @@
                             {{ reserva.passageiro.username }}
                         </td>
                         <td>
+                            {{ reserva.passageiro.perfil.data_nascimento|date:'d/m/Y'|default:'—' }}
+                        </td>
+                        <td>
                             {{ reserva.ponto_embarque }}
                         </td>
                         <td>
@@ -42,7 +48,7 @@
                     </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="4">
+                        <td colspan="5">
                             Nenhum passageiro associado.
                         </td>
                     </tr>

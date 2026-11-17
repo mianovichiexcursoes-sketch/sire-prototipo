@@ -73,6 +73,22 @@ def dados_excursao(**alteracoes):
     return dados
 
 
+def dados_cadastro(usuario="novo", email="novo@example.com", **alteracoes):
+    """Formulário público de cadastro preenchido de forma válida."""
+    dados = {
+        "username": usuario,
+        "first_name": "Nome",
+        "last_name": "Sobrenome",
+        "email": email,
+        "data_nascimento": "1990-05-20",
+        "password1": SENHA,
+        "password2": SENHA,
+        "aceite": "on",
+    }
+    dados.update(alteracoes)
+    return {chave: valor for chave, valor in dados.items() if valor is not None}
+
+
 def reservas_de(excursao):
     return Reserva.objects.filter(excursao=excursao).count()
 

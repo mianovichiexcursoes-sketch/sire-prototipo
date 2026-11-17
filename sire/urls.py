@@ -20,7 +20,10 @@ urlpatterns = [
     ),
     # Recuperação por código (extensão): funciona para toda conta, sem e-mail.
     path("recuperar-acesso/", views.recuperar_por_codigo, name="recuperar_por_codigo"),
+    path("minha-conta/", views.minha_conta, name="minha_conta"),
     path("minha-conta/codigo/", views.meu_codigo, name="meu_codigo"),
+    path("minha-conta/senha/", views.TrocarSenhaView.as_view(), name="trocar_senha"),
+    path("privacidade/", views.privacidade, name="privacidade"),
     path(
         "recuperar-senha/",
         views.RecuperarSenhaView.as_view(

@@ -39,7 +39,7 @@ c = Client(REMOTE_ADDR="10.2.0.1")
 
 # 1. Cadastro mostra o código uma única vez
 r = c.post("/cadastro/", {"username": "Maria", "first_name": "Maria", "last_name": "Teste",
-                          "email": "maria@example.com", "password1": senha, "password2": senha}, follow=True)
+                          "email": "maria@example.com", "data_nascimento": "1990-05-20", "aceite": "on", "password1": senha, "password2": senha}, follow=True)
 m = re.search(PADRAO, r.content.decode())
 checa("cadastro mostra o código de recuperação", r.status_code == 200 and m)
 codigo = m.group(1)

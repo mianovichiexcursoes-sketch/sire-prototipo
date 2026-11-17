@@ -17,10 +17,10 @@ apresentado como escrito sem ela.
 | --- | --- |
 | UC01–UC14 da baseline | Implementados |
 | Banco de dados | SQLite (padrão) ou PostgreSQL, por variável de ambiente |
-| Testes automatizados | 50 testes; rodam a cada envio em SQLite e PostgreSQL 18 |
+| Testes automatizados | 67 testes; rodam a cada envio em SQLite e PostgreSQL 18 |
 | Reservas simultâneas | Verificadas no PostgreSQL, sem exceder a capacidade |
 | Demonstração publicada | <https://sire-demo.onrender.com> (dados fictícios) |
-| Extensões fora da baseline | Login sem distinção de maiúsculas; recuperação de senha |
+| Extensões fora da baseline | Login sem distinção de maiúsculas; recuperação e troca de senha; data de nascimento; aviso de privacidade |
 
 ## Tecnologias
 
@@ -32,8 +32,16 @@ apresentado como escrito sem ela.
 | SQLite | o que acompanha o Python |
 | Hospedagem da demonstração | Render, plano gratuito (gunicorn + WhiteNoise) |
 
-Sem framework de front-end, API separada ou JavaScript adicional: as telas são
-templates do Django.
+Sem framework de front-end nem API separada: as telas são templates do Django.
+O único JavaScript é `sire/static/sire/js/mostrar-senha.js`, que acrescenta o
+botão “Mostrar” aos campos de senha; sem ele os formulários continuam
+funcionando.
+
+### Modelo de dados
+
+As seis entidades da baseline ER-SIRE 2.1 são mantidas. Uma única alteração
+posterior foi feita no esquema: o campo opcional `data_nascimento` em
+`PerfilUsuario` (migration `0005`), registrado como extensão.
 
 ## Executar no Windows
 
@@ -77,6 +85,7 @@ pelo Admin; passageiros se cadastram pela interface pública.
 | `test_cenarios_vf.py` | VF01–VF16 da baseline, UC07-E3 e autorizações |
 | `test_login.py` | Login sem distinção de maiúsculas no usuário |
 | `test_recuperacao.py` | Código de recuperação, cadastro com e-mail, recuperação por e-mail |
+| `test_conta.py` | Data de nascimento, aceite de privacidade, Minha conta, troca de senha |
 | `test_concorrencia.py` | Reservas simultâneas; executa somente em PostgreSQL |
 
 A integração contínua (`.github/workflows/testes.yml`) roda a suíte em SQLite e
@@ -118,7 +127,10 @@ secundária e depende de um provedor configurado.
 - Os ensaios de concorrência usam poucas requisições, em uma máquina; não medem
   carga, desempenho ou escalabilidade.
 - Não há cancelamento, pagamento, assentos, lista de espera nem notificações.
-- Não há tela para o usuário trocar a própria senha ou o e-mail.
+- O usuário troca a própria senha em “Minha conta”, mas não altera e-mail,
+  nome ou data de nascimento, nem exclui a conta pela interface.
+- O aviso de privacidade é informativo; não foi revisado por profissional da
+  área jurídica.
 - O limite de tentativas da recuperação fica na memória do processo.
 - A demonstração usa plano gratuito: o serviço hiberna sem uso e o banco tem
   prazo de validade. Não é ambiente de produção.

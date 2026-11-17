@@ -1,11 +1,14 @@
 """Formulários dos UC01, UC06–UC08 e UC10–UC11."""
 
+from datetime import date
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.utils.safestring import mark_safe
 
 from . import recuperacao
 from .models import Excursao, PerfilUsuario, PontoEmbarque, TipoPerfil
@@ -109,9 +112,33 @@ class CadastroPassageiroForm(UserCreationForm):
         help_text="Obrigatório. Usado para recuperar a senha.",
     )
 
+    # Extensão: dado usado pela agência para identificar o passageiro.
+    data_nascimento = forms.DateField(
+        label="Data de nascimento",
+        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+    )
+    aceite = forms.BooleanField(
+        label=mark_safe(
+            'Li o <a href="/privacidade/" target="_blank" rel="noopener">aviso de '
+            "privacidade</a> e concordo com o uso dos meus dados para as reservas."
+        ),
+        error_messages={"required": "É preciso concordar com o aviso de privacidade."},
+    )
+
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("username", "first_name", "last_name", "email")
+
+    field_order = (
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "data_nascimento",
+        "password1",
+        "password2",
+        "aceite",
+    )
 
     def clean_email(self):
         email = self.cleaned_data["email"].strip().lower()
@@ -119,12 +146,25 @@ class CadastroPassageiroForm(UserCreationForm):
             raise forms.ValidationError("Já existe uma conta com este e-mail.")
         return email
 
+    def clean_data_nascimento(self):
+        nascimento = self.cleaned_data["data_nascimento"]
+        hoje = date.today()
+        if nascimento > hoje:
+            raise forms.ValidationError("A data de nascimento não pode estar no futuro.")
+        if nascimento.year < hoje.year - 120:
+            raise forms.ValidationError("Informe uma data de nascimento válida.")
+        return nascimento
+
     @transaction.atomic
     def save(self, commit=True):
         if not commit:
             return super().save(commit=False)
         usuario = super().save()
-        PerfilUsuario.objects.create(usuario=usuario, tipo=TipoPerfil.PASSAGEIRO)
+        PerfilUsuario.objects.create(
+            usuario=usuario,
+            tipo=TipoPerfil.PASSAGEIRO,
+            data_nascimento=self.cleaned_data["data_nascimento"],
+        )
         return usuario
 
 

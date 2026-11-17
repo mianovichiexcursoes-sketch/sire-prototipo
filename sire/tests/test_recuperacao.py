@@ -9,7 +9,7 @@ from django.test import override_settings
 
 from sire import recuperacao
 
-from .base import SENHA, CasoSire, criar_passageiro
+from .base import SENHA, CasoSire, criar_passageiro, dados_cadastro
 
 PADRAO = re.compile(r"[A-Z2-7]{5}-[A-Z2-7]{5}-[A-Z2-7]{5}-[A-Z2-7]{5}")
 NOVA = "Outra-senha-forte-456"
@@ -38,17 +38,7 @@ class CodigoDeRecuperacao(CasoSire):
         return self.maria.check_password(senha)
 
     def test_cadastro_mostra_o_codigo_da_conta(self):
-        resposta = self.client.post(
-            "/cadastro/",
-            {
-                "username": "novo",
-                "first_name": "N",
-                "last_name": "S",
-                "email": "novo@example.com",
-                "password1": SENHA,
-                "password2": SENHA,
-            },
-        )
+        resposta = self.client.post("/cadastro/", dados_cadastro())
         encontrado = PADRAO.search(resposta.content.decode())
         self.assertIsNotNone(encontrado)
         self.assertTrue(recuperacao.confere(User.objects.get(username="novo"), encontrado.group()))
@@ -131,17 +121,7 @@ class CodigoDeRecuperacao(CasoSire):
 
 class CadastroComEmail(CasoSire):
     def cadastrar(self, usuario, email):
-        return self.client.post(
-            "/cadastro/",
-            {
-                "username": usuario,
-                "first_name": "N",
-                "last_name": "S",
-                "email": email,
-                "password1": SENHA,
-                "password2": SENHA,
-            },
-        )
+        return self.client.post("/cadastro/", dados_cadastro(usuario, email))
 
     def test_email_e_obrigatorio(self):
         self.cadastrar("sem_email", "")

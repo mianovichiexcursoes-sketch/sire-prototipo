@@ -5,12 +5,13 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.views import PasswordChangeView, PasswordResetView
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import OperationalError, transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 
 from . import recuperacao
@@ -49,6 +50,43 @@ def meu_codigo(request):
         "sire/codigo_recuperacao.html",
         {"codigo": recuperacao.codigo_de(request.user), "motivo": "consulta"},
     )
+
+
+@login_required
+def minha_conta(request):
+    """Dados da própria conta e atalhos para senha e código de recuperação."""
+    return render(
+        request,
+        "sire/minha_conta.html",
+        {
+            "perfil": getattr(request.user, "perfil", None),
+            "compartilhada": recuperacao.conta_compartilhada(request.user),
+        },
+    )
+
+
+class TrocarSenhaView(PasswordChangeView):
+    """Troca da própria senha, informando a senha atual."""
+
+    template_name = "sire/trocar_senha.html"
+    success_url = reverse_lazy("sire:meu_codigo")
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and recuperacao.conta_compartilhada(request.user):
+            raise PermissionDenied("A senha da conta compartilhada não pode ser trocada.")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        resposta = super().form_valid(form)
+        messages.success(
+            self.request,
+            "Senha alterada. O código de recuperação mudou: anote o novo.",
+        )
+        return resposta
+
+
+def privacidade(request):
+    return render(request, "sire/privacidade.html")
 
 
 def recuperar_por_codigo(request):

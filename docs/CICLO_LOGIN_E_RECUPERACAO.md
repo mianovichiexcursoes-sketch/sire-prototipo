@@ -87,3 +87,63 @@ compartilhadas, nomes em grafias diferentes e limite de tentativas). Saída em
 `evidencias/2026-11-16_recuperacao_por_codigo_local/`. As verificações
 anteriores de login e de recuperação por e-mail foram reexecutadas e
 permaneceram conformes.
+
+## Ciclo de qualidade (16/11/2026): testes automatizados e versão
+
+Uma revisão do projeto com critérios de banca apontou a ausência de suíte
+automatizada, de teste de regressão e de instalação reprodutível.
+
+- `sire/tests/`: suíte no framework de testes do Django, com os cenários
+  VF01–VF16, login, recuperação de senha e reservas simultâneas.
+- `.github/workflows/testes.yml`: a suíte roda a cada envio em SQLite e em
+  PostgreSQL 18. Os testes de concorrência executam só no PostgreSQL.
+- Dependências com versão exata; `main` passou a conter as três iterações;
+  versão `v0.3.0` marcada.
+
+## Ciclo da conta e privacidade (16/11/2026)
+
+### Problemas observados
+
+A autora, ao usar a demonstração, notou que não era possível ver a senha
+digitada e pediu o registro da data de nascimento do passageiro. A revisão
+havia apontado que o usuário não trocava a própria senha e que o sistema
+coletava dados pessoais sem aviso de privacidade.
+
+### Risco
+
+Erro de digitação na senha sem meio de conferir; conta sem troca de senha;
+coleta de dado pessoal sem finalidade declarada. A data de nascimento exige
+alterar o esquema, o que atinge a afirmação, repetida até aqui, de que nenhum
+campo havia sido acrescentado.
+
+### Decisões
+
+- **Data de nascimento:** campo opcional `data_nascimento` em `PerfilUsuario`
+  (migration `0005`). É a única alteração de esquema posterior à baseline; as
+  seis entidades e as migrations 0001–0004 não mudam. O formulário de cadastro
+  do passageiro a exige e recusa datas futuras ou implausíveis. Finalidade:
+  identificar o passageiro na lista da excursão, visível ao agente da agência.
+- **Aviso de privacidade:** página pública `/privacidade/`, com os dados
+  guardados, a finalidade, quem os vê, onde ficam e por quanto tempo. O
+  cadastro exige o aceite. O texto é informativo e não foi revisado por
+  profissional da área jurídica.
+- **Minha conta e troca de senha:** `/minha-conta/` mostra os dados da própria
+  conta; `/minha-conta/senha/` troca a senha mediante a senha atual. A troca
+  gera novo código de recuperação. As contas compartilhadas da banca não
+  trocam senha.
+- **Mostrar senha:** `sire/static/sire/js/mostrar-senha.js` acrescenta um
+  botão a cada campo de senha. É o único JavaScript do projeto; sem ele os
+  formulários continuam funcionando.
+
+### Limites
+
+- Contas criadas antes desta alteração ficam sem data de nascimento.
+- O usuário ainda não altera e-mail, nome ou data de nascimento, nem exclui a
+  própria conta.
+- Não há registro da data e da versão do aviso aceito.
+
+### Verificação
+
+`sire/tests/test_conta.py`: 17 testes. A suíte completa tem 67 testes; em
+SQLite, 65 aprovados e 2 pulados (concorrência). O comportamento do botão de
+mostrar senha foi conferido manualmente no navegador.

@@ -1,0 +1,108 @@
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+    <h1>
+        Aviso de privacidade
+    </h1>
+    <p>
+        O SIRE é um protótipo acadêmico, desenvolvido como trabalho de conclusão de
+        curso no IFSP Câmpus Sertãozinho. Este aviso explica, em linguagem simples,
+        quais dados o sistema guarda e para quê. Ele não substitui uma política de
+        privacidade revisada por profissional da área jurídica.
+    </p>
+
+    <h2>
+        Esta é uma demonstração
+    </h2>
+    <p>
+        As excursões exibidas são fictícias e nenhuma reserva feita aqui gera
+        viagem, cobrança ou contrato. Se preferir, use dados fictícios ao criar a
+        conta.
+    </p>
+
+    <h2>
+        Quais dados são guardados
+    </h2>
+    <ul>
+        <li>
+            No cadastro: nome de usuário, nome, sobrenome, e-mail e data de nascimento.
+        </li>
+        <li>
+            A senha não é guardada em texto: o sistema guarda apenas um resumo
+            criptográfico dela, que não permite recuperá-la.
+        </li>
+        <li>
+            Nas reservas: a excursão, o ponto de embarque e a data da reserva.
+        </li>
+        <li>
+            Para manter você conectado: um cookie de sessão. Não há cookies de
+            publicidade nem de rastreamento.
+        </li>
+    </ul>
+    <p>
+        O sistema não solicita CPF, documento, endereço, telefone nem dados de
+        pagamento.
+    </p>
+
+    <h2>
+        Para que são usados
+    </h2>
+    <ul>
+        <li>
+            Nome de usuário e senha: permitir a entrada na conta.
+        </li>
+        <li>
+            Nome e data de nascimento: identificar o passageiro na lista da excursão.
+        </li>
+        <li>
+            E-mail: contato e, quando o envio estiver disponível, recuperação de senha.
+        </li>
+        <li>
+            Reservas: controlar as vagas de cada excursão.
+        </li>
+    </ul>
+
+    <h2>
+        Quem pode ver
+    </h2>
+    <ul>
+        <li>
+            Você vê os seus dados e as suas reservas.
+        </li>
+        <li>
+            Os agentes de uma agência veem o nome, o usuário e a data de nascimento
+            dos passageiros que reservaram excursões dessa agência. Não veem
+            passageiros de outras agências.
+        </li>
+        <li>
+            Outros passageiros não veem os seus dados.
+        </li>
+        <li>
+            A autora do trabalho administra a demonstração e tem acesso ao banco de
+            dados.
+        </li>
+    </ul>
+
+    <h2>
+        Onde ficam e por quanto tempo
+    </h2>
+    <p>
+        A demonstração está hospedada em um serviço de nuvem com servidores nos
+        Estados Unidos. O banco de dados usa um plano gratuito com prazo de
+        validade e é apagado ao fim desse prazo ou ao término da avaliação do
+        trabalho, o que ocorrer primeiro. Os dados não são vendidos nem
+        compartilhados com terceiros.
+    </p>
+
+    <h2>
+        Seus direitos
+    </h2>
+    <p>
+        Você pode consultar os dados da sua conta em “Minha conta” e trocar a sua
+        senha. Para corrigir ou apagar os seus dados, peça à responsável pela
+        demonstração. O protótipo ainda não oferece exclusão de conta pela
+        própria interface.
+    </p>
+    <p>
+        <a href="{% url 'sire:catalogo' %}">Voltar ao catálogo</a>
+    </p>
+{% endblock %}

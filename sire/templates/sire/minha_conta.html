@@ -1,0 +1,54 @@
+{% extends 'sire/base.html' %}
+{% block conteudo %}
+    <h1>
+        Minha conta
+    </h1>
+    <article>
+        <dl>
+            <dt>
+                Usuário
+            </dt>
+            <dd>
+                {{ user.username }}
+            </dd>
+            <dt>
+                Nome
+            </dt>
+            <dd>
+                {{ user.get_full_name|default:'Não informado' }}
+            </dd>
+            <dt>
+                E-mail
+            </dt>
+            <dd>
+                {{ user.email|default:'Não informado' }}
+            </dd>
+            <dt>
+                Data de nascimento
+            </dt>
+            <dd>
+                {{ perfil.data_nascimento|date:'d/m/Y'|default:'Não informada' }}
+            </dd>
+            <dt>
+                Perfil
+            </dt>
+            <dd>
+                {{ perfil.get_tipo_display|default:'Sem perfil' }}
+            </dd>
+        </dl>
+    </article>
+    {% if compartilhada %}
+        <p>
+            Esta é uma conta compartilhada da demonstração. A senha é definida pela
+            responsável pela demonstração e não pode ser trocada por aqui.
+        </p>
+    {% else %}
+        <p>
+            <a class="botao" href="{% url 'sire:trocar_senha' %}">Trocar senha</a>
+            <a class="botao" href="{% url 'sire:meu_codigo' %}">Ver código de recuperação</a>
+        </p>
+    {% endif %}
+    <p>
+        <a href="{% url 'sire:privacidade' %}">Aviso de privacidade</a>
+    </p>
+{% endblock %}

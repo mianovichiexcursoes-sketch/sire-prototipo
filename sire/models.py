@@ -28,6 +28,10 @@ class PerfilUsuario(models.Model):
     agencia = models.ForeignKey(
         Agencia, null=True, blank=True, on_delete=models.PROTECT
     )
+    # Extensão posterior à baseline ER-SIRE 2.1 (migration 0005). Opcional no
+    # banco para não invalidar contas anteriores e contas de agente; o
+    # formulário de cadastro do passageiro é que a exige.
+    data_nascimento = models.DateField("data de nascimento", null=True, blank=True)
 
     class Meta:
         db_table = "sire_perfil_usuario"
