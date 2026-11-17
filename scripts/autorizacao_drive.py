@@ -3,6 +3,7 @@
 Execução local, apenas pelo responsável técnico; não envia credenciais ao Git.
 Requer cliente OAuth do tipo Aplicativo para computador no Google Cloud.
 """
+import argparse
 import base64
 import hashlib
 import json
@@ -16,6 +17,7 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 
 SCOPE = "https://www.googleapis.com/auth/drive.file"
@@ -69,18 +71,64 @@ def enviar_render(service_id, api_key, credenciais):
             resposta.read()  # Pode conter segredo; nunca imprimir ou gravar.
 
 
+CHAVES_DRIVE = {"SIRE_DRIVE_CLIENT_ID", "SIRE_DRIVE_CLIENT_SECRET", "SIRE_DRIVE_REFRESH_TOKEN"}
+
+
+def conferir_workspace(owner_id, api_key):
+    if not re.fullmatch(r"tea-[a-z0-9]+", owner_id):
+        raise ValueError("Identificador do workspace inválido.")
+    req = Request(f"https://api.render.com/v1/owners/{owner_id}",
+                  headers={"Authorization": f"Bearer {api_key}"})
+    with urlopen(req, timeout=20) as resposta:
+        workspace = json.load(resposta)
+    if workspace.get("id") != owner_id or workspace.get("name") != "SIRE.":
+        raise ValueError("O workspace não corresponde ao SIRE confirmado.")
+
+
+def enviar_grupo_render(owner_id, api_key, credenciais):
+    """Cria grupo novo sem vínculo; não altera serviço, banco ou deploy."""
+    if set(credenciais) != CHAVES_DRIVE or not all(credenciais.values()):
+        raise ValueError("Conjunto de credenciais incompleto.")
+    conferir_workspace(owner_id, api_key)
+    nome = "sire-drive-oauth-" + secrets.token_hex(4)
+    req = Request("https://api.render.com/v1/env-groups", method="POST",
+                  headers={"Authorization": f"Bearer {api_key}",
+                           "Content-Type": "application/json"},
+                  data=json.dumps({
+                      "name": nome, "ownerId": owner_id,
+                      "envVars": [{"key": k, "value": v} for k, v in credenciais.items()],
+                      "serviceIds": [], "secretFiles": [],
+                  }).encode())
+    with urlopen(req, timeout=20) as resposta:
+        if resposta.status != 201:
+            raise ValueError("Render não confirmou a criação do grupo.")
+        # A resposta pode conter segredos. Não imprimir nem gravar.
+        resposta.read()
+    return nome
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Autorizar Drive e guardar credenciais no Render sem exibi-las.")
+    parser.add_argument("--grupo-render", metavar="WORKSPACE_ID",
+                        help="Criar grupo separado, sem vincular a nenhum serviço.")
+    args = parser.parse_args()
+    service_id = ""
+    print("Etapa 1/3: validar o destino seguro no Render.")
+    if not args.grupo_render:
+        service_id = os.environ.get("SIRE_DRIVE_RENDER_SERVICE_ID", "")
+        if not re.fullmatch(r"srv-[a-z0-9]+", service_id):
+            raise SystemExit("Defina SIRE_DRIVE_RENDER_SERVICE_ID ou use --grupo-render WORKSPACE_ID.")
+    api_key = segredo("RENDER_API_KEY")
+    if not api_key:
+        raise SystemExit("Credencial do Render ausente.")
+    if args.grupo_render:
+        conferir_workspace(args.grupo_render, api_key)
+    print("Etapa 2/3: informar o cliente OAuth e autorizar no Google.")
+
     client_id = segredo("SIRE_DRIVE_CLIENT_ID")
     client_secret = segredo("SIRE_DRIVE_CLIENT_SECRET")
     if not client_id or not client_secret:
         raise SystemExit("Defina SIRE_DRIVE_CLIENT_ID e SIRE_DRIVE_CLIENT_SECRET antes de executar.")
-
-    service_id = os.environ.get("SIRE_DRIVE_RENDER_SERVICE_ID", "")
-    if not re.fullmatch(r"srv-[a-z0-9]+", service_id):
-        raise SystemExit("Defina SIRE_DRIVE_RENDER_SERVICE_ID para o serviço de ensaio isolado.")
-    api_key = segredo("RENDER_API_KEY")
-    if not api_key:
-        raise SystemExit("Credencial do Render ausente.")
 
     state = secrets.token_urlsafe(24)
     verifier = secrets.token_urlsafe(64)
@@ -139,17 +187,27 @@ def main():
     with urlopen(requisicao, timeout=20) as resposta:
         tokens = json.load(resposta)
     validar_tokens(tokens)
-    enviar_render(service_id, api_key, {
+    credenciais = {
         "SIRE_DRIVE_CLIENT_ID": client_id,
         "SIRE_DRIVE_CLIENT_SECRET": client_secret,
         "SIRE_DRIVE_REFRESH_TOKEN": tokens["refresh_token"],
-    })
-    print("Credenciais encaminhadas ao ambiente de ensaio do Render, sem exibir valores.")
+    }
+    print("Etapa 3/3: guardar credenciais no Render sem exibir valores.")
+    if args.grupo_render:
+        nome = enviar_grupo_render(args.grupo_render, api_key, credenciais)
+        print("CONCLUIDO: grupo criado no Render: " + nome)
+        print("Grupo sem vínculo com serviços. A demonstração pública não foi alterada.")
+    else:
+        enviar_render(service_id, api_key, credenciais)
+        print("CONCLUIDO: credenciais encaminhadas ao serviço de ensaio do Render.")
     print("Nenhum deploy solicitado. Testes reais e revisão ainda são necessários.")
+
 
 
 if __name__ == "__main__":
     try:
         main()
+    except HTTPError as erro:
+        raise SystemExit(f"Falha HTTP {erro.code}. Nenhum segredo foi exibido. Informe somente este código e a última etapa mostrada.") from None
     except (Exception, KeyboardInterrupt):
         raise SystemExit("Fluxo interrompido com segurança. Configuração pode estar parcial; confira as chaves no Render sem revelar valores.") from None

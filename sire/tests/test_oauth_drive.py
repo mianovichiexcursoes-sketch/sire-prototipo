@@ -59,3 +59,42 @@ class OAuthDriveTests(TestCase):
         with patch.dict(oauth.os.environ, {}, clear=True), patch.object(oauth, 'getpass', side_effect=oauth.GetPassWarning):
             with self.assertRaises(oauth.GetPassWarning):
                 oauth.segredo('SIRE_DRIVE_CLIENT_SECRET')
+
+    def test_grupo_sem_vinculo_nem_credenciais_extras(self):
+        creds = dict(SIRE_DRIVE_CLIENT_ID='id-ficticio', SIRE_DRIVE_CLIENT_SECRET='segredo-ficticio', SIRE_DRIVE_REFRESH_TOKEN='token-ficticio')
+        def responder(req, **kwargs):
+            if req.get_method() == 'GET':
+                return io.BytesIO(b'{"name":"SIRE.","id":"tea-ficticio"}')
+            resposta = io.BytesIO(b'{"envVars":[{"value":"segredo-ficticio"}]}')
+            resposta.status = 201
+            return resposta
+        saida = io.StringIO()
+        with patch.object(oauth, 'urlopen', side_effect=responder) as rede, redirect_stdout(saida):
+            nome = oauth.enviar_grupo_render('tea-ficticio', 'api-ficticia', creds)
+        self.assertTrue(nome.startswith('sire-drive-oauth-'))
+        self.assertEqual(saida.getvalue(), '')
+        self.assertEqual(rede.call_count, 2)
+        req = rede.call_args.args[0]
+        self.assertEqual(req.full_url, 'https://api.render.com/v1/env-groups')
+        self.assertEqual(req.get_method(), 'POST')
+        body = json.loads(req.data)
+        self.assertEqual(body['serviceIds'], [])
+        self.assertEqual(body['secretFiles'], [])
+        self.assertEqual(body['ownerId'], 'tea-ficticio')
+        self.assertEqual({v['key']: v['value'] for v in body['envVars']}, creds)
+        self.assertNotIn('api-ficticia', req.data.decode())
+
+    def test_workspace_errado_impede_gravacao(self):
+        for workspace in [{'name': 'Outro', 'id': 'tea-ficticio'}, {'name': 'SIRE.', 'id': 'tea-outro'}]:
+            with self.subTest(workspace=workspace), patch.object(oauth, 'urlopen') as rede:
+                rede.return_value.__enter__.return_value = io.BytesIO(json.dumps(workspace).encode())
+                with self.assertRaises(ValueError):
+                    oauth.enviar_grupo_render('tea-ficticio', 'ficticio', {k: 'ficticio' for k in oauth.CHAVES_DRIVE})
+                self.assertEqual(rede.call_count, 1)
+
+    def test_grupo_rejeita_segredos_extras_antes_da_rede(self):
+        creds = {k: 'ficticio' for k in oauth.CHAVES_DRIVE}
+        creds['RENDER_API_KEY'] = 'ficticio'
+        with patch.object(oauth, 'urlopen') as rede, self.assertRaises(ValueError):
+            oauth.enviar_grupo_render('tea-ficticio', 'ficticio', creds)
+        rede.assert_not_called()
