@@ -210,16 +210,42 @@ class ExcursaoForm(forms.ModelForm):
             "titulo",
             "destino",
             "tipo_pacote",
+            "descricao",
+            "roteiro",
+            "inclusos",
             "data_saida",
             "data_retorno",
             "valor",
             "capacidade",
         )
-        help_texts = {"tipo_pacote": "Opcional. Deixe em branco para manter sem classificação."}
+        help_texts = {
+            "tipo_pacote": "Opcional. Deixe em branco para manter sem classificação.",
+            "descricao": "Opcional. Apresente os principais detalhes do pacote.",
+            "roteiro": "Opcional. Informe os horários e paradas do roteiro.",
+            "inclusos": "Opcional. Escreva um item incluso por linha.",
+        }
         widgets = {
+            "descricao": forms.Textarea(attrs={"rows": 4, "maxlength": 4000}),
+            "roteiro": forms.Textarea(attrs={"rows": 6, "maxlength": 8000}),
+            "inclusos": forms.Textarea(attrs={"rows": 5, "maxlength": 4000}),
             "data_saida": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
             "data_retorno": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
         }
+
+
+class FotoExcursaoForm(forms.Form):
+    foto = forms.FileField(
+        label="Foto da excursão",
+        help_text="JPG, PNG ou WebP. Até 5 MB. O sistema ajusta o tamanho antes de enviar ao Drive.",
+    )
+
+    def clean_foto(self):
+        foto = self.cleaned_data["foto"]
+        if foto.size > 5 * 1024 * 1024:
+            raise forms.ValidationError("A foto deve ter no máximo 5 MB.")
+        if foto.size == 0:
+            raise forms.ValidationError("A foto não pode estar vazia.")
+        return foto
 
 
 class PontoEmbarqueForm(forms.ModelForm):
