@@ -9,21 +9,22 @@ from django.contrib.auth.views import PasswordChangeView, PasswordResetView
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import OperationalError, transaction
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 
-from . import recuperacao
+from . import recuperacao, drive_fotos
 from .forms import (
     CadastroPassageiroForm,
     ExcursaoForm,
     FiltroCatalogoForm,
+    FotoExcursaoForm,
     PontoEmbarqueForm,
     RecuperacaoPorCodigoForm,
     ReservaForm,
 )
-from .models import Excursao, Reserva, StatusExcursao, TipoPerfil
+from .models import Excursao, FotoExcursao, Reserva, StatusExcursao, TipoPerfil
 
 logger = logging.getLogger("sire.recuperacao")
 
@@ -222,8 +223,102 @@ def editar_excursao(request, id):
             messages.success(request, "Excursão atualizada.")
             return redirect("sire:agente_excursoes")
     return render(
-        request, "sire/excursao_form.html", {"form": form, "excursao": excursao}
+        request, "sire/excursao_form.html",
+        {
+            "form": form,
+            "excursao": excursao,
+            "foto_form": FotoExcursaoForm(),
+            "drive_pronto": drive_fotos.configurado(),
+            "limite_fotos": drive_fotos.LIMITE_FOTOS,
+        },
     )
+
+
+
+@login_required
+@require_POST
+def adicionar_foto(request, id):
+    perfil = exigir_perfil(request, TipoPerfil.AGENTE)
+    excursao = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+    if not drive_fotos.configurado():
+        messages.error(request, "Fotos indisponíveis: falta configurar a conexão com o Google Drive.")
+        return redirect("sire:editar_excursao", id=id)
+    if excursao.fotos.count() >= drive_fotos.LIMITE_FOTOS:
+        messages.error(request, "Limite de seis fotos por excursão.")
+        return redirect("sire:editar_excursao", id=id)
+    formulario = FotoExcursaoForm(request.POST, request.FILES)
+    if not formulario.is_valid():
+        messages.error(request, "Foto inválida: envie um arquivo de imagem JPG, PNG ou WebP de até 5 MB.")
+        return redirect("sire:editar_excursao", id=id)
+    try:
+        jpeg = drive_fotos.preparar_jpeg(formulario.cleaned_data["foto"])
+        identificador = drive_fotos.enviar(excursao.id, jpeg)
+    except ValueError as erro:
+        messages.error(request, str(erro))
+        return redirect("sire:editar_excursao", id=id)
+    except drive_fotos.FalhaDrive:
+        messages.error(request, "Não foi possível enviar ao Google Drive. Nenhuma foto foi cadastrada.")
+        return redirect("sire:editar_excursao", id=id)
+    try:
+        FotoExcursao.objects.create(excursao=excursao, drive_id=identificador)
+    except Exception:
+        # Evita foto órfã quando o cadastro da referência falha.
+        try:
+            drive_fotos.excluir(identificador)
+        except drive_fotos.FalhaDrive:
+            pass
+        raise
+    messages.success(request, "Foto enviada ao Google Drive e vinculada à excursão.")
+    return redirect("sire:editar_excursao", id=id)
+
+
+@login_required
+@require_POST
+def remover_foto(request, id, foto_id):
+    perfil = exigir_perfil(request, TipoPerfil.AGENTE)
+    excursao = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+    foto = get_object_or_404(FotoExcursao, pk=foto_id, excursao=excursao)
+    try:
+        drive_fotos.excluir(foto.drive_id)
+    except drive_fotos.FalhaDrive:
+        messages.error(request, "Não foi possível remover do Google Drive; a referência foi preservada.")
+        return redirect("sire:editar_excursao", id=id)
+    foto.delete()
+    from django.core.cache import cache
+    cache.delete(f"sire_foto:{foto_id}")
+    messages.success(request, "Foto removida da excursão e do Google Drive.")
+    return redirect("sire:editar_excursao", id=id)
+
+
+def imagem_excursao(request, foto_id):
+    """Entrega pública só imagens de excursões publicadas; sem link direto ao Drive."""
+    foto = get_object_or_404(
+        FotoExcursao.objects.select_related("excursao", "excursao__agencia"), pk=foto_id
+    )
+    publicada = foto.excursao.status == StatusExcursao.PUBLICADA
+    perfil = getattr(request.user, "perfil", None) if request.user.is_authenticated else None
+    propria = bool(
+        perfil
+        and perfil.tipo == TipoPerfil.AGENTE
+        and perfil.agencia_id == foto.excursao.agencia_id
+    )
+    if not publicada and not propria:
+        raise Http404("Foto não encontrada.")
+    if not drive_fotos.configurado():
+        raise Http404("Foto temporariamente indisponível.")
+    from django.core.cache import cache
+    chave = f"sire_foto:{foto.pk}"
+    dados = cache.get(chave)
+    if dados is None:
+        try:
+            dados = drive_fotos.baixar(foto.drive_id)
+        except drive_fotos.FalhaDrive:
+            raise Http404("Foto temporariamente indisponível.")
+        cache.set(chave, dados, 3600)
+    resposta = HttpResponse(dados, content_type="image/jpeg")
+    resposta["X-Content-Type-Options"] = "nosniff"
+    resposta["Cache-Control"] = "public, max-age=3600" if publicada else "private, no-store"
+    return resposta
 
 
 @login_required
