@@ -240,7 +240,12 @@ def editar_excursao(request, id):
 def adicionar_foto(request, id):
     perfil = exigir_perfil(request, TipoPerfil.AGENTE)
     # RN-03: negar URL de outra agência antes de validar/processar qualquer arquivo.
-    get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+    excursao_inicial = get_object_or_404(Excursao, pk=id, agencia=perfil.agencia)
+    # Rejeição barata quando já está cheio; a conferência após o lock segue
+    # obrigatória para pedidos que cheguem simultaneamente.
+    if excursao_inicial.fotos.count() >= drive_fotos.LIMITE_FOTOS:
+        messages.error(request, "Limite de seis fotos por excursão.")
+        return redirect("sire:editar_excursao", id=id)
     # Valida dados do upload antes de adquirir o bloqueio do registro.
     formulario = FotoExcursaoForm(request.POST, request.FILES)
     if not formulario.is_valid():
