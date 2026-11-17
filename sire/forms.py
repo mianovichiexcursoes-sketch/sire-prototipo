@@ -1,4 +1,4 @@
-"""Formulários dos UC01, UC06–UC08 e UC10–UC11."""
+"""Formulários de conta, catálogo e operações de excursão e reserva."""
 
 from datetime import date
 
@@ -11,7 +11,7 @@ from django.db import transaction
 from django.utils.safestring import mark_safe
 
 from . import recuperacao
-from .models import Excursao, PerfilUsuario, PontoEmbarque, TipoPerfil
+from .models import Excursao, PerfilUsuario, PontoEmbarque, TipoPacote, TipoPerfil
 
 
 class LoginSireForm(AuthenticationForm):
@@ -168,17 +168,54 @@ class CadastroPassageiroForm(UserCreationForm):
         return usuario
 
 
+class FiltroCatalogoForm(forms.Form):
+    destino = forms.CharField(
+        label="Destino",
+        required=False,
+        max_length=150,
+        widget=forms.TextInput(
+            attrs={"id": "destino", "placeholder": "Para onde você quer ir?"}
+        ),
+    )
+    saida_de = forms.DateField(
+        label="Saída a partir de",
+        required=False,
+        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+    )
+    saida_ate = forms.DateField(
+        label="Saída até",
+        required=False,
+        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+    )
+    tipo_pacote = forms.ChoiceField(
+        label="Tipo de pacote",
+        required=False,
+        choices=[("", "Todos os tipos"), *TipoPacote.choices],
+    )
+
+    def clean(self):
+        dados = super().clean()
+        inicio, fim = dados.get("saida_de"), dados.get("saida_ate")
+        if inicio and fim and inicio > fim:
+            self.add_error(
+                "saida_ate", "A data final deve ser igual ou posterior à data inicial."
+            )
+        return dados
+
+
 class ExcursaoForm(forms.ModelForm):
     class Meta:
         model = Excursao
         fields = (
             "titulo",
             "destino",
+            "tipo_pacote",
             "data_saida",
             "data_retorno",
             "valor",
             "capacidade",
         )
+        help_texts = {"tipo_pacote": "Opcional. Deixe em branco para manter sem classificação."}
         widgets = {
             "data_saida": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
             "data_retorno": forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),

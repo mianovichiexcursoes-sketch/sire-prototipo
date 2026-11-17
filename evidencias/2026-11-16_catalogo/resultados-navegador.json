@@ -1,0 +1,34 @@
+{
+  "browser": "153.0.8010.0",
+  "legada": 1,
+  "outra": 6,
+  "django": "6.1.2",
+  "banco": "sqlite",
+  "resultados": [
+    {
+      "id": "CAT-VF-05",
+      "resultado": "conforme",
+      "detalhes": "Marca rosa e branca, foco por Tab e ações presentes, sem rolagem horizontal em 320, 390, 768 e 1440 px. Contraste: marca 7.81:1, botao 7.81:1, etiqueta 9.38:1, bordaControle 3.63:1."
+    },
+    {
+      "id": "CAT-VF-01",
+      "resultado": "conforme",
+      "detalhes": "Filtros isolados e combinados; as duas pontas do intervalo foram incluídas, o rascunho aderente ficou oculto, a busca vazia foi sinalizada, o intervalo invertido manteve os campos e Limpar restaurou o legado."
+    },
+    {
+      "id": "CAT-VF-02 (tipo)",
+      "resultado": "conforme",
+      "detalhes": "Cadastro manteve o rascunho, os dois valores de tipo persistiram e GET/POST de edição para outra agência retornaram HTTP 404."
+    },
+    {
+      "id": "CAT-VF-04 (tipo)",
+      "resultado": "conforme",
+      "detalhes": "Ficha antiga sem classificação acessível, tipo exibido na ficha nova, rascunho retornou HTTP 404; datas, valor, vagas, embarque e ação de reserva foram preservados."
+    },
+    {
+      "id": "CAT-VF-06",
+      "resultado": "conforme",
+      "detalhes": "Agente cadastrou e publicou, passageiro selecionou o embarque e confirmou, agente consultou a mesma reserva nº 2. Disponibilidade caiu de 4 para 3. Login em maiúsculas, exibir/ocultar senha, link Esqueci minha senha e autorização por perfil conferidos. Migração preservou embarque, excursão, conta e reserva preexistentes."
+    }
+  ]
+}

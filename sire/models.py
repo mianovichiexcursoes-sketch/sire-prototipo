@@ -1,4 +1,4 @@
-"""Entidades da baseline ER-SIRE 2.1. Usuário: User padrão do Django."""
+"""Entidades da baseline ER-SIRE 2.1 e suas extensões. Usuário: User do Django."""
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -64,9 +64,21 @@ class StatusExcursao(models.TextChoices):
     PUBLICADA = "PUBLICADA", "Publicada"
 
 
+class TipoPacote(models.TextChoices):
+    BATE_VOLTA = "BATE_VOLTA", "Bate e volta"
+    COM_HOSPEDAGEM = "COM_HOSPEDAGEM", "Com hospedagem"
+
+
 class Excursao(models.Model):
     titulo = models.CharField(max_length=200)
     destino = models.CharField(max_length=150)
+    tipo_pacote = models.CharField(
+        "tipo de pacote",
+        max_length=20,
+        choices=TipoPacote.choices,
+        blank=True,
+        null=True,
+    )
     data_saida = models.DateField()
     data_retorno = models.DateField(null=True, blank=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2)

@@ -11,6 +11,10 @@
     </p>
     <article>
         <dl>
+            {% if excursao.tipo_pacote %}
+                <dt>Tipo de pacote</dt>
+                <dd>{{ excursao.get_tipo_pacote_display }}</dd>
+            {% endif %}
             <dt>
                 Saída
             </dt>

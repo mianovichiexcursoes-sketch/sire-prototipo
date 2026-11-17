@@ -1,0 +1,26 @@
+{
+  "ambiente": "Cliente HTTP do Django, postgresql descartável",
+  "django": "6.1.2",
+  "resultados": [
+    {
+      "caso": "CAT-VF-01",
+      "resultado": "conforme",
+      "detalhes": "Destino, tipo e datas isolados e combinados; limites inclusivos; rascunho compatível oculto; seleção preservada em intervalo invertido; nenhum resultado e limpeza conferidos."
+    },
+    {
+      "caso": "CAT-VF-02 (tipo)",
+      "resultado": "conforme",
+      "detalhes": "Tipo persistiu no cadastro e na edição; tipo inválido recusado; cadastro em rascunho; GET/POST de outra agência retornaram 404 sem alterar dados."
+    },
+    {
+      "caso": "CAT-VF-04 (tipo)",
+      "resultado": "conforme",
+      "detalhes": "Ficha antiga acessível sem tipo; rascunho oculto (404); a ficha nova mostra tipo, datas, valor, vagas e embarque, com ação de reserva."
+    },
+    {
+      "caso": "CAT-VF-06",
+      "resultado": "conforme",
+      "detalhes": "Agente publicou, passageiro reservou o embarque, agente consultou a mesma reserva nº 2; vagas de 4 para 3. Login em maiúsculas, rota de recuperação, links e restrições conferidos. A migração preservou dados anteriores."
+    }
+  ]
+}
