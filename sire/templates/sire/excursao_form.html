@@ -14,6 +14,38 @@
             Salvar excursão
         </button>
     </form>
+    {% if excursao %}
+        <section aria-labelledby="titulo-fotos">
+            <h2 id="titulo-fotos">Fotos da excursão</h2>
+            <p>Até {{ limite_fotos }} fotos. JPG, PNG ou WebP, até 5 MB. As imagens são otimizadas e ficam no Google Drive.</p>
+            {% if excursao.fotos.count %}
+                <div class="galeria-fotos">
+                    {% for foto in excursao.fotos.all %}
+                        <div class="foto-gerenciar">
+                            <img src="{% url 'sire:imagem_excursao' foto.id %}" alt="Foto da excursão {{ excursao.titulo }}" loading="lazy">
+                            <form method="post" action="{% url 'sire:remover_foto' excursao.id foto.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="secundario">Remover foto</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if drive_pronto %}
+                {% if excursao.fotos.count < limite_fotos %}
+                    <form method="post" enctype="multipart/form-data" action="{% url 'sire:adicionar_foto' excursao.id %}">
+                        {% csrf_token %}
+                        {{ foto_form.as_p }}
+                        <button type="submit">Adicionar foto</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <p role="status">Envio de fotos aguardando conexão do Google Drive pelo responsável técnico. A edição dos demais campos continua disponível.</p>
+            {% endif %}
+        </section>
+    {% else %}
+        <p>Salve primeiro a excursão em rascunho. Depois abra Editar para adicionar fotos.</p>
+    {% endif %}
     <a href="{% url 'sire:agente_excursoes' %}">
         Voltar
     </a>
