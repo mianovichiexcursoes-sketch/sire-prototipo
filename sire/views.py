@@ -359,7 +359,7 @@ def catalogo(request):
     filtros = FiltroCatalogoForm(request.GET or None)
     excursoes = Excursao.objects.filter(status=StatusExcursao.PUBLICADA).select_related(
         "agencia"
-    )
+    ).prefetch_related("fotos")
     if filtros.is_valid():
         criterios = {
             "destino__icontains": filtros.cleaned_data["destino"],
