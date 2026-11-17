@@ -59,3 +59,12 @@ Fontes a conferir antes da auditoria final: [documentação baseline](https://do
 - **Status B:** OAuth do aplicativo Django não comprovado; responsável pela conta configurar credenciais somente em ambiente seguro. Não usar tokens do ChatGPT.
 - **Trabalho concorrente:** a PR #2 permanece aberta como rascunho; não alterados models, views, migrations ou demo.
 - **Próxima ação independente:** implementar testes Django isolados do protocolo em branch que não toque no código do agente; antes de eventual merge, reconciliar PR #2 e registrar saída real. Se não houver ambiente de teste, avançar na auditoria documental e inventário do Drive, sem alegar testes concluídos.
+
+
+### 17/11/2026 — rodada 4: testes Django de fotos em PR independente
+- **Fontes reabertas:** documento oficial RN-01–RN-41, especificação CAT revisão 0.2 e implementação atual em `etapa/ficha-fotos-sire` (views, models, urls). PR #2 continua tendo código de fotos; esta entrega não modifica a branch da PR #2.
+- **Entrega real:** commit [`0850093`](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/commit/0850093ce9bb59debc864f480465c20f80c296ee), arquivo [`sire/test_fotos_regressao.py`](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/blob/testes/fotos-regressao-isolada-20261117/sire/test_fotos_regressao.py), [PR #4 em rascunho](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/4) contra `etapa/ficha-fotos-sire`.
+- **Cobertura criada (NÃO executada):** FOTO-02 visitante não acessa rascunho; FOTO-03 agente de outra agência não acessa; FOTO-04 agente responsável acessa sem cache; FOTO-05 publicação→rascunho exige `no-store` e 404; FOTO-07 sétima foto rejeitada antes do upload. Mocks de Drive, contas e IDs sintéticos; sem segredos.
+- **Falha esperada em FOTO-05:** o código atual retorna `Cache-Control: public, max-age=3600`; o teste foi criado para evidenciar a falha, não para mascará-la. Ainda não houve execução da suíte, logo não há contagem de testes aprovados.
+- **Bloqueios preservados:** correção de cache e concorrência de fotos na PR #2 (responsável pelo incremento), teste de concorrência real PostgreSQL FOTO-08, reconciliação de órfãos FOTO-12 e OAuth próprio do Django. Nenhum merge/deploy realizado.
+- **Próximo passo:** verificar CI/logs e executar os cinco testes em ambiente isolado; corrigir problemas detectados em coordenação com o responsável pela PR #2. Se a execução estiver indisponível, avançar com documentação acadêmica independente e revisão da matriz de rastreabilidade.
