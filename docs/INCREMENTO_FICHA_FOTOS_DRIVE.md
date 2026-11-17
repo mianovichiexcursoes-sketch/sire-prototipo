@@ -20,18 +20,13 @@ Quando o Drive não está configurado, o cadastro textual continua funcionando e
 
 1. Na conta Google que guardará as fotos, criar um projeto no [Google Cloud Console](https://console.cloud.google.com/) e ativar a **Google Drive API**. Isso não exige contratar um armazenamento adicional, mas está sujeito a cotas e políticas do Google.
 2. Configurar a tela de consentimento OAuth e permitir o escopo `https://www.googleapis.com/auth/drive.file`. Durante o modo *Testing*, adicionar a conta responsável como usuário de teste. Para uso prolongado, revisar o estado de publicação do aplicativo; tokens de testes externos podem expirar em sete dias.
-3. Criar um cliente OAuth do tipo **Aplicativo para computador**. Copiar o Client ID e o Client Secret, mantendo-os privados.
-4. No computador da autora, executar no PowerShell:
+3. Criar um cliente OAuth do tipo **Aplicativo para computador** para a autorização administrativa única via navegador local e callback loopback com PKCE. Não é um login Google dos passageiros.
+4. Usar um serviço e banco de ensaio separados, nome do serviço iniciado por `sire-oauth-test`, sem compartilhar o banco da demonstração. Definir apenas o identificador não secreto `SIRE_DRIVE_RENDER_SERVICE_ID` antes de executar `python scripts/autorizacao_drive.py` no computador onde o navegador será aberto.
+5. O script solicita Client ID, Client Secret e chave de API do Render com entrada oculta (ou recebe de ambiente seguro). Nunca colocar valores em arquivos, comandos com histórico ou chat. A chave Render fica somente no processo local e não é enviada ao Google nem ao serviço Django.
+6. Após consentimento explícito da conta, o script exige somente `drive.file` no retorno e envia as três credenciais SIRE diretamente aos campos de ambiente do serviço de ensaio via HTTPS. Não imprime tokens, códigos nem URL de autorização. Não lê os demais segredos; usa atualização individual de chaves. Em falha parcial, conferir quais chaves foram salvas e repetir o fluxo seguro. Não há rollback automático nem deploy solicitado pelo script.
+7. A demonstração pública é recusada por nome, URL ou branch. Depois da revisão, testar fotos sintéticas, permissões, remoção e persistência após redeploy no ensaio. A promoção para a demo é uma etapa posterior; este script não a executa.
 
-```powershell
-$env:SIRE_DRIVE_CLIENT_ID = 'CLIENT_ID_PRIVADO'
-$env:SIRE_DRIVE_CLIENT_SECRET = 'CLIENT_SECRET_PRIVADO'
-py scripts/autorizacao_drive.py
-```
-
-5. Autorizar no navegador a conta correta. O programa exibirá um `SIRE_DRIVE_REFRESH_TOKEN`; tratar como **senha**, nunca colocar em commits, PDFs, capturas ou conversas públicas.
-6. No Render, configurar as três variáveis secretas `SIRE_DRIVE_CLIENT_ID`, `SIRE_DRIVE_CLIENT_SECRET` e `SIRE_DRIVE_REFRESH_TOKEN` no serviço `sire-demo`. Nenhum token, e-mail ou conteúdo de foto deve ser registrado nos logs.
-7. Somente após a revisão da PR, confirmação das variáveis e execução dos testes, fazer o deploy com a migração `0007_ficha_e_fotos_drive`. A criação da pasta no Drive ocorre no primeiro envio, pelo próprio app autorizado.
+**Estado real em 17/11/2026:** o Console ficou indisponível antes do login nesta sessão. Nenhum projeto, consentimento, cliente OAuth ou segredo real foi criado/configurado. O fluxo acima foi preparado e testado com provedores simulados; não é evidência de autorização real.
 
 **Importante:** O Google Drive não é um CDN de imagens e não tem as garantias ou ferramentas de distribuição de um serviço especializado. O proxy Django pode aumentar latência e tráfego no Render; isso deve ser tratado como limitação acadêmica do protótipo, não solução de produção escalável.
 
