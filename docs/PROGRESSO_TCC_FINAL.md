@@ -112,3 +112,12 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Conflito acadêmico adicional constatado:** monografia principal apresenta subtítulo “Engenharia de Requisitos para Plataformas de Logística de Lazer”, enquanto o modelo IFSP consultado contém “Plataformas Escaláveis de Logística de Lazer”. Não alterar título sem confirmação do orientador; registrar divergência na auditoria final. O parecer de pré-banca já alerta para alegação de escalabilidade não comprovada.
 
 **Status após a unidade:** A EM EXECUÇÃO, com CI simulado previamente verificado; B BLOQUEADO para ensaio real; C EM EXECUÇÃO documental e BLOQUEADO para coleta por finalidade/base legal; D/E PENDENTES; F PARCIAL; G PENDENTE. Nenhum teste novo executado, merge, deploy, mudança de modelo ou alteração da demo nesta unidade. **Próxima unidade independente:** mapear casos VF01–16 e CAT-VF01–06 para os testes existentes e lacunas, sem tocar nas branches de código do Work. Após reconciliar HEADs, avaliar cherry-pick isolado dos dois commits OAuth em branch nova e CI, sem promover à demo.
+
+
+## Entrega independente — 17/11/2026, 15h55 (Brasília)
+
+**Commit verificável:** `c5b8adf36c5cfa56581bc928b36ae189fbb8cd12` — [matriz de verificação pendente](MATRIZ_VERIFICACAO_PENDENTE_20261117.md), na branch documental da PR #8. Leitura direta dos 12 documentos-fonte por ID original nesta rodada; a matriz relaciona VF01–VF16 e CAT-VF01–06 aos UC, RN, arquivos, evidências requeridas e dependências. É uma **entrega documental**, não execução de testes nem aceite.
+
+**Status F:** EM EXECUÇÃO DOCUMENTAL (matriz criada); testes reais continuam PENDENTES. CI com Drive simulado anteriormente verificado não comprova Drive real. **B:** BLOQUEADO — falta OAuth próprio e segredos em ensaio isolado; responsável autora/operador Google Cloud/Render; impacto: fotos reais, exclusão e persistência pós-deploy; retomar com autorização segura comprovada. **A:** EM EXECUÇÃO por outro agente; evitar alterações concorrentes. **C:** proposta LGPD em revisão, sem código ou CPF real. **D/E/G:** pendentes.
+
+**Próxima ação:** conferir correspondência linha a linha da matriz com descrições oficiais dos VF, inspecionar estado atual das PRs #2/#7/#8 e executar testes independentes somente após reconciliação de HEAD e ambiente; preservar demo. Nenhum merge, deploy, migração ou teste novo foi executado.
