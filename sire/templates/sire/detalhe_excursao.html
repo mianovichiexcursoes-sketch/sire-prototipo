@@ -9,6 +9,13 @@
     <p>
         {{ excursao.destino }} · {{ excursao.agencia }}
     </p>
+    {% if excursao.fotos.count %}
+        <div class="galeria-fotos" aria-label="Fotos da excursão">
+            {% for foto in excursao.fotos.all %}
+                <img src="{% url 'sire:imagem_excursao' foto.id %}" alt="Foto {{ forloop.counter }} — {{ excursao.titulo }}" loading="lazy">
+            {% endfor %}
+        </div>
+    {% endif %}
     <article>
         <dl>
             {% if excursao.tipo_pacote %}
@@ -40,6 +47,18 @@
                 {{ excursao.calcular_disponibilidade }}
             </dd>
         </dl>
+        {% if excursao.descricao %}
+            <h2>Sobre o pacote</h2>
+            <p>{{ excursao.descricao|linebreaksbr }}</p>
+        {% endif %}
+        {% if excursao.roteiro %}
+            <h2>Roteiro da viagem</h2>
+            <p>{{ excursao.roteiro|linebreaksbr }}</p>
+        {% endif %}
+        {% if excursao.inclusos %}
+            <h2>O que está incluso</h2>
+            <p>{{ excursao.inclusos|linebreaksbr }}</p>
+        {% endif %}
         <h2>
             Pontos de embarque
         </h2>
