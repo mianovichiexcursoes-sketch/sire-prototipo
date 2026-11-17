@@ -75,6 +75,9 @@ class FotoPermissoesRegressao(TestCase):
         primeira = self.client.get(self._imagem())
         self.assertEqual(primeira.status_code, 200)
         self.assertIn("no-store", primeira["Cache-Control"])
+        self.assertNotIn("public", primeira["Cache-Control"])
+        self.assertEqual(primeira["Pragma"], "no-cache")
+        self.assertEqual(primeira["Expires"], "0")
         self.excursao.status = StatusExcursao.RASCUNHO
         self.excursao.save(update_fields=["status"])
         segunda = self.client.get(self._imagem())
@@ -159,3 +162,40 @@ class FotoPermissoesRegressao(TestCase):
         resposta = self.client.get(url)
         self.assertEqual(resposta.status_code, 404)
         baixar.assert_not_called()
+
+    @patch("sire.views.drive_fotos.configurado", return_value=True)
+    @patch("sire.views.drive_fotos.preparar_jpeg", return_value=b"jpeg-sintetico")
+    @patch("sire.views.drive_fotos.enviar", return_value="drive-sintetico-2")
+    def test_foto_13_upload_adquire_lock_antes_de_gravar(self, enviar, preparar, configurado):
+        """Regressão estrutural: bloquear a excursão antes da contagem e gravação."""
+        from unittest.mock import patch as mock_patch
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        self.client.force_login(self.agente_a)
+        original = Excursao.objects.select_for_update
+        with mock_patch.object(Excursao.objects, "select_for_update", wraps=original) as lock:
+            resposta = self.client.post(
+                reverse("sire:adicionar_foto", args=[self.excursao.pk]),
+                {"foto": SimpleUploadedFile("teste.jpg", b"x", content_type="image/jpeg")},
+            )
+        self.assertEqual(resposta.status_code, 302)
+        lock.assert_called_once_with()
+        enviar.assert_called_once()
+        self.assertEqual(self.excursao.fotos.count(), 2)
+
+    @patch("sire.views.drive_fotos.configurado", return_value=True)
+    @patch("sire.views.drive_fotos.preparar_jpeg", return_value=b"jpeg-sintetico")
+    @patch("sire.views.drive_fotos.enviar", return_value="drive-sintetico-7")
+    def test_foto_14_limite_recusado_antes_do_drive(self, enviar, preparar, configurado):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        for numero in range(2, 7):
+            FotoExcursao.objects.create(excursao=self.excursao, drive_id=f"drive-sintetico-{numero}")
+        self.client.force_login(self.agente_a)
+        resposta = self.client.post(
+            reverse("sire:adicionar_foto", args=[self.excursao.pk]),
+            {"foto": SimpleUploadedFile("teste.jpg", b"x", content_type="image/jpeg")},
+        )
+        self.assertEqual(resposta.status_code, 302)
+        self.assertEqual(self.excursao.fotos.count(), 6)
+        enviar.assert_not_called()
