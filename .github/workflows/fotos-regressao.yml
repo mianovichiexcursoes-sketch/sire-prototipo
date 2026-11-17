@@ -1,0 +1,38 @@
+name: SIRE - regressao de fotos (SQLite isolado)
+
+on:
+  pull_request:
+    paths:
+      - 'sire/**'
+      - 'sire_project/**'
+      - 'requirements.txt'
+      - '.github/workflows/fotos-regressao.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fotos-sqlite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      SIRE_DEBUG: '1'
+      SIRE_DB_ENGINE: sqlite
+      SIRE_DRIVE_CLIENT_ID: ''
+      SIRE_DRIVE_CLIENT_SECRET: ''
+      SIRE_DRIVE_REFRESH_TOKEN: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Instalar dependencias do projeto
+        run: python -m pip install -r requirements.txt
+      - name: Verificar configuracao Django
+        run: python manage.py check
+      - name: Verificar migracoes pendentes (sem criar ou aplicar em producao)
+        run: python manage.py makemigrations --check --dry-run
+      - name: Executar 11 cenarios de fotos com Drive simulado
+        run: python manage.py test sire.test_fotos_regressao --verbosity 2
