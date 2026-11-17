@@ -135,3 +135,27 @@ class FotoPermissoesRegressao(TestCase):
         self.assertEqual(resposta.status_code, 405)
         self.assertTrue(FotoExcursao.objects.filter(pk=self.foto.pk).exists())
         excluir.assert_not_called()
+
+    @patch("sire.views.drive_fotos.configurado", return_value=True)
+    @patch("sire.views.drive_fotos.baixar", return_value=b"jpeg-ficticio")
+    def test_foto_01_visitante_ve_foto_publicada(self, baixar, configurado):
+        """CAT-RF-03: foto publicada pode ser consultada sem login."""
+        self.excursao.status = StatusExcursao.PUBLICADA
+        self.excursao.save(update_fields=["status"])
+        resposta = self.client.get(self._imagem())
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(resposta["Content-Type"], "image/jpeg")
+        self.assertEqual(resposta["X-Content-Type-Options"], "nosniff")
+        baixar.assert_called_once_with("drive-ficticio-foto-1")
+
+    @patch("sire.views.drive_fotos.configurado", return_value=True)
+    @patch("sire.views.drive_fotos.baixar")
+    def test_foto_12_referencia_excluida_nao_dispara_download(self, baixar, configurado):
+        """Referência ausente não deve permitir acesso a bytes remotos."""
+        self.excursao.status = StatusExcursao.PUBLICADA
+        self.excursao.save(update_fields=["status"])
+        url = self._imagem()
+        self.foto.delete()
+        resposta = self.client.get(url)
+        self.assertEqual(resposta.status_code, 404)
+        baixar.assert_not_called()
