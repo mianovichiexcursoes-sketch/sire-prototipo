@@ -59,3 +59,21 @@ Registro documental independente, 17/11/2026 15h55 (Brasília). **Não é result
 **Lacuna identificada:** a tabela anterior rotulava todos os VF como pendentes de nova execução sem distinguir a execução histórica de 22/10. Manter ambos os fatos: (a) há relato histórico individual de conformidade HTTP/ORM; (b) ainda faltam recuperação dos JSON, regressão sobre HEAD atual, PostgreSQL em ensaio isolado, avaliação visual e CAT-VF específicos. Não usar esses relatos para aprovar a PR #2 ou publicar a demo.
 
 **Próxima unidade:** localizar o pacote original de evidências `VFxx.json` no Drive/GitHub e verificar integridade, timestamps, ambiente e associação ao commit original. Em paralelo, reconciliar HEADs das PRs abertas e preservar branch de desenvolvimento em edição pelo Work.
+
+
+## Confronto documental das evidências históricas — 17/11/2026, 19h55 (Brasília)
+
+**Fontes lidas diretamente nesta unidade:** documentos oficiais pelos 12 IDs do inventário; `docs/resultados-http.json` da branch `etapa/postgresql-windows` (blob `e3323f54f39a995dc479f39bcb384dfc0a599a5e`); e registro técnico de implementação. O ZIP histórico foi localizado e teve sua integridade verificada na rodada anterior, mas **os arquivos individuais internos não foram reabertos nesta unidade**. Esta conciliação confronta os resultados agregados, não executa os cenários.
+
+| Cenários | Resultado verificável no JSON agregado histórico | Limitação para aceite atual |
+|---|---|---|
+| VF01–VF03 | Cadastro de PASSAGEIRO, recusa de duplicidade, login e 403 para passageiro na área de agente | Não há nova execução nem inspeção de dados de produção |
+| VF04–VF06 | Criação como RASCUNHO na agência correta; edição alheia 404; embarque vinculado corretamente | Isolamento requer regressão no HEAD atual |
+| VF07–VF09 | Publicação inválida preserva RASCUNHO; válida vira PUBLICADA; catálogo oculta rascunho | Filtros CAT incrementais não foram ensaiados aqui |
+| VF10–VF13 | Disponibilidade 1 após reserva; embarque alheio rejeitado; lotação limita 2/2 | Concorrência PostgreSQL atual exige execução separada |
+| VF14–VF16 | Passageiro vê apenas próprias reservas; consultas de outra agência retornam 404 | Repetir sobre versão atual e permissões de fotos |
+| EXTRA (4 entradas) | Redução indevida de capacidade recusada; papéis; logout POST; CSS/login inválido | Não substituir testes visuais nem CAT-VF |
+
+**VF12 — histórico de falha e correção:** o pacote original recuperado na rodada anterior contém `VF12-primeira-conferencia.json` marcado **não conforme** e `VF12.json` final marcado **conforme**; a versão agregada Git registra `erro_selecao=true` e `reservas_permanecem=1`. Preservar os três registros e sua ordem, sem interpretar o resultado final como ausência de defeito inicial. Para fechar a rastreabilidade, inspecionar os campos completos dos dois JSONs individuais e identificar commit/correção causal, sem inferi-los.
+
+**Estado:** CONCLUÍDO apenas este confronto documental do JSON agregado. VF01–VF16 no código atual, CAT-VF01–06, navegador, OAuth real e persistência pós-deploy continuam PENDENTES/BLOQUEADOS conforme dependências. Próxima unidade: verificar detalhadamente o diff de VF12 inicial/final dentro do ZIP e o vínculo com commit histórico; depois executar regressão isolada sem tocar na demo.
