@@ -43,6 +43,13 @@ As seis entidades da baseline ER-SIRE 2.1 são mantidas. Uma única alteração
 posterior foi feita no esquema: o campo opcional `data_nascimento` em
 `PerfilUsuario` (migration `0005`), registrado como extensão.
 
+
+### Ficha ampliada e fotos — segundo incremento em desenvolvimento
+
+A branch `etapa/ficha-fotos-sire` acrescenta descrição, roteiro, inclusos e fotos em uma extensão opcional da ER-SIRE 2.1. Imagens ficam no Google Drive pessoal por OAuth `drive.file`, e o PostgreSQL guarda somente IDs de arquivos. Ainda não foi integrada à demo: exige autorização da conta Google, migração 0007 e validação funcional antes de publicar. O SIRE atual permanece publicado na branch `etapa/postgresql-windows`.
+
+Consulte [projeto técnico e plano de verificação](docs/INCREMENTO_FICHA_FOTOS_DRIVE.md) e execute localmente `scripts/autorizacao_drive.py` após criar credenciais OAuth na Google Cloud. O armazenamento no Google Drive aproveita a cota gratuita da conta, mas não é solução de CDN escalável. Cloudinary, Cloudflare R2 e equivalentes constam como evolução futura, não como dependência atual.
+
 ## Executar no Windows
 
 Na pasta que contém `manage.py`, no PowerShell:
