@@ -62,6 +62,8 @@ urlpatterns = [
 urlpatterns += [
     path("agente/excursoes/", views.agente_excursoes, name="agente_excursoes"),
     path("agente/excursoes/nova/", views.cadastrar_excursao, name="cadastrar_excursao"),
+    path("agente/excursoes/<int:id>/fotos/nova/", views.adicionar_foto, name="adicionar_foto"),
+    path("agente/excursoes/<int:id>/fotos/<int:foto_id>/excluir/", views.remover_foto, name="remover_foto"),
     path(
         "agente/excursoes/<int:id>/editar/",
         views.editar_excursao,
@@ -84,6 +86,7 @@ urlpatterns += [
 urlpatterns += [
     path("buscar/", views.buscar_excursoes, name="buscar_excursoes"),
     path("excursao/<int:id>/", views.detalhe_excursao, name="detalhe_excursao"),
+    path("fotos/<int:foto_id>/imagem/", views.imagem_excursao, name="imagem_excursao"),
 ]
 urlpatterns += [
     path("excursao/<int:id>/reservar/", views.realizar_reserva, name="realizar_reserva")
