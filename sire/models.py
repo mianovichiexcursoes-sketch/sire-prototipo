@@ -79,6 +79,9 @@ class Excursao(models.Model):
         blank=True,
         null=True,
     )
+    descricao = models.TextField("Descrição do pacote", blank=True, default="")
+    roteiro = models.TextField("Roteiro da viagem", blank=True, default="")
+    inclusos = models.TextField("Itens inclusos (um por linha)", blank=True, default="")
     data_saida = models.DateField()
     data_retorno = models.DateField(null=True, blank=True)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
@@ -193,3 +196,20 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f"Reserva {self.pk} — {self.excursao}"
+
+
+class FotoExcursao(models.Model):
+    """Extensão CAT-RF-03: o arquivo fica no Google Drive, não no PostgreSQL."""
+
+    excursao = models.ForeignKey(
+        Excursao, on_delete=models.CASCADE, related_name="fotos"
+    )
+    drive_id = models.CharField("ID no Google Drive", max_length=128, unique=True)
+    criada_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "sire_foto_excursao"
+        ordering = ("id",)
+
+    def __str__(self):
+        return f"Foto {self.pk} — {self.excursao}"
