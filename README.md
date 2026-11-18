@@ -17,7 +17,7 @@ apresentado como escrito sem ela.
 | --- | --- |
 | UC01–UC14 da baseline | Implementados |
 | Banco de dados | SQLite (padrão) ou PostgreSQL, por variável de ambiente |
-| Testes automatizados | 67 testes; rodam a cada envio em SQLite e PostgreSQL 18 |
+| Testes automatizados | Suíte geral, fotos SQLite/PostgreSQL e tutorial no navegador com CI aprovado na PR #18 |
 | Reservas simultâneas | Verificadas no PostgreSQL, sem exceder a capacidade |
 | Demonstração publicada | <https://sire-demo.onrender.com> (dados fictícios) |
 | Extensões fora da baseline | Login sem distinção de maiúsculas; recuperação e troca de senha; data de nascimento; aviso de privacidade |
@@ -33,22 +33,20 @@ apresentado como escrito sem ela.
 | Hospedagem da demonstração | Render, plano gratuito (gunicorn + WhiteNoise) |
 
 Sem framework de front-end nem API separada: as telas são templates do Django.
-O único JavaScript é `sire/static/sire/js/mostrar-senha.js`, que acrescenta o
-botão “Mostrar” aos campos de senha; sem ele os formulários continuam
-funcionando.
+O JavaScript do protótipo inclui o botão Mostrar/Ocultar senha e a ajuda contextual `tutorial-uso.js`. O tutorial não concede permissões nem executa formulários.
 
 ### Modelo de dados
 
-As seis entidades da baseline ER-SIRE 2.1 são mantidas. Uma única alteração
-posterior foi feita no esquema: o campo opcional `data_nascimento` em
-`PerfilUsuario` (migration `0005`), registrado como extensão.
+As seis entidades históricas da baseline ER-SIRE 2.1 são mantidas. Extensões posteriores, identificadas separadamente: data de nascimento (`0005`), classificação do pacote (`0006`) e ficha/fotos com entidade técnica FotoExcursao (`0007`).
 
 
-### Ficha ampliada e fotos — segundo incremento em desenvolvimento
+### Entrega consolidada em revisão — PR #18 (18/11/2026)
 
-A branch `etapa/ficha-fotos-sire` acrescenta descrição, roteiro, inclusos e fotos em uma extensão opcional da ER-SIRE 2.1. Imagens ficam no Google Drive pessoal por OAuth `drive.file`, e o PostgreSQL guarda somente IDs de arquivos. Ainda não foi integrada à demo: exige autorização da conta Google, migração 0007 e validação funcional antes de publicar. O SIRE atual permanece publicado na branch `etapa/postgresql-windows`.
+A [PR #18](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/18), branch `entrega/consolidacao-final-20261118`, reúne **descrição, roteiro, inclusos, fotos no Google Drive, aviso de privacidade e tutorial contextual “Como usar”**, além de correções de segurança. A migração `0007` é aditiva. O PostgreSQL guarda apenas os IDs das fotos, e o Drive armazena imagens otimizadas; não há binários no banco.
 
-Consulte [projeto técnico e plano de verificação](docs/INCREMENTO_FICHA_FOTOS_DRIVE.md) e execute localmente `scripts/autorizacao_drive.py` após criar credenciais OAuth na Google Cloud. O armazenamento no Google Drive aproveita a cota gratuita da conta, mas não é solução de CDN escalável. Cloudinary, Cloudflare R2 e equivalentes constam como evolução futura, não como dependência atual.
+O OAuth do Google Drive foi autorizado no computador da autora (escopo `drive.file`) e registrado no grupo de segredos **não vinculado à demo**. Em 18/11 foram registrados 13 de 13 ensaios reais conformes em PostgreSQL local; no GitHub Actions as suítes gerais, de fotos SQLite/PostgreSQL e de navegador encerraram com sucesso no commit `cd93a81d`. **Esses resultados não demonstram persistência das fotos após deploy no Render.** A demo pública continua com commit `7c531342` até a publicação verificada. Não incluir CPF, pagamentos ou assentos na apresentação como entregues.
+
+Consulte [plano e rastreabilidade da ficha](docs/INCREMENTO_FICHA_FOTOS_DRIVE.md), [evidências do Drive real](docs/OAUTH_EXECUCAO_REAL_2026-11-18.md) e [relatório de fechamento](docs/ENTREGA_TCC_20261118.md). Google Drive é opção acadêmica sujeita a cota; Cloudinary/R2 são propostas futuras.
 
 ## Executar no Windows
 
@@ -67,8 +65,7 @@ Acesse <http://127.0.0.1:8000/>. Sem nenhuma configuração, o banco é SQLite.
 ### Usar PostgreSQL
 
 Copie `.env.example` para `.env` e preencha a senha do banco. O `.env` fica
-fora do Git. As mesmas quatro migrations do domínio criam o esquema; nenhum
-dado do SQLite é transferido.
+fora do Git. As migrations preservam as quatro primeiras etapas do domínio e adicionam extensões posteriores, sem migrar automaticamente dados existentes do SQLite.
 
 ### Dados de demonstração
 
