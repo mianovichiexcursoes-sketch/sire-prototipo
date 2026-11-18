@@ -1,6 +1,6 @@
 # SIRE — Termo de reconciliação e entrega técnica (18/11/2026)
 
-**Status: candidato de entrega validado em CI; publicação/aceite finais ainda não comprovados.** Autora: Julia Mianovichi. TCC de Engenharia Elétrica, IFSP Câmpus Sertãozinho. Implementação assistida por ChatGPT, Codex e Claude Code. O documento distingue explicitamente evidências executadas de condições ainda pendentes.
+**Status: candidato de entrega validado em CI; monografia exportada para revisão com sumário atualizado; publicação/aceite finais ainda não comprovados.** Autora: Julia Mianovichi. TCC de Engenharia Elétrica, IFSP Câmpus Sertãozinho. Implementação assistida por ChatGPT, Codex e Claude Code. O documento distingue explicitamente evidências executadas de condições ainda pendentes.
 
 ## 1. Versões, branches e fatos verificados
 
@@ -9,7 +9,7 @@
 - **CI da base consolidada**: [Django geral](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44319295069), [fotos em SQLite/PostgreSQL](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44319295483), [tutorial em navegador](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44319294940). Esses workflows indicaram sucesso no commit `cd93a81d`. A CI dos commits documentais posteriores deve ser conferida separadamente.
 - **Drive real, fora da demo**: [relatório completo](OAUTH_EXECUCAO_REAL_2026-11-18.md) e [JSON do ensaio](../evidencias/2026-11-18_1032_drive_real/resultados.json) registram 13 de 13 verificações conformes em Windows/PostgreSQL local após OAuth `drive.file` renovado com o aplicativo Google em produção. Foi testada persistência após reiniciar **processo local**, não após deploy Render; os arquivos sintéticos de ensaio foram removidos.
 - **Segredos**: grupo Render `sire-drive-oauth-36a0572f` (ID `evg-dbuq4kom7kps73d5trfg`) contém três variáveis, mas o relatório de execução afirma que ele **não estava vinculado a serviço**; não registrar valores, tokens nem chaves em Git, Drive ou impressões. As chaves temporárias de API criadas na configuração foram relatadas como revogadas.
-- **Monografia atual**: https://docs.google.com/document/d/1SPpcP6bf2Whsq3cCwjYRRDGqV45jsANOofaifG4b6jg/edit — seção 3.2.3 relata retorno do orientador e EVO-USO-01; subseção 3.2.3.5 adicionada em 18/11 registra a CI consolidada e as limitações da integração.
+- **Monografia atual**: https://docs.google.com/document/d/1SPpcP6bf2Whsq3cCwjYRRDGqV45jsANOofaifG4b6jg/edit — seção 3.2.3 relata retorno do orientador e EVO-USO-01; subseção 3.2.3.5 registra CI e Drive real. O sumário (páginas impressas 10–58) foi reconciliado após edição; exportação A4 revista em 60 páginas, sem folha vazia. [PDF de revisão na pasta central](https://drive.google.com/file/d/1jeciw6ftt-ESq3d6NhZYIzcawjeirhH0/view).
 - **Documentação de desenvolvimento**: https://docs.google.com/document/d/19U5JhTHfk8IbvWfdAAUg8Z81fwQ8wsji6m4vxTN9Ed8/edit — Apêndice A contém as especificações completas UC01–UC14. Regra de negócio de referência RN-01–RN-41: https://docs.google.com/document/d/1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0/edit
 
 ## 2. Rastreabilidade resumida e escopo
@@ -31,7 +31,7 @@
 3. **Drive no Render:** o responsável deve vincular o grupo existente de segredos ao serviço de demonstração pelo painel do Render **antes** de testar upload real na demo. Não criar recurso pago nem usar dados de passageiros reais.
 4. **E2E:** repetir com identidades e imagens sintéticas: agente cadastra excursão/embarque/publica, envia foto; visitante abre, passageiro reserva, agente consulta a reserva; verificar disponibilidade e imagem depois do deploy, permissões de rascunho e remoção.
 5. **Modelagem:** conferir a figura do modelo relacional presente no projeto versus entidades e relações efetivas. A lista de pendências do Visual Paradigm sobre cardinalidade Agência/PerfilUsuario ainda não foi encerrada no editor; não atribuir aceite ao diagrama sem prova.
-6. **Acadêmico:** concluir auditoria de ABNT e referências, comparar figuras, resultados e métodos da monografia com o código efetivo. O orientador precisa confirmar o título oficial e validar uso do tutorial. O relato de "entrevista" deve ter registro demonstrável ou ser tratado como relato da experiência profissional da autora, sem inventar participantes e datas.
+6. **Acadêmico:** o sumário da monografia foi conciliado com os títulos e páginas após a inclusão da subseção 3.2.3.5; a exportação A4 voltou a 60 páginas, sem página em branco. Ainda é necessária revisão substantiva das fontes, figuras e conformidade ABNT. O orientador precisa confirmar o título oficial e validar o tutorial; relatos de entrevistas devem ter evidência demonstrável, sem inventar participantes nem datas.
 7. **Aceite:** só então exportar PDF final da monografia e cópia dos documentos na pasta central do Drive, em revisão pela autora e orientador.
 
 ## 4. Limitações e condições de apresentação à banca
@@ -39,7 +39,7 @@
 - O sistema do TCC é um **protótipo** multiagência, não uma operação comercial de viagens: não processa pagamentos, não escolhe poltronas e não comprova escalabilidade por testes de carga.
 - O Google Drive pessoal foi uma escolha acadêmica de baixo custo; Cloudinary/R2 são melhorias futuras possíveis, não funcionalidades entregues.
 - Autores de código/registro devem ser informados conforme ocorrido: IA assistiu construção, Git e verificações; autora definiu problema, requisitos, limites e avaliações. Não declarar programação manual que não ocorreu.
-- Revisões realizadas em 18/11/2026: inclusão de seção de CI/Drive real na monografia e da presente reconciliação. A revisão global de todas as páginas ABNT, posição das imagens e fontes **ainda depende de inspeção visual PDF**.
+- Revisões realizadas em 18/11/2026: inclusão de seção de CI/Drive real na monografia e da presente reconciliação. Foi inspecionada a exportação PDF de 60 páginas A4, com 10 imagens e conferência de páginas exemplares, inclusive a Figura 4 do modelo relacional. A revisão global de cada página e de todas as referências ABNT **continua pendente de validação acadêmica integral**.
 
 ## 5. Decisão registrada
 
