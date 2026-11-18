@@ -192,3 +192,12 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Dependências:** B BLOQUEADO para autorização real Google OAuth `drive.file`, ambiente Render isolado e teste real de fotos; responsável autora/operador autorizado, retomar após autorização e ambiente confirmado. A PR #7 permanece sujeita a conciliação de base e revisão humana; os novos testes não foram inseridos na PR existente para evitar sobrescrever Work. F EM EXECUÇÃO, testes atuais SQLite/PostgreSQL e CAT pendentes. A PR #2 exige revisão antes de merge; C exige finalidade/base legal LGPD; D/E/G pendentes. Busca GitHub de PRs abertas retornou lista vazia, resultado inconclusivo: verificar PRs individualmente antes de operações de integração.
 
 **Próxima ação:** executar os testes isolados via CI/ambiente com acesso à branch, registrar resultado e, se aprovados, propor incorporação à PR #7 após conciliação. Alternativa independente: confrontar JSONs individuais de VF12. **Sem merge, deploy, migração, alteração da demo, credenciais reais ou dados empresariais.**
+
+
+## Rodada 17/11/2026, 23h55 (Brasília) — PR #9 e dependências OAuth
+
+**Gate:** leitura direta dos 12 documentos oficiais/históricos pelos IDs exatos, incluindo regulamento PFC PDF. Não equivale à auditoria integral da monografia.
+
+**Entrega documental CONCLUÍDA:** [revisão independente da PR #9 e dos testes isolados](REVISAO_DEPENDENCIAS_OAUTH_PR9_20261117.md), commit `9266aaf8a01ee27621f369672cbf8334d1c8a105`. PR #2 aberta/draft HEAD `faa5ba3`; PR #7 aberta/draft HEAD `0a7f77c`; PR #9 aberta/draft HEAD `2a354a7`, com Environment Group desvinculado. Branch `test/oauth-falha-parcial-20261117` foi lida: dois testes cobrem caminho antigo de PUT sequencial, não o novo modo de grupo. Não atribuir a PR #9 cobertura que não foi executada nesta rodada.
+
+**B BLOQUEADO:** OAuth real drive.file e grupo Render não comprovados, responsável autora/operador autorizado; condição de retomada: consentimento e grupo verificado sem segredos, seguidos de serviço de ensaio isolado. **A EM REVISÃO:** PR #2 e cadeia #7/#9 ainda requerem reconciliação sem sobrescrever Work. **F PENDENTE:** testes da branch isolada ainda não executados/CI não confirmado; próxima ação é executar com SHA e saída preservados. **C BLOQUEADO** para coleta até finalidade/base legal; D/E/G pendentes. Nenhum merge, deploy, migração, teste novo ou alteração da demo.
