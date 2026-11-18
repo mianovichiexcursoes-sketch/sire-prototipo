@@ -86,7 +86,7 @@ def _pasta():
     # drive.file permite ver a pasta que o próprio SIRE criou. Não acessa
     # indiscriminadamente as outras pastas privadas da conta Google.
     q = f"name = '{PASTA}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false"
-    url = f"{API}?{urlencode({'q': q, 'fields': 'files(id,name)', 'page_size': '10'})}"
+    url = f"{API}?{urlencode({'q': q, 'fields': 'files(id,name)', 'pageSize': '10'})}"
     existentes = _json_request(url, headers=_headers()).get("files", [])
     if existentes:
         return existentes[0]["id"]

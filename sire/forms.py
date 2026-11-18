@@ -236,7 +236,10 @@ class ExcursaoForm(forms.ModelForm):
 class FotoExcursaoForm(forms.Form):
     foto = forms.FileField(
         label="Foto da excursão",
-        help_text="JPG, PNG ou WebP. Até 5 MB. O sistema ajusta o tamanho antes de enviar ao Drive.",
+        help_text=(
+            "JPG, PNG ou WebP. Até 5 MB. O sistema ajusta o tamanho antes de enviar ao "
+            "Drive. Não envie fotos em que pessoas possam ser identificadas."
+        ),
     )
 
     def clean_foto(self):

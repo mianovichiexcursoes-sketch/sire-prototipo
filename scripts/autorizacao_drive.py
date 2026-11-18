@@ -25,14 +25,86 @@ PORT = 8766
 REDIRECT = f"http://127.0.0.1:{PORT}/oauth/callback"
 
 
+# Formato esperado de cada segredo: confere se o valor colado é o certo
+# (por exemplo, o NOME da chave no lugar da chave) sem nunca exibi-lo.
+FORMATOS = {
+    "RENDER_API_KEY": (r"rnd_[A-Za-z0-9]{16,}", "a chave do Render começa com rnd_"),
+    "SIRE_DRIVE_CLIENT_ID": (
+        r"[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com",
+        "o ID do cliente termina com .apps.googleusercontent.com",
+    ),
+    "SIRE_DRIVE_CLIENT_SECRET": (r"GOCSPX-[A-Za-z0-9_-]{10,}", "a chave secreta começa com GOCSPX-"),
+}
+DESCRICOES = {
+    "RENDER_API_KEY": "Chave de API do Render (começa com rnd_)",
+    "SIRE_DRIVE_CLIENT_ID": "ID do cliente OAuth do Google (termina com .apps.googleusercontent.com)",
+    "SIRE_DRIVE_CLIENT_SECRET": "Chave secreta do cliente OAuth do Google (começa com GOCSPX-)",
+}
+USAR_JANELA = [False]  # ligado por main(); os testes usam só o terminal
+
+
+def _janela_segredo(nome):
+    """Campo mascarado (•) em uma janela local: a pessoa vê que colou algo,
+    e quantos caracteres, sem que o valor apareça na tela, no terminal ou em logs."""
+    import tkinter as tk
+
+    resultado = {"valor": None}
+    raiz = tk.Tk()
+    raiz.title("SIRE — " + nome)
+    raiz.attributes("-topmost", True)
+    raiz.resizable(False, False)
+    tk.Label(raiz, text=DESCRICOES.get(nome, nome), font=("Segoe UI", 11, "bold"),
+             padx=16, pady=(12)).pack(anchor="w")
+    tk.Label(raiz, text="Cole com Ctrl+V. O valor fica oculto (•••).",
+             padx=16).pack(anchor="w")
+    campo = tk.Entry(raiz, show="•", width=52, font=("Consolas", 12))
+    campo.pack(padx=16, pady=8)
+    aviso = tk.Label(raiz, text="0 caracteres", fg="#684957", padx=16)
+    aviso.pack(anchor="w")
+
+    def mudou(_evento=None):
+        aviso.config(text=f"{len(campo.get().strip())} caracteres", fg="#684957")
+
+    def confirmar(_evento=None):
+        valor = campo.get().strip()
+        padrao, dica = FORMATOS.get(nome, (r".+", ""))
+        if not re.fullmatch(padrao, valor):
+            aviso.config(text="Formato inesperado: " + dica + ". Confira e cole de novo.",
+                         fg="#9d2424")
+            campo.delete(0, "end")
+            return
+        resultado["valor"] = valor
+        raiz.destroy()
+
+    campo.bind("<KeyRelease>", mudou)
+    campo.bind("<Return>", confirmar)
+    tk.Button(raiz, text="Confirmar", command=confirmar, padx=12).pack(pady=(4, 14))
+    raiz.protocol("WM_DELETE_WINDOW", raiz.destroy)
+    raiz.after(200, lambda: (raiz.lift(), raiz.focus_force(), campo.focus_set()))
+    raiz.mainloop()
+    if not resultado["valor"]:
+        raise KeyboardInterrupt
+    return resultado["valor"]
+
+
 def segredo(nome):
     """Não usar fallback de getpass que possa ecoar a entrada."""
     valor = os.environ.get(nome, "")
     if valor:
         return valor
+    if USAR_JANELA[0]:
+        try:
+            print(f"Abrindo janela para {nome}...")
+            return _janela_segredo(nome)
+        except ImportError:
+            pass  # sem interface gráfica: segue para a entrada oculta do terminal
     with warnings.catch_warnings():
         warnings.simplefilter("error", GetPassWarning)
-        return getpass(f"{nome} (entrada oculta): ")
+        valor = getpass(f"{nome} (entrada oculta): ").strip()
+    padrao, dica = FORMATOS.get(nome, (r".+", ""))
+    if valor and not re.fullmatch(padrao, valor):
+        raise ValueError(f"O valor de {nome} não tem o formato esperado ({dica}).")
+    return valor
 
 
 def validar_tokens(tokens):
@@ -103,30 +175,160 @@ def enviar_grupo_render(owner_id, api_key, credenciais):
         if resposta.status != 201:
             raise ValueError("Render não confirmou a criação do grupo.")
         # A resposta pode conter segredos. Não imprimir nem gravar.
-        resposta.read()
+        corpo = resposta.read()
+    try:
+        criado = json.loads(corpo) if corpo else {}
+    except ValueError:
+        criado = {}
+    if criado.get("serviceLinks"):
+        raise ValueError("O grupo foi criado vinculado a um serviço; verifique o painel.")
     return nome
+
+
+PREFIXO_GRUPO = "sire-drive-oauth-"
+
+
+def _listar_grupos(owner_id, api_key):
+    """Lista os grupos do workspace (somente nomes, IDs e vínculos)."""
+    req = Request(
+        "https://api.render.com/v1/env-groups?" + urlencode({"ownerId": owner_id, "limit": "100"}),
+        headers={"Authorization": f"Bearer {api_key}", "Accept": "application/json"},
+    )
+    with urlopen(req, timeout=20) as resposta:
+        itens = json.load(resposta)
+    grupos = []
+    for item in itens if isinstance(itens, list) else []:
+        grupo = item.get("envGroup", item) if isinstance(item, dict) else {}
+        grupos.append({
+            "id": grupo.get("id", ""),
+            "name": grupo.get("name", ""),
+            "serviceLinks": grupo.get("serviceLinks") or [],
+        })
+    return grupos
+
+
+def grupos_drive_existentes(owner_id, api_key):
+    """Nomes dos grupos de credenciais do Drive já criados (evita duplicatas)."""
+    return [g["name"] for g in _listar_grupos(owner_id, api_key)
+            if g["name"].startswith(PREFIXO_GRUPO)]
+
+
+def conferir_grupo(owner_id, api_key, nome):
+    """Relê o grupo criado e confere chaves e vínculos sem expor valores.
+
+    Devolve o ID (não secreto). Os valores das variáveis são descartados.
+    """
+    candidatos = [g for g in _listar_grupos(owner_id, api_key) if g["name"] == nome]
+    if len(candidatos) != 1:
+        raise ValueError("O grupo criado não foi encontrado de forma única no Render.")
+    grupo_id = candidatos[0]["id"]
+    if not re.fullmatch(r"evg-[a-z0-9]+", grupo_id):
+        raise ValueError("Identificador de grupo inesperado.")
+    req = Request(f"https://api.render.com/v1/env-groups/{grupo_id}",
+                  headers={"Authorization": f"Bearer {api_key}", "Accept": "application/json"})
+    with urlopen(req, timeout=20) as resposta:
+        grupo = json.load(resposta)
+    chaves = {v.get("key") for v in grupo.get("envVars") or []}
+    vazias = [v.get("key") for v in grupo.get("envVars") or [] if not v.get("value")]
+    grupo.clear()  # descarta os valores lidos
+    if grupo_id and chaves and chaves != CHAVES_DRIVE:
+        raise ValueError("O grupo não contém exatamente as três chaves do Drive.")
+    if vazias:
+        raise ValueError("Há chave sem valor no grupo criado.")
+    if candidatos[0]["serviceLinks"]:
+        raise ValueError("O grupo está vinculado a um serviço; desvincule no painel.")
+    return grupo_id, bool(chaves)
+
+
+def ler_grupo_drive(owner_id, api_key):
+    """Lê, só em memória, o único grupo sire-drive-oauth-* do workspace.
+
+    Devolve (id, nome, valores). Usado para renovar o token sem pedir de novo
+    o ID e a chave secreta do cliente, que o Google não volta a exibir.
+    """
+    grupos = [g for g in _listar_grupos(owner_id, api_key) if g["name"].startswith(PREFIXO_GRUPO)]
+    if len(grupos) != 1:
+        raise ValueError(f"Esperado exatamente 1 grupo {PREFIXO_GRUPO}*; encontrados {len(grupos)}.")
+    grupo_id = grupos[0]["id"]
+    if not re.fullmatch(r"evg-[a-z0-9]+", grupo_id):
+        raise ValueError("Identificador de grupo inesperado.")
+    if grupos[0]["serviceLinks"]:
+        raise ValueError("O grupo está vinculado a um serviço; renovação interrompida.")
+    req = Request(f"https://api.render.com/v1/env-groups/{grupo_id}",
+                  headers={"Authorization": f"Bearer {api_key}", "Accept": "application/json"})
+    with urlopen(req, timeout=20) as resposta:
+        detalhe = json.load(resposta)
+    valores = {v.get("key"): v.get("value") for v in detalhe.get("envVars") or []}
+    detalhe.clear()
+    if set(valores) != CHAVES_DRIVE or not all(valores.values()):
+        raise ValueError("O grupo não contém as três credenciais preenchidas.")
+    return grupo_id, grupos[0]["name"], valores
+
+
+def atualizar_token_grupo(grupo_id, api_key, refresh_token):
+    """Troca apenas SIRE_DRIVE_REFRESH_TOKEN no grupo (sem tocar no resto)."""
+    if not re.fullmatch(r"evg-[a-z0-9]+", grupo_id) or not refresh_token:
+        raise ValueError("Dados de atualização inválidos.")
+    req = Request(
+        f"https://api.render.com/v1/env-groups/{grupo_id}/env-vars/SIRE_DRIVE_REFRESH_TOKEN",
+        method="PUT",
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        data=json.dumps({"value": refresh_token}).encode(),
+    )
+    with urlopen(req, timeout=20) as resposta:
+        resposta.read()  # pode conter o valor; não imprimir nem gravar
 
 
 def main():
     parser = argparse.ArgumentParser(description="Autorizar Drive e guardar credenciais no Render sem exibi-las.")
     parser.add_argument("--grupo-render", metavar="WORKSPACE_ID",
                         help="Criar grupo separado, sem vincular a nenhum serviço.")
+    parser.add_argument("--renovar-token", metavar="WORKSPACE_ID",
+                        help="Nova autorização reaproveitando o cliente guardado no grupo; "
+                             "troca só o refresh token.")
+    parser.add_argument("--permitir-novo-grupo", action="store_true",
+                        help="Criar outro grupo mesmo que já exista um sire-drive-oauth-*.")
+    parser.add_argument("--sem-janela", action="store_true",
+                        help="Pedir os segredos no terminal em vez de janela mascarada.")
     args = parser.parse_args()
+    USAR_JANELA[0] = not args.sem_janela
     service_id = ""
+    ETAPA[0] = "1/3 (Render)"
     print("Etapa 1/3: validar o destino seguro no Render.")
-    if not args.grupo_render:
+    grupo_renovar = None
+    if args.renovar_token:
+        api_key = segredo("RENDER_API_KEY")
+        conferir_workspace(args.renovar_token, api_key)
+        grupo_renovar = ler_grupo_drive(args.renovar_token, api_key)
+        client_id = grupo_renovar[2]["SIRE_DRIVE_CLIENT_ID"]
+        client_secret = grupo_renovar[2]["SIRE_DRIVE_CLIENT_SECRET"]
+        grupo_renovar[2].clear()
+        print(f"Workspace SIRE. confirmado; cliente lido do grupo {grupo_renovar[1]}.")
+    elif not args.grupo_render:
         service_id = os.environ.get("SIRE_DRIVE_RENDER_SERVICE_ID", "")
         if not re.fullmatch(r"srv-[a-z0-9]+", service_id):
             raise SystemExit("Defina SIRE_DRIVE_RENDER_SERVICE_ID ou use --grupo-render WORKSPACE_ID.")
-    api_key = segredo("RENDER_API_KEY")
+    if not grupo_renovar:
+        api_key = segredo("RENDER_API_KEY")
     if not api_key:
         raise SystemExit("Credencial do Render ausente.")
-    if args.grupo_render:
+    if args.grupo_render and not grupo_renovar:
         conferir_workspace(args.grupo_render, api_key)
+        existentes = grupos_drive_existentes(args.grupo_render, api_key)
+        if existentes and not args.permitir_novo_grupo:
+            raise SystemExit(
+                "Já existe grupo de credenciais do Drive no Render: "
+                + ", ".join(existentes)
+                + ". Nada foi alterado. Confira no painel antes de repetir; para criar "
+                "outro mesmo assim, use --permitir-novo-grupo."
+            )
+        print("Workspace SIRE. confirmado; nenhum grupo anterior do Drive encontrado.")
+    ETAPA[0] = "2/3 (Google)"
     print("Etapa 2/3: informar o cliente OAuth e autorizar no Google.")
 
-    client_id = segredo("SIRE_DRIVE_CLIENT_ID")
-    client_secret = segredo("SIRE_DRIVE_CLIENT_SECRET")
+    if not grupo_renovar:
+        client_id = segredo("SIRE_DRIVE_CLIENT_ID")
+        client_secret = segredo("SIRE_DRIVE_CLIENT_SECRET")
     if not client_id or not client_secret:
         raise SystemExit("Defina SIRE_DRIVE_CLIENT_ID e SIRE_DRIVE_CLIENT_SECRET antes de executar.")
 
@@ -192,11 +394,31 @@ def main():
         "SIRE_DRIVE_CLIENT_SECRET": client_secret,
         "SIRE_DRIVE_REFRESH_TOKEN": tokens["refresh_token"],
     }
+    ETAPA[0] = "3/3 (gravação no Render)"
+    print("Autorização do Google recebida com escopo drive.file.")
     print("Etapa 3/3: guardar credenciais no Render sem exibir valores.")
-    if args.grupo_render:
+    if grupo_renovar:
+        grupo_id, nome, _ = grupo_renovar
+        atualizar_token_grupo(grupo_id, api_key, credenciais["SIRE_DRIVE_REFRESH_TOKEN"])
+        credenciais.clear()
+        ETAPA[0] = "3/3 (conferência do grupo)"
+        conferido_id, chaves_lidas = conferir_grupo(args.renovar_token, api_key, nome)
+        print("CONCLUIDO: token renovado no grupo " + nome + " (" + conferido_id + ")")
+        print("Conferido: 3 chaves preenchidas e nenhum serviço vinculado." if chaves_lidas
+              else "Conferido: grupo sem serviço vinculado.")
+        print("A demonstração pública não foi alterada.")
+    elif args.grupo_render:
         nome = enviar_grupo_render(args.grupo_render, api_key, credenciais)
-        print("CONCLUIDO: grupo criado no Render: " + nome)
-        print("Grupo sem vínculo com serviços. A demonstração pública não foi alterada.")
+        credenciais.clear()
+        ETAPA[0] = "3/3 (conferência do grupo)"
+        grupo_id, chaves_lidas = conferir_grupo(args.grupo_render, api_key, nome)
+        print("CONCLUIDO: grupo criado no Render: " + nome + " (" + grupo_id + ")")
+        if chaves_lidas:
+            print("Conferido: exatamente 3 chaves preenchidas e nenhum serviço vinculado.")
+        else:
+            print("Conferido: grupo existe e não tem serviço vinculado; a chave do Render "
+                  "não permitiu ler a lista de variáveis.")
+        print("A demonstração pública não foi alterada.")
     else:
         enviar_render(service_id, api_key, credenciais)
         print("CONCLUIDO: credenciais encaminhadas ao serviço de ensaio do Render.")
@@ -204,10 +426,26 @@ def main():
 
 
 
+ETAPA = ["inicial"]
+
+
 if __name__ == "__main__":
     try:
         main()
     except HTTPError as erro:
-        raise SystemExit(f"Falha HTTP {erro.code}. Nenhum segredo foi exibido. Informe somente este código e a última etapa mostrada.") from None
-    except (Exception, KeyboardInterrupt):
-        raise SystemExit("Fluxo interrompido com segurança. Configuração pode estar parcial; confira as chaves no Render sem revelar valores.") from None
+        raise SystemExit(
+            f"Falha HTTP {erro.code} na etapa {ETAPA[0]}. Nenhum segredo foi exibido. "
+            "Informe somente esta linha."
+        ) from None
+    except ValueError as erro:
+        # Mensagens de ValueError deste script são escritas aqui e não contêm segredos.
+        raise SystemExit(f"Interrompido na etapa {ETAPA[0]}: {erro}") from None
+    except KeyboardInterrupt:
+        raise SystemExit(f"Cancelado na etapa {ETAPA[0]}. Nada mais foi enviado.") from None
+    except Exception as erro:
+        # Apenas o tipo do erro: a mensagem de bibliotecas pode conter dados sensíveis.
+        raise SystemExit(
+            f"Fluxo interrompido na etapa {ETAPA[0]} ({type(erro).__name__}). "
+            "Nenhum segredo foi exibido. Se a etapa for 3/3, confira o painel do Render "
+            "antes de repetir."
+        ) from None

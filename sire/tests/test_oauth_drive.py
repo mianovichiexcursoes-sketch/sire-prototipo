@@ -92,6 +92,84 @@ class OAuthDriveTests(TestCase):
                     oauth.enviar_grupo_render('tea-ficticio', 'ficticio', {k: 'ficticio' for k in oauth.CHAVES_DRIVE})
                 self.assertEqual(rede.call_count, 1)
 
+    def _rede_grupos(self, grupos, detalhe=None):
+        def responder(req, **kwargs):
+            if '/env-groups?' in req.full_url:
+                return io.BytesIO(json.dumps([{'envGroup': g, 'cursor': 'c'} for g in grupos]).encode())
+            return io.BytesIO(json.dumps(detalhe or {}).encode())
+        return patch.object(oauth, 'urlopen', side_effect=responder)
+
+    def test_lista_somente_grupos_do_drive(self):
+        grupos = [{'id': 'evg-a', 'name': 'sire-drive-oauth-1a2b'}, {'id': 'evg-b', 'name': 'outro'}]
+        with self._rede_grupos(grupos):
+            self.assertEqual(oauth.grupos_drive_existentes('tea-ficticio', 'k'), ['sire-drive-oauth-1a2b'])
+
+    def test_conferir_grupo_sem_expor_valores(self):
+        detalhe = {'envVars': [{'key': k, 'value': 'segredo-ficticio'} for k in oauth.CHAVES_DRIVE]}
+        saida = io.StringIO()
+        with self._rede_grupos([{'id': 'evg-abc', 'name': 'sire-drive-oauth-x', 'serviceLinks': []}], detalhe), redirect_stdout(saida):
+            self.assertEqual(oauth.conferir_grupo('tea-ficticio', 'k', 'sire-drive-oauth-x'), ('evg-abc', True))
+        self.assertEqual(saida.getvalue(), '')
+
+    def test_conferir_grupo_recusa_vinculo_chave_extra_ou_vazia(self):
+        cheio = [{'key': k, 'value': 'v'} for k in oauth.CHAVES_DRIVE]
+        casos = {
+            'vinculado': ([{'id': 'evg-a', 'name': 'g', 'serviceLinks': [{'id': 'srv-x'}]}], {'envVars': cheio}),
+            'chave extra': ([{'id': 'evg-a', 'name': 'g'}], {'envVars': cheio + [{'key': 'RENDER_API_KEY', 'value': 'v'}]}),
+            'valor vazio': ([{'id': 'evg-a', 'name': 'g'}], {'envVars': cheio[:2] + [{'key': cheio[2]['key'], 'value': ''}]}),
+            'ausente': ([{'id': 'evg-a', 'name': 'outro'}], {}),
+        }
+        for rotulo, (grupos, detalhe) in casos.items():
+            with self.subTest(rotulo), self._rede_grupos(grupos, detalhe), self.assertRaises(ValueError):
+                oauth.conferir_grupo('tea-ficticio', 'k', 'g')
+
+    def test_formato_recusa_valor_trocado_sem_exibir(self):
+        # Ex.: o NOME da chave colado no lugar da chave do Render.
+        casos = {
+            'RENDER_API_KEY': ('sire-drive-temporaria', 'rnd_' + 'A' * 24),
+            'SIRE_DRIVE_CLIENT_ID': ('GOCSPX-ficticio', '123-abc.apps.googleusercontent.com'),
+            'SIRE_DRIVE_CLIENT_SECRET': ('123-abc.apps.googleusercontent.com', 'GOCSPX-' + 'b' * 20),
+        }
+        for nome, (errado, certo) in casos.items():
+            with self.subTest(nome), patch.dict(oauth.os.environ, {}, clear=True):
+                with patch.object(oauth, 'getpass', return_value=errado):
+                    with self.assertRaises(ValueError) as erro:
+                        oauth.segredo(nome)
+                    self.assertNotIn(errado, str(erro.exception))
+                with patch.object(oauth, 'getpass', return_value=' ' + certo + ' '):
+                    self.assertEqual(oauth.segredo(nome), certo)
+
+    def test_renovacao_le_cliente_do_grupo_sem_exibir(self):
+        detalhe = {'envVars': [{'key': k, 'value': k.lower() + '-ficticio'} for k in oauth.CHAVES_DRIVE]}
+        saida = io.StringIO()
+        with self._rede_grupos([{'id': 'evg-abc', 'name': 'sire-drive-oauth-x'}], detalhe), redirect_stdout(saida):
+            grupo_id, nome, valores = oauth.ler_grupo_drive('tea-ficticio', 'k')
+        self.assertEqual((grupo_id, nome), ('evg-abc', 'sire-drive-oauth-x'))
+        self.assertEqual(valores['SIRE_DRIVE_CLIENT_ID'], 'sire_drive_client_id-ficticio')
+        self.assertEqual(saida.getvalue(), '')
+
+    def test_renovacao_recusa_grupo_vinculado_ou_ambiguo(self):
+        cheio = {'envVars': [{'key': k, 'value': 'v'} for k in oauth.CHAVES_DRIVE]}
+        casos = {
+            'vinculado': [{'id': 'evg-a', 'name': 'sire-drive-oauth-a', 'serviceLinks': [{'id': 'srv-x'}]}],
+            'dois grupos': [{'id': 'evg-a', 'name': 'sire-drive-oauth-a'}, {'id': 'evg-b', 'name': 'sire-drive-oauth-b'}],
+            'nenhum': [{'id': 'evg-a', 'name': 'outro'}],
+        }
+        for rotulo, grupos in casos.items():
+            with self.subTest(rotulo), self._rede_grupos(grupos, cheio), self.assertRaises(ValueError):
+                oauth.ler_grupo_drive('tea-ficticio', 'k')
+
+    def test_renovacao_troca_somente_o_refresh_token(self):
+        with patch.object(oauth, 'urlopen', return_value=io.BytesIO(b'{"value":"x"}')) as rede:
+            oauth.atualizar_token_grupo('evg-abc', 'k', 'novo-token-ficticio')
+        req = rede.call_args.args[0]
+        self.assertEqual(req.get_method(), 'PUT')
+        self.assertEqual(req.full_url, 'https://api.render.com/v1/env-groups/evg-abc/env-vars/SIRE_DRIVE_REFRESH_TOKEN')
+        self.assertEqual(json.loads(req.data), {'value': 'novo-token-ficticio'})
+        with patch.object(oauth, 'urlopen') as rede, self.assertRaises(ValueError):
+            oauth.atualizar_token_grupo('../outro', 'k', 'x')
+        rede.assert_not_called()
+
     def test_grupo_rejeita_segredos_extras_antes_da_rede(self):
         creds = {k: 'ficticio' for k in oauth.CHAVES_DRIVE}
         creds['RENDER_API_KEY'] = 'ficticio'
