@@ -224,3 +224,14 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 | G-monografia | **PENDENTE** | Fontes consultadas, mas auditoria integral ainda não realizada | Inventário e confronto documental com evidências verificáveis |
 
 **Limites:** os logs demonstram migração 0007 apenas nos bancos descartáveis de CI. Não houve nesta rodada merge, deploy, migração na demo, teste OAuth real nem execução local. PRs #2, #7, #8 e #9 consultadas abertas em draft; PR #8 apresentou atualização em 18/11/2026 04:01 UTC, portanto não editar arquivos compartilhados sem nova reconciliação.
+
+
+## Rodada 18/11/2026 — conciliação FOTO-05 (branch independente)
+
+| Item | Status | Último commit / evidência | Bloqueio e próxima ação |
+|---|---|---|---|
+| A — divergência de cabeçalho do teste FOTO-05 | **CONCLUÍDO (diagnóstico)** | `af01346f2bc0e7635ac90a090fb59fee1229b984`; [conciliação](CONCILIACAO_CACHE_FOTO05_20261118.md); PR #2 HEAD `faa5ba3` | Cabeçalho descreve falha atual, mas view impõe no-store. Correção textual **PENDENTE** ao mantenedor da PR #2, após conciliação; não alterar branch em uso |
+| B — OAuth e fotos reais | **BLOQUEADO** | CI da PR #2 usa mocks | Falta autorização própria `drive.file` e ambiente Render isolado; responsável autora/operador Google/Render; impacto: impede aceite real de upload, exclusão e persistência; retomar com consentimento e ambiente seguro |
+| F — aceite visual/pós-deploy | **PENDENTE** | Nenhum ensaio novo nesta rodada | Requer B e reconciliação de PRs; executar navegador e teste real sem afetar demo |
+
+**Gate documental desta unidade:** RN-01–41, baseline, guia, UC01–14, ERS 3.0, CAT 0.2 e registro técnico lidos por IDs originais. Não houve alteração de código, testes executados, merge, migração, deploy ou edição da monografia. Branch independente para não colidir com a PR #8; este registro só entra no checklist principal após revisão/integração da branch documental. Próxima ação independente: verificar cobertura da PR #9 e seus logs no SHA exato, ou prosseguir com matriz acadêmica sem alterar históricos.
