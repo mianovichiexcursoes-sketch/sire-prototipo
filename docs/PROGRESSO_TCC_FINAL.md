@@ -4,14 +4,14 @@ Este checklist acompanha a branch isolada feat/evo-uso-01-tutorial-20261118. A l
 
 | Item | Estado | Último commit | Evidência | Próxima ação |
 |---|---|---|---|---|
-| A — PR #2, ficha e fotos | Em execução em PR independente | faa5ba3 (referência histórica) | PR #2; CI 44097899889 | Revisão e testes reais de fotos após OAuth |
+| A — PR #2, ficha e fotos | PR fechada; integração não verificada | faa5ba3 (referência histórica) | PR #2; CI 44097899889 | Revisão e testes reais de fotos após OAuth |
 | B — OAuth drive.file | Bloqueado: autorização própria do app/ambiente de ensaio não confirmados | 2a354a7 (PR #9) | PR #9 e CI 44145474063 (somente fotos simuladas) | Autora configura ambiente isolado, sem divulgar segredos |
 | C — CPF/LGPD | Pendente, branch independente | — | — | Revisar estado da PR dedicada e testes sintéticos |
 | D — UX de reserva | Pendente | — | — | Implementar após reconciliação das branches |
 | E — Painéis | Pendente | — | — | Verificar consultas e permissões existentes |
 | F — CAT/VF regressão | Pendente parcialmente | faa5ba3 | CI 44097899889 | Validar cenários afetados, PostgreSQL e navegador |
 | G — documentação e auditoria global | Pendente | — | Documentos oficiais abaixo | Inventariar pasta e auditar monografia integral |
-| EVO-USO-01 — tutorial | Em execução, NÃO validado | 91fcede / 6f1045a | sire/static/sire/js/tutorial-uso.js e sire/templates/sire/base.html | Testar no navegador com perfis sintéticos, corrigir achados, registrar avaliação humana |
+| EVO-USO-01 — tutorial | Correções propostas, NÃO validadas | 3f4549b (base PR #15) | sire/static/sire/js/tutorial-uso.js e sire/templates/sire/base.html | Executar TUT-01–06 na branch de correções, conciliar PR #15 e registrar avaliação humana |
 | EVO-USO-01 — modelo e UC no projeto | Pendente | — | PR #14, plano espiral | Consolidar apêndice e PDF após conferir diagramas |
 
 ## Gate de fontes
@@ -26,3 +26,9 @@ Lidas em 18/11/2026 por ID: RN-01–41 (1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE0
 
 ## Rastreabilidade
 EVO-USO-01 / TUT-01 a TUT-05 -> base.html + tutorial-uso.js -> ensaios de navegador pendentes -> seção metodologia/avaliação da monografia pendente. TUT-06 depende de regressão de reservas e autorização entre agências. DOC-01 depende de conferência do diagrama e apêndice. AVAL-01 depende de retorno humano.
+
+## Rodada 18/11/2026 — correções isoladas
+- PR #15 inspecionada no SHA 3f4549b; PR #19 documental no SHA 19b2f08; PR #2 consultada e encontrada fechada, sem inferir merge.
+- Fonte RN lida via Drive fetch (a leitura Docs retornou 429); baseline lida via fetch; guia, UC, requisitos, CAT e registro via get_document_text. Versões originais não modificadas.
+- TUT-A01/A02/A03/A04/A05: correções propostas em branch independente, sem testes de navegador; responsável pela conciliação: revisão técnica. Retomar merge somente após regressão, revisão do template e aceite.
+- OAuth real: bloqueado por autorização Django drive.file e ambiente isolado não confirmados; responsável: autora/operador da conta. Evidência: nenhuma autorização real demonstrada. Não impede TUT.
