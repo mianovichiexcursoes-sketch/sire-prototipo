@@ -247,3 +247,21 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 | D/E/G | **PENDENTE** | fontes lidas; auditoria integral não executada | UX/painéis e inventário acadêmico após reconciliação pertinente |
 
 Nenhum merge, deploy, migração, teste novo, alteração de monografia ou dados reais nesta rodada. A baseline ER-SIRE 2.1 permanece preservada.
+
+
+## Rodada 18/11/2026, 08h (Brasília) — gate documental e conferência independente dos jobs da PR #9
+
+**Fontes oficiais:** leitura direta, por ID exato, dos 12 itens (RN-01–RN-41, ER-SIRE 2.1, guia, UC01–UC14, ERS, CAT, registro, monografia, modelo IFSP, regulamento PDF, parecer e PROMPS histórico). Datas de modificação retornadas pelo Drive: regras 28/09/2026; baseline 16/11/2026; guia 12/11/2026; UC 22/10/2026; ERS 23/10/2026; CAT e registro 17/11/2026; monografia 17/11/2026; modelo 30/06/2026; regulamento 28/09/2026; parecer 23/10/2026; PROMPS 28/09/2026. Leitura de seções introdutórias e metadados, **não auditoria integral**.
+
+**Verificação atual do GitHub:** PRs #2, #7, #8, #9, #10, #11 e #12 abertas como rascunho na consulta. A execução [44145474063](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44145474063) apresenta jobs **fotos-sqlite** ID 134259294641 e **fotos-postgresql** ID 134259295337, ambos com conclusão success. Os nomes dos passos confirmam regressão de fotos simulada; **não há passo identificado como execução dos nove testes OAuth**. A confirmação não substitui inspeção dos logs nem teste de callback.
+
+| Item | Status | Último commit/evidência | Próxima ação / dependência |
+|---|---|---|---|
+| F-CI-PR9: identificar jobs e passos | **CONCLUÍDO (metadados)** | run 44145474063, jobs 134259294641 e 134259295337 | Ler logs integrais e registrar comandos/contagens exatos; não inferir execução OAuth |
+| B-CB: consentimento negado e timeout | **PENDENTE** | inspeção do script PR #9 e relatório REVISAO_CALLBACK_OAUTH_20261118.md | Criar testes locais sintéticos em branch isolada após conciliar com agente da PR #9; não depende de OAuth real |
+| B-OAuth real / fotos persistentes | **BLOQUEADO** | nenhum consentimento próprio drive.file nem ambiente isolado confirmado nesta rodada | Responsável autora/operador Google Cloud e Render; retomar com autorização e serviço de ensaio verificáveis sem expor credenciais |
+| A: integrar PR #2 e extensões | **EM REVISÃO** | PRs em draft, branches concorrentes | Responsável revisor/Work; conciliar HEADs e regressão antes de merge/deploy |
+| C: CPF | **BLOQUEADO para coleta** | especificação independente na PR #8 | Responsável autora; validar finalidade/necessidade/base legal; documentação sintética independente pode avançar |
+| G: monografia e auditoria global | **PENDENTE** | fontes consultadas, auditoria integral não executada | Inventariar pasta e confrontar evidências sem editar históricos silenciosamente |
+
+**Limite de ferramenta:** tentativa local de `git ls-remote` falhou por DNS (`Could not resolve host: github.com`); não houve checkout nem testes locais. Esta rodada **não executou novos testes, não criou deploy, não aplicou migrations, não realizou merge nem alterou a demo**. A entrega desta rodada é rastreabilidade de jobs e dependências, não aceite OAuth.
