@@ -62,3 +62,15 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Dependências/coordenação:** A permanece EM EXECUÇÃO, com código e testes em andamento por outro agente. Não editar `views.py`, `models.py`, migrações, templates nem a PR #2 enquanto não reconciliar PR #4/#5 e respectivos HEADs. B permanece BLOQUEADO pela autorização OAuth do aplicativo, com responsável autora/operador Google Cloud + Render; sem B não validar fotos reais ou persistência após deploy. C pode avançar de modo independente apenas em especificação de finalidade, minimização e política de acesso do CPF (RN-04/05 e UC01), sem coletar CPF real; implementação requer checagem de branches ativas. D/E seguem independentes de B, sujeitos a reconciliação de código. F parcialmente possível com Drive simulado; aceite real dependente de B. G mantém auditoria global pendente.
 
 **Próxima ação verificável:** comparar HEAD, status de CI e conteúdo das PRs #2/#4/#5; consolidar matriz CAT-RF-02/03/04 → migração 0007 / views / testes FOTO → evidências; só então revisar lacunas sem duplicar alterações. Em paralelo, preparar especificação EVO-CPF/LGPD em documento separado e sintético. **Nenhum teste, merge, deploy ou aprovação humana foi executado nesta rodada.**
+
+
+## Rodada 18/11/2026 — EVO-USO-01 (unidade independente)
+
+| Item | Estado | Último commit | Evidência verificável | Próxima ação |
+|---|---|---|---|---|
+| EVO-USO-01 critérios TUT-01–09 | CONCLUÍDO (somente especificação) | d2078232075338b96245f63b3d8eea621a6f41ea | [Critérios TUT](EVO_USO_01_CRITERIOS_TUT_20261118.md) | Inspecionar seletores reais e implementar tutorial em branch isolada; não afirmar aceite |
+| EVO-USO-01 implementação e testes | PENDENTE | — | Nenhum teste de tutorial executado nesta rodada | Testar perfis, teclado, celular, estados vazios e regressões antes de merge |
+| EVO-USO-01 avaliação com orientador | BLOQUEADO (revisão humana) | — | Feedback histórico 17/11; nenhuma reavaliação recebida | Autora solicitar nova tentativa após versão testada; registrar resultado real |
+| OAuth Drive próprio do Django | BLOQUEADO (autorização) | — | Nenhum OAuth ou foto real testados nesta rodada | Autora/operador autorizar aplicativo e configurar segredos no Render; não depende do tutorial |
+
+PR #2 foi consultada em 18/11 e consta **merged**, ao contrário do estado antigo do checklist; isso não comprova deploy nem validação real de fotos. PR #14 permanece aberta/draft com texto anterior sobre vídeo; decisão posterior é tutorial, preservando histórico. Fontes oficiais RN, baseline, guia, UC, requisitos, CAT e registro foram relidas diretamente pelos IDs registrados acima nesta rodada. Nenhum deploy, teste funcional ou alteração da monografia foi feito nesta unidade.
