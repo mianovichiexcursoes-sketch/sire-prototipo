@@ -52,8 +52,8 @@ A entrada oculta do terminal não dava retorno visual. O nome da chave do
 Render foi enviado no lugar da chave (HTTP 401, nada gravado) e, em seguida, a
 chave foi colada no prompt do PowerShell, ficando visível na tela e no
 histórico. Medidas: troca da entrada por janela mascarada com conferência de
-formato (commit `11786b9`) e **revogação da chave exposta** (pendente de
-confirmação no painel, ver seção 7).
+formato (commit `11786b9`) e **revogação da chave exposta**, feita no painel
+do Render em 18/11/2026 após o ensaio, com autorização da autora.
 
 ## 4. Autorização e gravação no Render (real)
 
@@ -116,8 +116,8 @@ criada pelo aplicativo.
 
 ## 7. Pendências e riscos
 
-1. **Revogar no Render a chave de API usada** (exposta no terminal). Depois
-   disso, o grupo continua válido: ele não depende da chave.
+1. ~~Revogar no Render a chave de API usada~~ — **feito** em 18/11/2026: o
+   painel mostra "No provisioned API keys"; o grupo segue presente e válido.
 2. **Validade do token (modo Testando):** para apps externos em teste, o
    refresh token expira em **7 dias** (por volta de 25/11/2026). Para uso
    duradouro, publicar o app em produção (escopo `drive.file` é não
