@@ -210,3 +210,17 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Evidência verificável:** PR #2 aberta/draft HEAD `faa5ba3d60b7f292be09676b13f39e9276eacafb`; migração `0007_ficha_e_fotos_drive.py` depende da 0006, acrescenta três campos textuais opcionais e a tabela `FotoExcursao` sem remover colunas. O teste de fotos usa mocks e tem cabeçalho possivelmente desatualizado sobre cache público. São observações estáticas, **não testes executados**. PR #7 aberta/draft HEAD `0a7f77c`, PR #9 aberta/draft HEAD `2a354a7`; PR #8 permanece aberta/draft.
 
 **A EM REVISÃO:** reconciliar branches e revisar implementação/CI sem sobrescrever Work (responsável: revisor/autor da integração; retomar após diff e testes por SHA). **B BLOQUEADO:** falta confirmação de OAuth próprio `drive.file` e ambiente isolado (responsável: autora/operador Google/Render; retomar após consentimento/ambiente); não realizar upload/exclusão/persistência real nem deploy. **C BLOQUEADO:** finalidade/base legal CPF não aprovadas. **F PENDENTE:** execução SQLite/PostgreSQL, CAT-VF e testes visuais. **D/E/G PENDENTES.** Próxima ação independente: verificar status/logs dos workflows do HEAD exato da PR #2 e avaliar divergência de documentação, sem alterar demo. Nenhum teste novo, merge, migração aplicada, deploy ou monografia editada.
+
+
+## Rodada de auditoria CI — 18/11/2026 (01h55, Brasília)
+
+**Unidade concluída:** leitura dos logs reais de GitHub Actions da PR #2 no HEAD `faa5ba3d60b7f292be09676b13f39e9276eacafb`. Evidência versionada em [AUDITORIA_CI_PR2_20261118.md](AUDITORIA_CI_PR2_20261118.md), commit `56ed670178a859bcfdf99dd478f5284569e00177`. As 12 fontes oficiais/históricas foram novamente acessadas por seus IDs originais nesta rodada; nenhuma versão histórica foi alterada.
+
+| Item | Status | Evidência | Próxima ação |
+|---|---|---|---|
+| A-CI-PR2: verificar logs SQLite/PostgreSQL no HEAD da PR #2 | **CONCLUÍDO** | Runs [44097899889](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44097899889) e [44097900342](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44097900342): fotos 17/17 PostgreSQL e 16/17 SQLite (1 skip); suíte 84/84 PostgreSQL e 81/84 SQLite (3 skips), sem falhas | Reexecutar se o HEAD mudar; revisar comentários de cache e conciliar PRs |
+| B-OAUTH real | **BLOQUEADO** | CI usa Drive simulado, não comprova token real | Pré-requisito: autorização própria `drive.file`, credenciais seguras e ambiente isolado; responsável: autora/operador Google Cloud e Render; retomar após confirmação verificável |
+| F-aceite integrado | **PENDENTE** | CI não cobre navegador, deploy e persistência real | Executar testes em ensaio sem afetar demo após B e conciliação |
+| G-monografia | **PENDENTE** | Fontes consultadas, mas auditoria integral ainda não realizada | Inventário e confronto documental com evidências verificáveis |
+
+**Limites:** os logs demonstram migração 0007 apenas nos bancos descartáveis de CI. Não houve nesta rodada merge, deploy, migração na demo, teste OAuth real nem execução local. PRs #2, #7, #8 e #9 consultadas abertas em draft; PR #8 apresentou atualização em 18/11/2026 04:01 UTC, portanto não editar arquivos compartilhados sem nova reconciliação.
