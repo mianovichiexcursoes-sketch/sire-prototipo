@@ -379,3 +379,7 @@ textarea:focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
 .foto-gerenciar { display: grid; gap: 8px; align-content: start; }
 .foto-gerenciar form { margin: 0; }
 .foto-gerenciar button { width: 100%; }
+
+/* Aviso imediato quando o arquivo escolhido não é uma foto aceita */
+.aviso-arquivo { margin: 6px 0 0; padding: 10px 14px; border-left: 4px solid var(--erro);
+    background: #fff0ec; color: var(--erro); font-weight: 600; }

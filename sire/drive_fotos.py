@@ -127,7 +127,10 @@ def preparar_jpeg(arquivo):
                 raise ValueError("A foto otimizada ultrapassou 2 MB.")
             return dados
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as erro:
-        raise ValueError("Não foi possível ler a imagem enviada.") from erro
+        raise ValueError(
+            "O arquivo enviado não é uma foto válida. Envie somente fotos JPG, PNG ou "
+            "WebP; vídeos não são aceitos."
+        ) from erro
 
 
 def enviar(excursao_id, imagem_jpeg):

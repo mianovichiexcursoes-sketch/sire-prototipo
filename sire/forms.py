@@ -236,6 +236,11 @@ class ExcursaoForm(forms.ModelForm):
 class FotoExcursaoForm(forms.Form):
     foto = forms.FileField(
         label="Foto da excursão",
+        # accept: o seletor do sistema já mostra só imagens; data-limite-bytes é
+        # usado por fotos-upload.js para avisar antes de enviar.
+        widget=forms.FileInput(
+            attrs={"accept": "image/jpeg,image/png,image/webp", "data-limite-bytes": 5 * 1024 * 1024}
+        ),
         help_text=(
             "JPG, PNG ou WebP. Até 5 MB. O sistema ajusta o tamanho antes de enviar ao "
             "Drive. Não envie fotos em que pessoas possam ser identificadas."

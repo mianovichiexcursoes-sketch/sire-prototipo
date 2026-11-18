@@ -1,4 +1,5 @@
 {% extends 'sire/base.html' %}
+{% load static %}
 {% block conteudo %}
     <h1>
         {% if excursao %}
@@ -38,6 +39,7 @@
                         {{ foto_form.as_p }}
                         <button type="submit">Adicionar foto</button>
                     </form>
+                    <script src="{% static 'sire/js/fotos-upload.js' %}" defer></script>
                 {% endif %}
             {% else %}
                 <p role="status">Envio de fotos aguardando conexão do Google Drive pelo responsável técnico. A edição dos demais campos continua disponível.</p>

@@ -246,6 +246,20 @@ def adicionar_foto(request, id):
     if excursao_inicial.fotos.count() >= drive_fotos.LIMITE_FOTOS:
         messages.error(request, "Limite de seis fotos por excursão.")
         return redirect("sire:editar_excursao", id=id)
+    # Arquivo muito acima do limite (ex.: vídeo): recusa pelo tamanho declarado,
+    # sem decodificar o conteúdo. A tela já avisa antes do envio (fotos-upload.js).
+    try:
+        tamanho = int(request.META.get("CONTENT_LENGTH") or 0)
+    except ValueError:
+        tamanho = 0
+    if tamanho > drive_fotos.LIMITE_UPLOAD + 256 * 1024:
+        megas = f"{tamanho / (1024 * 1024):.1f}".replace(".", ",")
+        messages.error(
+            request,
+            f"Arquivo grande demais para foto ({megas} MB). Envie somente fotos JPG, "
+            "PNG ou WebP de até 5 MB; vídeos não são aceitos.",
+        )
+        return redirect("sire:editar_excursao", id=id)
     # Valida dados do upload antes de adquirir o bloqueio do registro.
     formulario = FotoExcursaoForm(request.POST, request.FILES)
     if not formulario.is_valid():
