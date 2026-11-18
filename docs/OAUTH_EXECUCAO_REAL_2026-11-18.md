@@ -157,6 +157,10 @@ Para evitar a expiração de 7 dias dos tokens emitidos em modo Testando:
 5. **Chave temporária do Render** (`sire-drive-renovacao`, permissões
    restritas) revogada logo depois; o painel mostra "No provisioned API keys".
 
-Pendência decorrente: o aviso de privacidade da demonstração, agora exibido na
-tela de consentimento do Google, ainda não menciona o armazenamento de fotos
-no Google Drive. Deve ser atualizado antes de as fotos irem para a demonstração.
+Aviso de privacidade: atualizado nesta branch com a seção "Fotos das
+excursões" (Drive da responsável, acesso restrito a arquivos do próprio SIRE,
+sem link público, visibilidade só após publicação, remoção de metadados e
+vedação de fotos com pessoas identificáveis). A demonstração pública ainda
+exibe a versão anterior até a integração da cadeia de PRs. Teste
+`sire/tests/test_privacidade_fotos.py` comprova que o JPEG enviado ao Drive
+não carrega EXIF nem coordenadas GPS do original.
