@@ -11,7 +11,7 @@ Este checklist acompanha a branch isolada feat/evo-uso-01-tutorial-20261118. A l
 | E — Painéis | Pendente | — | — | Verificar consultas e permissões existentes |
 | F — CAT/VF regressão | Pendente parcialmente | faa5ba3 | CI 44097899889 | Validar cenários afetados, PostgreSQL e navegador |
 | G — documentação e auditoria global | Pendente | — | Documentos oficiais abaixo | Inventariar pasta e auditar monografia integral |
-| EVO-USO-01 — tutorial | Em execução, NÃO validado | 91fcede / 6f1045a | sire/static/sire/js/tutorial-uso.js e sire/templates/sire/base.html | Testar no navegador com perfis sintéticos, corrigir achados, registrar avaliação humana |
+| EVO-USO-01 — tutorial | Em execução, NÃO validado | 9f2f923 (auditoria); 91fcede / 6f1045a (implementação) | docs/EVO_USO_01_AUDITORIA_QA_20261118.md; JS e base.html | Conciliar PR #15; corrigir A01–A05 em branch técnica; testar TUT-01–06 em navegador |
 | EVO-USO-01 — modelo e UC no projeto | Pendente | — | PR #14, plano espiral | Consolidar apêndice e PDF após conferir diagramas |
 
 ## Gate de fontes
@@ -26,3 +26,9 @@ Lidas em 18/11/2026 por ID: RN-01–41 (1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE0
 
 ## Rastreabilidade
 EVO-USO-01 / TUT-01 a TUT-05 -> base.html + tutorial-uso.js -> ensaios de navegador pendentes -> seção metodologia/avaliação da monografia pendente. TUT-06 depende de regressão de reservas e autorização entre agências. DOC-01 depende de conferência do diagrama e apêndice. AVAL-01 depende de retorno humano.
+
+## Rodada 18/11/2026 — auditoria EVO-USO-01
+- **Concluído:** revisão estática dos arquivos da PR #15 e matriz de verificação TUT-01–06, registrada em `docs/EVO_USO_01_AUDITORIA_QA_20261118.md` (commit `9f2f923`). Nenhum teste de navegador executado nesta rodada.
+- **Achados a reproduzir:** roteiros idênticos para visitante/passageiro, seleção ambígua de alvos, foco/teclado, destaque que altera posicionamento, ausência de retomada entre páginas. São riscos de inspeção, não falhas confirmadas em produção.
+- **Bloqueios:** OAuth real — credenciais/autorização do aplicativo e ambiente isolado não confirmados; responsável autora; retomar somente com autorização segura. Testes de navegador — ambiente e execução ainda não comprovados; responsável equipe técnica; retomar após conciliação do HEAD e preparação de perfis sintéticos. Avaliação orientador — requer versão testada e encaminhamento pela autora.
+- **Próxima unidade independente:** correções isoladas TUT-A01–A05 após conferir HEAD/PR #15; alternativamente modelo relacional e apêndice UC01–14 se conflito técnico impedir edição.
