@@ -95,5 +95,27 @@ class TutorialBrowserTests(unittest.TestCase):
         self.assertEqual(page.evaluate("window.__submitted"), 0)
 
 
+    def test_tut07_mobile_viewport_and_missing_targets(self):
+        """Smoke test on narrow viewport with synthetic, incomplete page."""
+        page = self.page_for("visitante")
+        page.set_viewport_size({"width": 375, "height": 812})
+        page.get_by_role("button", name="Começar").click()
+        dialog = page.get_by_role("dialog")
+        self.assertTrue(dialog.is_visible())
+        self.assertLessEqual(dialog.bounding_box()["width"], 375)
+        # Navigate all steps: absent targets must not prevent closing the guide.
+        for _ in range(12):
+            if not dialog.is_visible():
+                break
+            next_button = dialog.get_by_role("button", name="Próximo")
+            if next_button.count() and next_button.is_visible():
+                next_button.click()
+            else:
+                break
+        if dialog.is_visible():
+            page.keyboard.press("Escape")
+        self.assertFalse(dialog.is_visible())
+
+
 if __name__ == "__main__":
     unittest.main()
