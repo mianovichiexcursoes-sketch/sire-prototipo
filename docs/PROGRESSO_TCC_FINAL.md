@@ -11,7 +11,7 @@ Este checklist acompanha a branch isolada feat/evo-uso-01-tutorial-20261118. A l
 | E — Painéis | Pendente | — | — | Verificar consultas e permissões existentes |
 | F — CAT/VF regressão | Pendente parcialmente | faa5ba3 | CI 44097899889 | Validar cenários afetados, PostgreSQL e navegador |
 | G — documentação e auditoria global | Pendente | — | Documentos oficiais abaixo | Inventariar pasta e auditar monografia integral |
-| EVO-USO-01 — tutorial | Correções propostas, NÃO validadas | 3f4549b (base PR #15) | sire/static/sire/js/tutorial-uso.js e sire/templates/sire/base.html | Executar TUT-01–06 na branch de correções, conciliar PR #15 e registrar avaliação humana |
+| EVO-USO-01 — tutorial | Suíte Chromium proposta; execução não confirmada | a9de631 / 22afb069 | tests/test_tutorial_browser.py; .github/workflows/evo-uso-01-browser.yml | Verificar CI do SHA e corrigir falhas; validar Django e navegador móvel antes de merge |
 | EVO-USO-01 — modelo e UC no projeto | Pendente | — | PR #14, plano espiral | Consolidar apêndice e PDF após conferir diagramas |
 
 ## Gate de fontes
@@ -32,3 +32,9 @@ EVO-USO-01 / TUT-01 a TUT-05 -> base.html + tutorial-uso.js -> ensaios de navega
 - Fonte RN lida via Drive fetch (a leitura Docs retornou 429); baseline lida via fetch; guia, UC, requisitos, CAT e registro via get_document_text. Versões originais não modificadas.
 - TUT-A01/A02/A03/A04/A05: correções propostas em branch independente, sem testes de navegador; responsável pela conciliação: revisão técnica. Retomar merge somente após regressão, revisão do template e aceite.
 - OAuth real: bloqueado por autorização Django drive.file e ambiente isolado não confirmados; responsável: autora/operador da conta. Evidência: nenhuma autorização real demonstrada. Não impede TUT.
+
+## Rodada 18/11/2026 — suíte Chromium TUT-01–06 isolada
+- **Em execução, NÃO aprovada:** branch `test/evo-uso-01-browser-20261118`, commits `22afb069` (testes Playwright) e `a9de631` (workflow de CI). Testes verificam convite, acesso permanente, roteiro passageiro/agente, Escape e foco, storage indisponível e ausência de submissão de formulário; usam HTML e formulário sintéticos, não dados reais.
+- **Pré-requisito da verificação:** runner GitHub Actions com Playwright 1.56.0 e Chromium; o código do tutorial é lido do mesmo SHA pelo teste. A execução local completa não ocorreu: repositório inacessível via DNS no ambiente local. Workflow recém-criado ainda requer comprovação de job/log, portanto TUT-01–06 seguem **pendentes de resultado**.
+- **Limitação:** harness isolado não demonstra integração Django, permissões reais, responsividade no Render, acessibilidade por leitor de tela nem aceite do orientador. Não mesclar PR #15/#20 sem CI, regressão e conciliação do template.
+- **Próxima ação concreta:** verificar job do workflow no SHA `a9de631`; corrigir falhas reais, ampliar viewport móvel/Tab, conciliar PR #20; depois testar em aplicação Django isolada. OAuth real permanece bloqueado por autorização do aplicativo/ambiente Render de ensaio (responsável: autora), mas não impede testes de tutorial.
