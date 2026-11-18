@@ -1,0 +1,81 @@
+{
+  "executado_em": "2026-11-18T10:32:20-03:00",
+  "ambiente": {
+    "local": "computador da autora (Windows)",
+    "banco": "sire",
+    "python": "3.14.8",
+    "django": "6.1.2",
+    "escopo_oauth": "https://www.googleapis.com/auth/drive.file",
+    "grupo_render": "sire-drive-oauth-36a0572f",
+    "demo_publica_alterada": false
+  },
+  "imagem": "sintética, gerada pelo script (faixas coloridas e texto)",
+  "verificacoes": [
+    {
+      "verificacao": "Upload pela agência dona (publicada e rascunho)",
+      "conforme": true,
+      "obtido": "fotos gravadas: 2 de 2"
+    },
+    {
+      "verificacao": "Arquivo criado no Drive como JPEG",
+      "conforme": true,
+      "obtido": "image/jpeg"
+    },
+    {
+      "verificacao": "Arquivo NÃO é público nem compartilhado",
+      "conforme": true,
+      "obtido": "shared=False; tipos de permissão=['user']"
+    },
+    {
+      "verificacao": "Visitante vê foto de excursão publicada",
+      "conforme": true,
+      "obtido": "HTTP 200; JPEG=True; Cache-Control=private, no-store, no-cache, max-age=0, must-revalidate"
+    },
+    {
+      "verificacao": "Resposta da foto sem cache reutilizável",
+      "conforme": true,
+      "obtido": "private, no-store, no-cache, max-age=0, must-revalidate"
+    },
+    {
+      "verificacao": "Página não expõe link direto ao Drive",
+      "conforme": true,
+      "obtido": "sem drive.google.com/googleapis no HTML"
+    },
+    {
+      "verificacao": "Foto de rascunho só para a agência dona",
+      "conforme": true,
+      "obtido": "{\"visitante\": 404, \"passageiro\": 404, \"agente_outra_agencia\": 404, \"agente_dona\": 200}"
+    },
+    {
+      "verificacao": "Outra agência não envia foto",
+      "conforme": true,
+      "obtido": "HTTP 404; fotos 1->1"
+    },
+    {
+      "verificacao": "Outra agência não remove foto",
+      "conforme": true,
+      "obtido": "HTTP 404; foto preservada no banco e no Drive: True"
+    },
+    {
+      "verificacao": "Persistência após reinício (processo novo, cache vazio)",
+      "conforme": true,
+      "obtido": "referência preservada: True; HTTP 200"
+    },
+    {
+      "verificacao": "Remoção pela agência dona apaga banco e Drive",
+      "conforme": true,
+      "obtido": "removida do banco e do Drive: True"
+    },
+    {
+      "verificacao": "Foto removida deixa de ser servida",
+      "conforme": true,
+      "obtido": "HTTP 404"
+    },
+    {
+      "verificacao": "Limpeza do ensaio (Drive e banco)",
+      "conforme": true,
+      "obtido": "arquivos não removidos: 0"
+    }
+  ],
+  "resultado": "TODOS CONFORMES"
+}

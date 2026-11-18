@@ -118,13 +118,45 @@ criada pelo aplicativo.
 
 1. ~~Revogar no Render a chave de API usada~~ — **feito** em 18/11/2026: o
    painel mostra "No provisioned API keys"; o grupo segue presente e válido.
-2. **Validade do token (modo Testando):** para apps externos em teste, o
-   refresh token expira em **7 dias** (por volta de 25/11/2026). Para uso
-   duradouro, publicar o app em produção (escopo `drive.file` é não
-   confidencial) e repetir a autorização com `--permitir-novo-grupo`,
-   apagando depois o grupo antigo. Decisão da autora.
+2. ~~Validade do token (modo Testando)~~ — **resolvido** em 18/11/2026: ver
+   seção 8.
 3. Ambiente persistente isolado para o teste de redeploy: menor alternativa
    viável sem custo é um serviço web gratuito de ensaio, vinculado ao grupo,
    usando um PostgreSQL externo gratuito (não o da demo); depende de decisão.
 4. Revisar e integrar a cadeia de PRs (#2, #5, #7, #9 e esta) antes de
    qualquer publicação das fotos.
+
+## 8. Publicação do app e renovação do token (18/11/2026, 10:30)
+
+Para evitar a expiração de 7 dias dos tokens emitidos em modo Testando:
+
+1. **Branding:** página inicial `https://sire-demo.onrender.com/`, política de
+   privacidade `https://sire-demo.onrender.com/privacidade/` e domínio
+   autorizado `sire-demo.onrender.com`. Sem logotipo.
+2. **Publicação:** status alterado de "Testando" para **"Em produção"**, com
+   autorização da autora. Com 1 domínio, sem logotipo e somente o escopo não
+   confidencial `drive.file`, o Google não exigiu verificação.
+3. **Renovação:** novo modo `scripts/autorizacao_drive.py --renovar-token
+   WORKSPACE_ID` (commit `f76ffb2`). Lê o ID e a chave secreta do cliente do
+   grupo do Render só em memória (o Google não volta a exibir a chave
+   secreta), faz nova autorização e troca apenas `SIRE_DRIVE_REFRESH_TOKEN`.
+   Saída:
+
+   ```
+   Workspace SIRE. confirmado; cliente lido do grupo sire-drive-oauth-36a0572f.
+   Autorização do Google recebida com escopo drive.file.
+   CONCLUIDO: token renovado no grupo sire-drive-oauth-36a0572f (evg-dbuq4kom7kps73d5trfg)
+   Conferido: 3 chaves preenchidas e nenhum serviço vinculado.
+   ```
+
+   Uma primeira tentativa recebeu HTTP 401 porque a chave nova do Render
+   ainda não tinha sido gerada (foi colada a chave antiga, já revogada);
+   nada foi alterado.
+4. **Ensaio repetido com o token novo:** 18/11/2026 10:32, **13 de 13
+   conformes** — [`evidencias/2026-11-18_1032_drive_real/resultados.json`](../evidencias/2026-11-18_1032_drive_real/resultados.json).
+5. **Chave temporária do Render** (`sire-drive-renovacao`, permissões
+   restritas) revogada logo depois; o painel mostra "No provisioned API keys".
+
+Pendência decorrente: o aviso de privacidade da demonstração, agora exibido na
+tela de consentimento do Google, ainda não menciona o armazenamento de fotos
+no Google Drive. Deve ser atualizado antes de as fotos irem para a demonstração.
