@@ -88,3 +88,11 @@ GET de reserva lotada; não constituem repetição de uma suíte de regressão.
 A reconstrução em diretório separado, sem banco prévio, também aplicou todas as
 migrations internas e as quatro migrations do domínio com sucesso. Nenhum banco
 dessa conferência é incluído na distribuição.
+
+## Atualizações posteriores (o texto acima é o registro de 20/10/2026)
+
+Os itens marcados acima como "não verificado" foram tratados depois, em registros próprios:
+
+- Concorrência simultânea: `docs/POSTGRESQL_E_CONCORRENCIA.md` (12/11/2026, PostgreSQL 18.6).
+- Navegação manual e telas de computador e celular: `docs/ACEITE_FUNCIONAL_FINAL_20261118.md` (18/11/2026). Nessa rodada, VF01, VF02 e VF12 não foram repetidos.
+- Suíte automatizada: a partir de 16/11/2026 (67 testes); 107 testes no commit `e220974`.

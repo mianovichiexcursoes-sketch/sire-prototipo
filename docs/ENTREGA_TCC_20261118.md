@@ -10,19 +10,19 @@
 - **Drive real, fora da demo**: [relatório completo](OAUTH_EXECUCAO_REAL_2026-11-18.md) e [JSON do ensaio](../evidencias/2026-11-18_1032_drive_real/resultados.json) registram 13 de 13 verificações conformes em Windows/PostgreSQL local após OAuth `drive.file` renovado com o aplicativo Google em produção. Foi testada persistência após reiniciar **processo local**, não após deploy Render; os arquivos sintéticos de ensaio foram removidos.
 - **Segredos**: grupo Render `sire-drive-oauth-36a0572f` (ID `evg-dbuq4kom7kps73d5trfg`) contém três variáveis, mas o relatório de execução afirma que ele **não estava vinculado a serviço**; não registrar valores, tokens nem chaves em Git, Drive ou impressões. As chaves temporárias de API criadas na configuração foram relatadas como revogadas.
 - **Monografia atual**: https://docs.google.com/document/d/1SPpcP6bf2Whsq3cCwjYRRDGqV45jsANOofaifG4b6jg/edit — seção 3.2.3 relata retorno do orientador e EVO-USO-01; subseção 3.2.3.5 registra CI e Drive real. O sumário (páginas impressas 10–58) foi reconciliado após edição; exportação A4 revista em 60 páginas, sem folha vazia. [PDF de revisão na pasta central](https://drive.google.com/file/d/1jeciw6ftt-ESq3d6NhZYIzcawjeirhH0/view).
-- **Documentação de desenvolvimento**: https://docs.google.com/document/d/19U5JhTHfk8IbvWfdAAUg8Z81fwQ8wsji6m4vxTN9Ed8/edit — Apêndice A contém as especificações completas UC01–UC14. Regra de negócio de referência RN-01–RN-41: https://docs.google.com/document/d/1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0/edit
+- **Documentação de desenvolvimento**: https://docs.google.com/document/d/19U5JhTHfk8IbvWfdAAUg8Z81fwQ8wsji6m4vxTN9Ed8/edit — Apêndice A contém as especificações completas UC01–UC14. Regras de negócio da baseline: RN001–RN014, seção 3.4 desse documento. O documento separado "Regras de Negócio do SIRE" (https://docs.google.com/document/d/1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0/edit) é o catálogo ampliado RN-01–RN-41 da visão do produto completo, com numeração própria; ver docs/RASTREABILIDADE.md
 
 ## 2. Rastreabilidade resumida e escopo
 
 | Artefato | Requisitos e regras | Implementação | Evidência / limite |
 | --- | --- | --- | --- |
-| Baseline histórica | ER-SIRE 2.1, UC01–UC14, RN-01–RN-30 pertinentes | User, Agencia, PerfilUsuario, Excursao, PontoEmbarque, Reserva; Django ORM | VF01–VF16 registrados em artefatos de outubro e regressão posterior; preservar escopo histórico |
+| Baseline histórica | ER-SIRE 2.1, UC01–UC14, RN001–RN014 | User, Agencia, PerfilUsuario, Excursao, PontoEmbarque, Reserva; Django ORM | VF01–VF16 registrados em artefatos de outubro e regressão posterior; preservar escopo histórico |
 | Catálogo rosa e filtros | CAT-RF-01, CAT-RNF-01 | formulários, views e templates da branch de demonstração | PR #1 merged, commit 7c531342 live no Render |
-| Ficha completa | CAT-RF-02/04, UC05–UC07, RN-03/11/14 | migração 0007, formulário, detalhes, galeria | CI e testes locais; versão pública com ficha ampliada pendente |
-| Fotos | CAT-RF-03, RN-03/04/05/11 | FotoExcursao (entidade técnica nova, fora da baseline), Google Drive, proxy protegido | CI SQLite/PG e 13 verificações reais locais; sem ensaio de persistência pós-redeploy Render |
+| Ficha completa | CAT-RF-02/04 (estendem RF008/RF009), UC05–UC07, RN003, RN005 | migração 0007, formulário, detalhes, galeria | CI e testes locais; versão pública com ficha ampliada pendente |
+| Fotos | CAT-RF-03, RN003, RN005, RNF001–RNF002 | FotoExcursao (entidade técnica nova, fora da baseline), Google Drive, proxy protegido | CI SQLite/PG e 13 verificações reais locais; sem ensaio de persistência pós-redeploy Render |
 | Tutorial contextual | EVO-USO-01, retorno do orientador de 17/11 | JavaScript progressivo por perfil, botão Como usar, fechamento por Escape | Workflow de navegador aprovado; ainda falta avaliação da interface publicada pelo orientador |
-| CPF | EVO-CPF-01, RN-04/05 | **Não implementado**; somente especificação LGPD proposta na PR #8 | não colocar nos resultados de software |
-| Pagamentos, assentos, cancelamentos, favoritos, avaliações | visão evolutiva RN-31–41, backlog | **Não implementados** | proposta de trabalhos futuros, não conformidade testada |
+| CPF | EVO-CPF-01, RNF002 (catálogo ampliado: RN-04/05) | **Não implementado**; somente especificação LGPD proposta na PR #8 | não colocar nos resultados de software |
+| Pagamentos, assentos, cancelamentos, favoritos, avaliações | RF022 e catálogo ampliado RN-31–RN-41 (produto completo), backlog | **Não implementados** | proposta de trabalhos futuros, não conformidade testada |
 
 ## 3. Condições necessárias antes de declarar entrega final
 
@@ -48,3 +48,9 @@
 ## 6. Confirmação de publicação — 18/11/2026
 
 Render deployment `dep-dburju68bjmc739njca0`, commit `74f50c844b44d3a3d95f5afc06fdde31977cd91d`, status `live`, finalizado `2026-11-18T14:46:14Z`. Os logs do build confirmam instalação de dependências, coleta de 133 estáticos e comando de migrations executado sem atualizações pendentes. Isso não comprova testes reais de reserva, fotos ou tutorial em navegador da URL publicada. A vinculação do grupo OAuth ao serviço ainda precisa de verificação no painel. A revisão do PDF e o aceite do orientador permanecem pendentes.
+
+## Atualização de 18/11/2026 (noite)
+
+- Versão live no Render conferida antes do aceite: commit `e220974`. O print R06 do aceite mostra uma foto servida pela demonstração, então o vínculo do Drive com o Render funciona para exibição. Um envio novo de foto e a persistência após redeploy continuam sem evidência registrada.
+- A numeração de regras deste documento foi alinhada à baseline (RN001–RN014). A equivalência com o catálogo ampliado está em `docs/RASTREABILIDADE.md`.
+- Desde 18/11, a pasta central do Drive está com acesso **restrito**. Os links do Drive citados aqui e na monografia só abrem para a autora até ela compartilhar com o orientador ou a banca.

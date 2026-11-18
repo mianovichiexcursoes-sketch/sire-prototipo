@@ -13,6 +13,31 @@ para confirmar as decisões. As imagens corrigidas não foram localizadas como
 arquivos individuais nesta execução; não se declara nova revisão visual delas.
 Os campos e relacionamentos foram conferidos pelo mapeamento do guia original.
 
+### Numeração válida (nota de 18/11/2026)
+
+Os identificadores RF001–RF023, RNF001–RNF007 e RN001–RN014 usados aqui são os
+da **Documentação de Desenvolvimento** (seções 3.2, 3.3 e 3.4), que contém a
+baseline ER-SIRE 2.1. Na pasta central também existem dois documentos mais
+antigos com **outra numeração**, que não deve ser misturada com esta:
+
+- "Especificação de Requisitos de Software — SIRE" (versão 3.0, PFC2), com
+  RF-01–RF-23, RD-01–RD-09 e uma lista própria de RN-01–RN-14. Exemplo: nela,
+  o RF-05 é "Editar excursão" e o RF-18 aparece como Protótipo. Na baseline, o
+  RF005 é "Cadastro de excursão" e o RF018 é Produto completo.
+- "Regras de Negócio do SIRE", com o catálogo ampliado RN-01–RN-41 (visão do
+  produto completo). Exemplo: lá, o RN-06 é "Informações mínimas para
+  publicação"; na baseline, o RN006 tem esse sentido e o RN008 é "Ponto de
+  embarque válido".
+
+Em caso de divergência, vale a Documentação de Desenvolvimento.
+
+Decisões da baseline que explicam o que **não** foi implementado (seção 3.1.8):
+(a) e (b) agentes e agências são cadastrados previamente, pela administração
+do Django, sem autocadastro; (c) a excursão só tem os estados RASCUNHO e
+PUBLICADA; (d) a reserva concluída ocupa vaga, e o ciclo de estados da reserva
+(RF018) fica para o produto completo; (e) o cancelamento (RF022) fica para o
+produto completo; (f) a publicação exige pelo menos um ponto de embarque.
+
 Todas as funções abaixo estão em `sire/views.py`, salvo indicação. As rotas
 estão em `sire/urls.py`, os forms em `sire/forms.py` e os templates na pasta
 `sire/templates/sire/`.
@@ -37,6 +62,26 @@ estão em `sire/urls.py`, os forms em `sire/forms.py` e os templates na pasta
 `agente_excursoes` organiza o acesso aos UC06–UC09 e UC13–UC14; não representa
 um novo caso de uso. Não existe página independente para UC11.
 
+### Requisitos fora da matriz do protótipo (situação em 18/11/2026)
+
+| Requisito | Escopo na baseline | Situação no código | Onde |
+| --- | --- | --- | --- |
+| RF008 Registro de roteiro | Produto completo (implementação simplificada possível) | Implementado depois da baseline, como extensão (campo `roteiro`, migration 0007; CAT-RF-02) | `ExcursaoForm`; `detalhe_excursao.html` |
+| RF009 Informações complementares | Produto completo | Parcial, como extensão: `descricao` e `inclusos` (migration 0007; CAT-RF-02). "Não incluídos" e condições comerciais **não** existem | idem |
+| RF014 Filtros de pesquisa | Produto completo | Parcial, como extensão (CAT-RF-01): período de saída e tipo de pacote. O filtro por **local de embarque**, citado no RF014, **não** foi implementado; o tipo de pacote não estava no RF014 | `buscar_excursoes`; `FiltroCatalogoForm` |
+| RF018 Situação da reserva | Produto completo (decisão 3.1.8 d) | Não implementado: `Reserva` não tem campo de situação | — |
+| RF022 Cancelamento de reserva | Produto completo (decisão 3.1.8 e) | Não implementado | — |
+
+Extensões posteriores à baseline que **não** têm RF correspondente:
+- `data_nascimento` em `PerfilUsuario` (migration 0005), informada no cadastro,
+  visível ao próprio passageiro e ao agente da excursão (UC14). A finalidade
+  está declarada no aviso de privacidade ("identificar o passageiro na lista
+  da excursão"), mas nenhum RF da baseline pede esse dado. Ele é uma extensão,
+  e não um requisito original (ver RNF002, proteção de dados pessoais).
+- Recuperação de acesso por código, aviso de privacidade, troca de senha e
+  tutorial "Como usar" (EVO-USO-01).
+- Fotos (`FotoExcursao`, migration 0007; CAT-RF-03).
+
 ## Seis entidades e persistência
 
 | Entidade | Model | Tabela | Migração |
@@ -50,9 +95,22 @@ um novo caso de uso. Não existe página independente para UC11.
 
 `usuario` no perfil é OneToOne. `agencia_id` é nullable; a validação e uma
 restrição de integridade exigem agência para AGENTE e ausência para PASSAGEIRO.
-Não foram adicionados campos às entidades além dos previstos no guia.
-Restrições de valor, capacidade e status reforçam regras sobre os campos
-existentes. Tabelas internas do framework não constituem entidades do domínio.
+As migrations 0001–0004 criam as seis entidades da baseline com os campos
+previstos no guia. Restrições de valor, capacidade e status reforçam regras
+sobre esses campos. Tabelas internas do framework não constituem entidades do
+domínio.
+
+Extensões posteriores à baseline (não alteram 0001–0004):
+
+| Migration | O que acrescenta |
+| --- | --- |
+| 0005_perfil_data_nascimento | `PerfilUsuario.data_nascimento` (opcional no banco) |
+| 0006_excursao_tipo_pacote | `Excursao.tipo_pacote` (opcional) |
+| 0007_ficha_e_fotos_drive | `Excursao.descricao`, `roteiro`, `inclusos` e a entidade técnica `FotoExcursao` (sétima tabela de domínio, fora da baseline) |
+
+Observação sobre os modelos: a ERS antiga lista "agente" e "passageiro" como
+entidades. Na baseline, ambos são `User` + `PerfilUsuario` (campo `tipo`), sem
+um segundo modelo de usuário (Documentação de Desenvolvimento, seção 4.5.3).
 
 ## Onde localizar as regras
 
@@ -71,8 +129,11 @@ existentes. Tabelas internas do framework não constituem entidades do domínio.
 1. `login_required` exige autenticação; `exigir_perfil` exige PASSAGEIRO.
 2. A excursão é buscada com status PUBLICADA.
 3. O form só aceita um ponto contido no queryset dessa excursão.
-4. No POST válido, `transaction.atomic()` inicia a transação IMMEDIATE.
-5. A excursão é relida; `Reserva.full_clean()` confirma perfil, publicação,
+4. No POST válido, `transaction.atomic()` abre a transação. No SQLite, ela é
+   do tipo IMMEDIATE (`settings.py`). No PostgreSQL, a excursão é relida com
+   `select_for_update()` (`SELECT … FOR UPDATE`), que bloqueia a linha até o
+   fim da transação.
+5. Com a linha bloqueada, `Reserva.full_clean()` confirma perfil, publicação,
    pertencimento do ponto e disponibilidade atual.
 6. `Reserva.save()` grava uma reserva; a transação confirma a gravação.
 7. A próxima contagem já inclui essa reserva. O passageiro é redirecionado para
