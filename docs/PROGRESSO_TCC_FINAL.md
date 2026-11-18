@@ -29,3 +29,9 @@ RN (ID 1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0, mod. 28/09); baseline (19U5
 - **Bloqueio parcial:** nome/branch da migration 0007 ainda não confirmado; tentativa de leitura por caminho presumido retornou 404. Impacto: não atestar sincronismo entre esquema e models. Responsável: revisão técnica. Retomar após listagem efetiva da árvore e teste isolado.
 - **Conflito editorial:** documento principal teve edição paralela recente; não houve alteração nele. Responsável: revisão técnica/autora. Retomar após comparação do conteúdo vigente e autorização de integração.
 - **Próximo item independente:** apêndice UC01–UC14 a partir da especificação oficial e/ou testes TUT-01–06, após conferir estado das PRs e CI. Nenhum teste/deploy/merge nesta unidade.
+
+## Unidade 18/11/2026 16h — apêndice UC01–UC14
+- **Concluído (artefato de revisão):** transcrição integral do documento oficial de casos de uso em `docs/EVO_USO_01_APENDICE_UC01_UC14_20261118.md`; commit `1f0c0b65dbec5af81c274be2e21b4a6b434c7684`. Fonte lida diretamente pelo ID original nesta rodada. Não houve alteração da monografia, modelos, migrations ou demo.
+- **Pendente:** conciliar monografia atual e incorporar apêndice com sumário/paginação, confirmar texto com orientador; conferir diagrama e migrations da branch efetiva; testar TUT-01–06 e registrar logs.
+- **Bloqueio de integração:** monografia em edição paralela; responsável revisão acadêmica/autora; condição para retomar: comparação da versão atual e local de inserção sem sobrescrever alterações. OAuth Drive permanece bloqueado para ensaio real de fotos, mas não impede documentação.
+- **Próxima unidade independente:** inspecionar o CI da PR #21 e a árvore de migrations em branch real; preparar matriz código/migration/teste sem alegar validação não realizada.
