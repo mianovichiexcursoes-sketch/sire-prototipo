@@ -1,0 +1,51 @@
+# PROGRESSO TCC FINAL — reconciliação de estado (18/11/2026, 18h55 BRT)
+
+Este checklist é **um registro de estado verificável**, não aceite acadêmico nem declaração de deploy. Branch documental isolada derivada de `main`; não altera código, dados, migrations ou Render. O checklist histórico em `docs/progresso-tcc-final-20261117` está **desatualizado**: descreve PR #2 como aberta, mas consulta GitHub desta rodada a encontrou **mesclada**. Evitar copiar os status antigos como fatos atuais.
+
+## Estado verificado e dependências
+
+| ID | Status | Último commit / evidência | Bloqueio, responsável e próxima ação |
+|---|---|---|---|
+| A — ficha/fotos | **em execução (aceite real pendente)** | [PR #2](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/2) **merged**; branch histórica `etapa/ficha-fotos-sire` em `faa5ba3` | Reconciliar código integrado com PRs de segurança, verificar limites/autorizações e não inferir que Drive real funciona |
+| B — OAuth Drive `drive.file` | **bloqueado para aceite real** | Nenhum teste OAuth Django/Render verificado nesta rodada | Pré-requisito: autorização própria do app, credenciais seguras e ambiente de ensaio; responsável: titular Google/Render; retomar com evidência de autorização e testes, nunca com segredo no GitHub/chat |
+| C — CPF/LGPD | **pendente de conferência do incremento** | Branch `docs/evo-cpf-lgpd-20261117`, `6bf7df7` | Ler documentação e código mais recentes antes de migrar; apenas CPF sintético e mínimo necessário |
+| D — UX de reserva | **pendente de aceite verificado** | Sem teste de navegador desta rodada | Comparar versão integrada e confirmar resumo/embarque/preço sem pagamento |
+| E — painéis | **pendente de aceite verificado** | Sem teste de papéis desta rodada | Auditar consultas e RN-03–05 sem tocar em dados reais |
+| F — CAT-VF/VF, PostgreSQL, responsividade, pós-deploy | **pendente de verificação integral** | Nenhuma suíte executada nesta rodada; resultados anteriores não foram reexecutados | Rodar CI e ensaios isolados; testes Drive real dependem de B; não publicar sem revisão |
+| G — documentação/ABNT | **em execução** | [PR #28](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/28) **merged**; [PR #29](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/29) **open** em 18/11 | Reconciliar pacote acadêmico com documentos originais; revisar formatação, inventário integral, referências e validação humana |
+| EVO-USO-01 — tutorial | **em execução / aceite humano pendente** | Branch `feat/evo-uso-01-tutorial-20261118` em `3f4549b`; branch de acessibilidade `fix/evo-uso-01-acessibilidade-20261118` em `63f341a`; [PR #14](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/14) | **Não reimplementar cegamente**: conferir integração e critérios TUT, testes teclado/mobile/primeiro acesso; decisão de 18/11 substitui vídeo por tutorial; solicitar avaliação do orientador via autora após verificação |
+| FUT — assentos, pagamentos, cancelamentos | **pendente — fora do protótipo** | Requisitos 3.0 e RN-31–41 | Registrar somente como visão futura |
+
+**Impacto do bloqueio B:** sem autorização OAuth própria e ensaio real não há comprovação de upload, exclusão, persistência de fotos após redeploy nem aceite dessa integração. Isso **não bloqueia** auditoria documental, UX, tutorial ou testes isolados. **Condição de retomada:** configuração segura comprovada e ambiente de teste com fotos sintéticas. Não há confirmação nova de OAuth nesta rodada.
+
+## Fontes oficiais consultadas diretamente nesta rodada
+
+- RN-01–RN-41: [regras](https://docs.google.com/document/d/1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0/edit), sobretudo RN-01–05 e RN-06–16.
+- ER-SIRE 2.1 e histórico até versão documental 2.6: [desenvolvimento](https://docs.google.com/document/d/19U5JhTHfk8IbvWfdAAUg8Z81fwQ8wsji6m4vxTN9Ed8/edit).
+- [Guia de implementação](https://docs.google.com/document/d/1QzjUnoxF9MBukMQEexTuzK1O16czpMIParG5QgSab8U/edit).
+- [UC01–UC14](https://docs.google.com/document/d/1h5T8l9PPBGralJYaTqjG0K-czRBrGok6tzWRCHenWOY/edit).
+- [Requisitos versão 3.0](https://docs.google.com/document/d/1RTgG9fDY71_8hsncRQKWNd2cQGwRTQfo72xLAitwBaM/edit).
+- [Especificação complementar CAT, revisão 0.2](https://docs.google.com/document/d/1EKm59rEfdHFgK0Ze5EfxBc5AC1g4hwfx1UVogbXL7Is/edit).
+- [Registro de implementação](https://docs.google.com/document/d/1g3MnJfhbMFsDE-x42HemvypzXbAOh0wi3GPK7rwMqaM/edit).
+- [Plano do tutorial](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/blob/docs/retorno-orientador-tutorial-20261118/docs/PLANO_ESPIRAL_TUTORIAL_20261118.md).
+
+Leitura da monografia, modelo IFSP, regulamento e inventário integral **não realizada nesta rodada**; não afirmar auditoria global concluída. As datas editoriais são as declaradas nos documentos; a leitura não prova aprovação formal de cada revisão.
+
+## Matriz mínima de rastreabilidade e lacunas
+
+| Requisito | Código/migração a verificar | Teste/evidência | Documento acadêmico |
+|---|---|---|---|
+| ER-SIRE 2.1; UC01–UC14; seis entidades | `sire/models.py`, `sire/views.py`, migrations históricas | VF01–VF16: **não reexecutados** nesta rodada | Desenvolvimento 2.6, especificação UC, monografia |
+| RN-01–05, RN-06–16 | views, forms, templates, autorização | CI/ensaio de isolamento e publicação **pendente de reconferência** | Regras e registro |
+| CAT-RF e fotos | migration aditiva `0007`, `FotoExcursao`, storage | CAT-VF01–06, upload/exclusão real **pendentes de aceite** | Complementar 0.2 e registro |
+| EVO-USO-01 | tutorial JS/templates em branches próprias | TUT teclado/foco/Escape/mobile/perfis **pendentes de reconferência** | Nova volta espiral, apêndice UC |
+| RN-31–41 | **não implementar como baseline** | não aplicável ao protótipo | Trabalhos futuros |
+
+## Próxima unidade independente
+
+1. Conferir diffs da implementação EVO-USO-01 **já existente**, testes e estado de integração; corrigir apenas lacuna comprovada em branch própria, sem sobrescrever outro agente.
+2. Reconciliar PR #29 com documentação e inventário da pasta do TCC; verificar leitura após qualquer edição.
+3. Quando OAuth próprio estiver disponível, validar fotos reais; até lá manter B como bloqueado e executar trabalho independente.
+4. Não mesclar esta branch documental automaticamente; comparar com a branch de checklist anterior e consolidar em uma única fonte de verdade antes do merge.
+
+**Sem deploy, testes locais ou avaliação do orientador executados nesta rodada.**
