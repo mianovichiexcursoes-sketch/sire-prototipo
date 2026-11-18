@@ -139,6 +139,37 @@ class OAuthDriveTests(TestCase):
                 with patch.object(oauth, 'getpass', return_value=' ' + certo + ' '):
                     self.assertEqual(oauth.segredo(nome), certo)
 
+    def test_renovacao_le_cliente_do_grupo_sem_exibir(self):
+        detalhe = {'envVars': [{'key': k, 'value': k.lower() + '-ficticio'} for k in oauth.CHAVES_DRIVE]}
+        saida = io.StringIO()
+        with self._rede_grupos([{'id': 'evg-abc', 'name': 'sire-drive-oauth-x'}], detalhe), redirect_stdout(saida):
+            grupo_id, nome, valores = oauth.ler_grupo_drive('tea-ficticio', 'k')
+        self.assertEqual((grupo_id, nome), ('evg-abc', 'sire-drive-oauth-x'))
+        self.assertEqual(valores['SIRE_DRIVE_CLIENT_ID'], 'sire_drive_client_id-ficticio')
+        self.assertEqual(saida.getvalue(), '')
+
+    def test_renovacao_recusa_grupo_vinculado_ou_ambiguo(self):
+        cheio = {'envVars': [{'key': k, 'value': 'v'} for k in oauth.CHAVES_DRIVE]}
+        casos = {
+            'vinculado': [{'id': 'evg-a', 'name': 'sire-drive-oauth-a', 'serviceLinks': [{'id': 'srv-x'}]}],
+            'dois grupos': [{'id': 'evg-a', 'name': 'sire-drive-oauth-a'}, {'id': 'evg-b', 'name': 'sire-drive-oauth-b'}],
+            'nenhum': [{'id': 'evg-a', 'name': 'outro'}],
+        }
+        for rotulo, grupos in casos.items():
+            with self.subTest(rotulo), self._rede_grupos(grupos, cheio), self.assertRaises(ValueError):
+                oauth.ler_grupo_drive('tea-ficticio', 'k')
+
+    def test_renovacao_troca_somente_o_refresh_token(self):
+        with patch.object(oauth, 'urlopen', return_value=io.BytesIO(b'{"value":"x"}')) as rede:
+            oauth.atualizar_token_grupo('evg-abc', 'k', 'novo-token-ficticio')
+        req = rede.call_args.args[0]
+        self.assertEqual(req.get_method(), 'PUT')
+        self.assertEqual(req.full_url, 'https://api.render.com/v1/env-groups/evg-abc/env-vars/SIRE_DRIVE_REFRESH_TOKEN')
+        self.assertEqual(json.loads(req.data), {'value': 'novo-token-ficticio'})
+        with patch.object(oauth, 'urlopen') as rede, self.assertRaises(ValueError):
+            oauth.atualizar_token_grupo('../outro', 'k', 'x')
+        rede.assert_not_called()
+
     def test_grupo_rejeita_segredos_extras_antes_da_rede(self):
         creds = {k: 'ficticio' for k in oauth.CHAVES_DRIVE}
         creds['RENDER_API_KEY'] = 'ficticio'
