@@ -11,7 +11,7 @@
         </title>
         <link rel="stylesheet" href="{% static 'sire/css/style.css' %}">
     </head>
-    <body>
+    <body data-sire-role="{% if user.is_authenticated %}{% if user.perfil.tipo == 'AGENTE' %}agente{% elif user.perfil.tipo == 'PASSAGEIRO' %}passageiro{% else %}visitante{% endif %}{% else %}visitante{% endif %}">
         <a class="pular" href="#conteudo-principal">
             Ir ao conteúdo
         </a>
@@ -74,5 +74,6 @@
             <a href="{% url 'sire:privacidade' %}">Aviso de privacidade</a>
         </footer>
         <script src="{% static 'sire/js/mostrar-senha.js' %}" defer></script>
+        <script src="{% static 'sire/js/tutorial-uso.js' %}" defer></script>
     </body>
 </html>
