@@ -247,3 +247,14 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 | D/E/G | **PENDENTE** | fontes lidas; auditoria integral não executada | UX/painéis e inventário acadêmico após reconciliação pertinente |
 
 Nenhum merge, deploy, migração, teste novo, alteração de monografia ou dados reais nesta rodada. A baseline ER-SIRE 2.1 permanece preservada.
+
+
+## Rodada de 18/11/2026 — evidência CI PR #9 por branch
+
+| Item | Estado | Último commit | Evidência | Próxima ação |
+|---|---|---|---|---|
+| CI da PR #9, SHA `2a354a75` | CONCLUÍDO (localização do workflow; não aceite do OAuth) | `6a565438` | [Relatório](EVIDENCIA_CI_PR9_20261118.md), [run 44145474063](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44145474063), `completed/success` em 17/11/2026 | Inspecionar jobs, conferir se os nove testes OAuth foram executados e reproduzi-los em ambiente isolado |
+| OAuth real `drive.file` e fotos persistentes | BLOQUEADO | sem commit funcional nesta rodada | Autorização própria do aplicativo/ambiente de ensaio não comprovados | Responsável: autora/operador Google Cloud e Render; retomar após autorização e serviço isolado, sem expor segredos |
+| Callback OAuth — negativa, state e timeout | PENDENTE | revisão anterior `a1bf9bc` | [Análise estática](REVISAO_CALLBACK_OAUTH_20261118.md) | Testes sintéticos e conciliação com PR #9; não modificar branch de outro agente |
+
+Fontes oficiais por IDs exatos foram relidas em 18/11/2026 (RN, baseline, guia, UC, requisitos, complemento, registro, monografia, modelo/regulamento IFSP, pré-banca e PROMPS). A consulta anterior por SHA sem resultados e a nova consulta por branch são preservadas como evidências de escopos diferentes. Não houve merge, deploy, migração, OAuth real ou teste local nesta rodada.
