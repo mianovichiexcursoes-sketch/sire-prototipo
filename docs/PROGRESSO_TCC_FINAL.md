@@ -265,3 +265,19 @@ Nenhum merge, deploy, migração, teste novo, alteração de monografia ou dados
 | G: monografia e auditoria global | **PENDENTE** | fontes consultadas, auditoria integral não executada | Inventariar pasta e confrontar evidências sem editar históricos silenciosamente |
 
 **Limite de ferramenta:** tentativa local de `git ls-remote` falhou por DNS (`Could not resolve host: github.com`); não houve checkout nem testes locais. Esta rodada **não executou novos testes, não criou deploy, não aplicou migrations, não realizou merge nem alterou a demo**. A entrega desta rodada é rastreabilidade de jobs e dependências, não aceite OAuth.
+
+
+## Rodada 18/11/2026, 09h (Brasília) — logs integrais da PR #9
+
+**CONCLUÍDO — auditoria documental por logs reais:** relatório [LOGS_INTEGRAIS_CI_PR9_20261118.md](LOGS_INTEGRAIS_CI_PR9_20261118.md), commit `69f9777da28e02b9a1e25b9fffc17efffd1dcb78`. Run [44145474063](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/44145474063), HEAD da PR #9 `2a354a75`. Logs de jobs 134259294641 e 134259295337 lidos diretamente: ambos executaram `python manage.py test sire.test_fotos_regressao --verbosity 2`, `check` e `makemigrations --check --dry-run`. SQLite: `Ran 17 tests`, `OK (skipped=1)`; PostgreSQL: `Ran 17 tests`, `OK`. Migração `sire.0007_ficha_e_fotos_drive` aplicada em bancos de teste. **Não executaram os nove testes OAuth**. Nenhum novo teste foi iniciado nesta rodada.
+
+| Item | Estado | Último commit/evidência | Próxima ação, bloqueio e responsável |
+|---|---|---|---|
+| F-logs CI PR9 | **CONCLUÍDO** | `69f9777`; logs run 44145474063 | Preservar SHA e comandos; revalidar se HEAD mudar |
+| B-callback negativo/timeout | **PENDENTE** | revisão `2a49b5f`; nenhum teste HTTP comprovado | Revisor PR #9: conciliar branch e testar com mocks, sem OAuth real |
+| B-OAuth/fotos reais | **BLOQUEADO** | falta consentimento `drive.file` próprio e ambiente Render isolado | Autora/operador autorizado: concluir consentimento/configuração segura; só então ensaio real |
+| A-merge e demo | **EM REVISÃO** | PRs abertas e concorrentes | Work/revisor: reconciliar e testar antes de merge/deploy |
+| C-CPF real | **BLOQUEADO** | proposta EVO-CPF na PR #8 | Autora: validar finalidade, necessidade e base legal; não coletar dados reais |
+| D/E/G e F integral | **PENDENTE** | não verificados nesta rodada | Prosseguir trabalho independente e auditoria acadêmica posterior |
+
+Fontes oficiais/históricas: os 12 documentos identificados na tabela inicial foram acessados por seus IDs exatos em 18/11/2026; versões e datas já inventariadas na rodada 08h. A baseline ER-SIRE 2.1, UC01–UC14 e seis entidades históricas permanecem preservadas. **Sem merge, deploy, migração de produção, credenciais ou edição da monografia.**
