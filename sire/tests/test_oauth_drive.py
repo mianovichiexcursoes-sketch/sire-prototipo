@@ -92,6 +92,37 @@ class OAuthDriveTests(TestCase):
                     oauth.enviar_grupo_render('tea-ficticio', 'ficticio', {k: 'ficticio' for k in oauth.CHAVES_DRIVE})
                 self.assertEqual(rede.call_count, 1)
 
+    def _rede_grupos(self, grupos, detalhe=None):
+        def responder(req, **kwargs):
+            if '/env-groups?' in req.full_url:
+                return io.BytesIO(json.dumps([{'envGroup': g, 'cursor': 'c'} for g in grupos]).encode())
+            return io.BytesIO(json.dumps(detalhe or {}).encode())
+        return patch.object(oauth, 'urlopen', side_effect=responder)
+
+    def test_lista_somente_grupos_do_drive(self):
+        grupos = [{'id': 'evg-a', 'name': 'sire-drive-oauth-1a2b'}, {'id': 'evg-b', 'name': 'outro'}]
+        with self._rede_grupos(grupos):
+            self.assertEqual(oauth.grupos_drive_existentes('tea-ficticio', 'k'), ['sire-drive-oauth-1a2b'])
+
+    def test_conferir_grupo_sem_expor_valores(self):
+        detalhe = {'envVars': [{'key': k, 'value': 'segredo-ficticio'} for k in oauth.CHAVES_DRIVE]}
+        saida = io.StringIO()
+        with self._rede_grupos([{'id': 'evg-abc', 'name': 'sire-drive-oauth-x', 'serviceLinks': []}], detalhe), redirect_stdout(saida):
+            self.assertEqual(oauth.conferir_grupo('tea-ficticio', 'k', 'sire-drive-oauth-x'), ('evg-abc', True))
+        self.assertEqual(saida.getvalue(), '')
+
+    def test_conferir_grupo_recusa_vinculo_chave_extra_ou_vazia(self):
+        cheio = [{'key': k, 'value': 'v'} for k in oauth.CHAVES_DRIVE]
+        casos = {
+            'vinculado': ([{'id': 'evg-a', 'name': 'g', 'serviceLinks': [{'id': 'srv-x'}]}], {'envVars': cheio}),
+            'chave extra': ([{'id': 'evg-a', 'name': 'g'}], {'envVars': cheio + [{'key': 'RENDER_API_KEY', 'value': 'v'}]}),
+            'valor vazio': ([{'id': 'evg-a', 'name': 'g'}], {'envVars': cheio[:2] + [{'key': cheio[2]['key'], 'value': ''}]}),
+            'ausente': ([{'id': 'evg-a', 'name': 'outro'}], {}),
+        }
+        for rotulo, (grupos, detalhe) in casos.items():
+            with self.subTest(rotulo), self._rede_grupos(grupos, detalhe), self.assertRaises(ValueError):
+                oauth.conferir_grupo('tea-ficticio', 'k', 'g')
+
     def test_grupo_rejeita_segredos_extras_antes_da_rede(self):
         creds = {k: 'ficticio' for k in oauth.CHAVES_DRIVE}
         creds['RENDER_API_KEY'] = 'ficticio'

@@ -103,16 +103,80 @@ def enviar_grupo_render(owner_id, api_key, credenciais):
         if resposta.status != 201:
             raise ValueError("Render não confirmou a criação do grupo.")
         # A resposta pode conter segredos. Não imprimir nem gravar.
-        resposta.read()
+        corpo = resposta.read()
+    try:
+        criado = json.loads(corpo) if corpo else {}
+    except ValueError:
+        criado = {}
+    if criado.get("serviceLinks"):
+        raise ValueError("O grupo foi criado vinculado a um serviço; verifique o painel.")
     return nome
+
+
+PREFIXO_GRUPO = "sire-drive-oauth-"
+
+
+def _listar_grupos(owner_id, api_key):
+    """Lista os grupos do workspace (somente nomes, IDs e vínculos)."""
+    req = Request(
+        "https://api.render.com/v1/env-groups?" + urlencode({"ownerId": owner_id, "limit": "100"}),
+        headers={"Authorization": f"Bearer {api_key}", "Accept": "application/json"},
+    )
+    with urlopen(req, timeout=20) as resposta:
+        itens = json.load(resposta)
+    grupos = []
+    for item in itens if isinstance(itens, list) else []:
+        grupo = item.get("envGroup", item) if isinstance(item, dict) else {}
+        grupos.append({
+            "id": grupo.get("id", ""),
+            "name": grupo.get("name", ""),
+            "serviceLinks": grupo.get("serviceLinks") or [],
+        })
+    return grupos
+
+
+def grupos_drive_existentes(owner_id, api_key):
+    """Nomes dos grupos de credenciais do Drive já criados (evita duplicatas)."""
+    return [g["name"] for g in _listar_grupos(owner_id, api_key)
+            if g["name"].startswith(PREFIXO_GRUPO)]
+
+
+def conferir_grupo(owner_id, api_key, nome):
+    """Relê o grupo criado e confere chaves e vínculos sem expor valores.
+
+    Devolve o ID (não secreto). Os valores das variáveis são descartados.
+    """
+    candidatos = [g for g in _listar_grupos(owner_id, api_key) if g["name"] == nome]
+    if len(candidatos) != 1:
+        raise ValueError("O grupo criado não foi encontrado de forma única no Render.")
+    grupo_id = candidatos[0]["id"]
+    if not re.fullmatch(r"evg-[a-z0-9]+", grupo_id):
+        raise ValueError("Identificador de grupo inesperado.")
+    req = Request(f"https://api.render.com/v1/env-groups/{grupo_id}",
+                  headers={"Authorization": f"Bearer {api_key}", "Accept": "application/json"})
+    with urlopen(req, timeout=20) as resposta:
+        grupo = json.load(resposta)
+    chaves = {v.get("key") for v in grupo.get("envVars") or []}
+    vazias = [v.get("key") for v in grupo.get("envVars") or [] if not v.get("value")]
+    grupo.clear()  # descarta os valores lidos
+    if grupo_id and chaves and chaves != CHAVES_DRIVE:
+        raise ValueError("O grupo não contém exatamente as três chaves do Drive.")
+    if vazias:
+        raise ValueError("Há chave sem valor no grupo criado.")
+    if candidatos[0]["serviceLinks"]:
+        raise ValueError("O grupo está vinculado a um serviço; desvincule no painel.")
+    return grupo_id, bool(chaves)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Autorizar Drive e guardar credenciais no Render sem exibi-las.")
     parser.add_argument("--grupo-render", metavar="WORKSPACE_ID",
                         help="Criar grupo separado, sem vincular a nenhum serviço.")
+    parser.add_argument("--permitir-novo-grupo", action="store_true",
+                        help="Criar outro grupo mesmo que já exista um sire-drive-oauth-*.")
     args = parser.parse_args()
     service_id = ""
+    ETAPA[0] = "1/3 (Render)"
     print("Etapa 1/3: validar o destino seguro no Render.")
     if not args.grupo_render:
         service_id = os.environ.get("SIRE_DRIVE_RENDER_SERVICE_ID", "")
@@ -123,6 +187,16 @@ def main():
         raise SystemExit("Credencial do Render ausente.")
     if args.grupo_render:
         conferir_workspace(args.grupo_render, api_key)
+        existentes = grupos_drive_existentes(args.grupo_render, api_key)
+        if existentes and not args.permitir_novo_grupo:
+            raise SystemExit(
+                "Já existe grupo de credenciais do Drive no Render: "
+                + ", ".join(existentes)
+                + ". Nada foi alterado. Confira no painel antes de repetir; para criar "
+                "outro mesmo assim, use --permitir-novo-grupo."
+            )
+        print("Workspace SIRE. confirmado; nenhum grupo anterior do Drive encontrado.")
+    ETAPA[0] = "2/3 (Google)"
     print("Etapa 2/3: informar o cliente OAuth e autorizar no Google.")
 
     client_id = segredo("SIRE_DRIVE_CLIENT_ID")
@@ -192,11 +266,21 @@ def main():
         "SIRE_DRIVE_CLIENT_SECRET": client_secret,
         "SIRE_DRIVE_REFRESH_TOKEN": tokens["refresh_token"],
     }
+    ETAPA[0] = "3/3 (gravação no Render)"
+    print("Autorização do Google recebida com escopo drive.file.")
     print("Etapa 3/3: guardar credenciais no Render sem exibir valores.")
     if args.grupo_render:
         nome = enviar_grupo_render(args.grupo_render, api_key, credenciais)
-        print("CONCLUIDO: grupo criado no Render: " + nome)
-        print("Grupo sem vínculo com serviços. A demonstração pública não foi alterada.")
+        credenciais.clear()
+        ETAPA[0] = "3/3 (conferência do grupo)"
+        grupo_id, chaves_lidas = conferir_grupo(args.grupo_render, api_key, nome)
+        print("CONCLUIDO: grupo criado no Render: " + nome + " (" + grupo_id + ")")
+        if chaves_lidas:
+            print("Conferido: exatamente 3 chaves preenchidas e nenhum serviço vinculado.")
+        else:
+            print("Conferido: grupo existe e não tem serviço vinculado; a chave do Render "
+                  "não permitiu ler a lista de variáveis.")
+        print("A demonstração pública não foi alterada.")
     else:
         enviar_render(service_id, api_key, credenciais)
         print("CONCLUIDO: credenciais encaminhadas ao serviço de ensaio do Render.")
@@ -204,10 +288,26 @@ def main():
 
 
 
+ETAPA = ["inicial"]
+
+
 if __name__ == "__main__":
     try:
         main()
     except HTTPError as erro:
-        raise SystemExit(f"Falha HTTP {erro.code}. Nenhum segredo foi exibido. Informe somente este código e a última etapa mostrada.") from None
-    except (Exception, KeyboardInterrupt):
-        raise SystemExit("Fluxo interrompido com segurança. Configuração pode estar parcial; confira as chaves no Render sem revelar valores.") from None
+        raise SystemExit(
+            f"Falha HTTP {erro.code} na etapa {ETAPA[0]}. Nenhum segredo foi exibido. "
+            "Informe somente esta linha."
+        ) from None
+    except ValueError as erro:
+        # Mensagens de ValueError deste script são escritas aqui e não contêm segredos.
+        raise SystemExit(f"Interrompido na etapa {ETAPA[0]}: {erro}") from None
+    except KeyboardInterrupt:
+        raise SystemExit(f"Cancelado na etapa {ETAPA[0]}. Nada mais foi enviado.") from None
+    except Exception as erro:
+        # Apenas o tipo do erro: a mensagem de bibliotecas pode conter dados sensíveis.
+        raise SystemExit(
+            f"Fluxo interrompido na etapa {ETAPA[0]} ({type(erro).__name__}). "
+            "Nenhum segredo foi exibido. Se a etapa for 3/3, confira o painel do Render "
+            "antes de repetir."
+        ) from None
