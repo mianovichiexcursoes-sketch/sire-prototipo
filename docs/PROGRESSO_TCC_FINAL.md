@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | EVO-USO-01 índice UC | **Concluído (somente índice)** | `7b32020b` | `docs/EVO_USO_01_INDICE_UC_ORIENTADOR_20261118.md` e fonte original UC | Conferir e inserir apêndice integral no documento do projeto |
 | EVO-USO-01 tutorial | Em execução | PR #21 / #20 | Código e suíte proposta, sem resultado de navegador confirmado | Verificar CI e testar Django, teclado, celular e perfis |
-| EVO-USO-01 modelo relacional | Pendente | — | Baseline ER-SIRE 2.1 consultada | Comparar diagrama, models.py e migrations, gerar modelo legível |
+| EVO-USO-01 modelo relacional | Em execução (quadro de código concluído) | `32b2ffb` | `docs/EVO_USO_01_MODELO_RELACIONAL_CONFERENCIA_20261118.md`; models.py/0001/0006 lidos | Conferir diagrama, árvore real 0007, banco e inserir anexo no documento após conciliação |
 | A — Ficha/fotos | Verificação pendente | PR #2 fechada, merge não confirmado | PR #2, CI histórico de fotos | Conciliar integração e persistência real |
 | B — OAuth Drive | **Bloqueado** | PR #9 | Ausência de comprovação da autorização própria do app e ambiente isolado | Autora/operador configurar OAuth drive.file e Render seguro; retomar teste real |
 | C — CPF/LGPD | Pendente de conciliação | PR dedicada | Não ensaiado nesta unidade | Revisar PR e testes sintéticos |
@@ -23,3 +23,9 @@ RN (ID 1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0, mod. 28/09); baseline (19U5
 - **OAuth:** falta autorização do aplicativo e ambiente Render isolado confirmados; bloqueia ensaio real de fotos, não índice UC nem tutorial.
 - **Avaliação:** professor ainda não reavaliou tutorial; solicitar apenas via autora após testes.
 - **Limites:** este índice não equivale a apêndice completo, modelo de dados validado, teste de navegador, aceite nem deploy.
+
+## Unidade 18/11/2026 15h — modelo relacional
+- Entrega: `32b2ffb` — quadro das seis entidades históricas, FKs e extensões em arquivo novo, sem tocar modelos/migrations nem monografia.
+- **Bloqueio parcial:** nome/branch da migration 0007 ainda não confirmado; tentativa de leitura por caminho presumido retornou 404. Impacto: não atestar sincronismo entre esquema e models. Responsável: revisão técnica. Retomar após listagem efetiva da árvore e teste isolado.
+- **Conflito editorial:** documento principal teve edição paralela recente; não houve alteração nele. Responsável: revisão técnica/autora. Retomar após comparação do conteúdo vigente e autorização de integração.
+- **Próximo item independente:** apêndice UC01–UC14 a partir da especificação oficial e/ou testes TUT-01–06, após conferir estado das PRs e CI. Nenhum teste/deploy/merge nesta unidade.
