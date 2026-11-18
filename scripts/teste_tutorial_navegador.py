@@ -1,0 +1,64 @@
+from playwright.sync_api import sync_playwright
+import json
+from pathlib import Path
+import os
+out=Path(__file__).resolve().parents[1] / 'evidencias/2026-11-18_tutorial'
+out.mkdir(parents=True, exist_ok=True)
+checks=[]
+def ok(name, condition):
+    checks.append({'cenario':name,'conforme':bool(condition)})
+    assert condition,name
+with sync_playwright() as p:
+    browser=p.chromium.launch(executable_path=os.environ.get('SIRE_CHROMIUM_BINARY'),headless=True,args=['--no-sandbox'])
+    for width,height in [(1280,900),(390,844)]:
+        page=browser.new_page(viewport={'width':width,'height':height})
+        errors=[]; page.on('pageerror',lambda e:errors.append(str(e)))
+        page.goto('http://127.0.0.1:8765/')
+        ok(f'{width}: convite inicial',page.get_by_role('button',name='Começar',exact=True).is_visible())
+        page.get_by_role('button',name='Como usar',exact=True).click()
+        ok(f'{width}: ajuda remove convite sobreposto',page.get_by_role('button',name='Começar',exact=True).count()==0)
+        seen=[]
+        while page.get_by_role('dialog').is_visible():
+            title=page.locator('#sire-guia-titulo').inner_text(); seen.append(title)
+            ok(f'{width}: alvo visível {title}',page.locator('.sire-guia-alvo').is_visible())
+            a=page.locator('.sire-guia-alvo').bounding_box(); b=page.get_by_role('dialog').bounding_box()
+            overlap=a['x']<b['x']+b['width'] and a['x']+a['width']>b['x'] and a['y']<b['y']+b['height'] and a['y']+a['height']>b['y']
+            ok(f'{width}: alvo descoberto {title}',not overlap)
+            if len(seen)==1: page.screenshot(path=str(out/f'tutorial-{width}.png'),full_page=True)
+            page.locator('[data-action=proximo]').click()
+        ok(f'{width}: somente etapas presentes',len(seen)>=3)
+        page.reload(); ok(f'{width}: convite não se repete',page.get_by_role('button',name='Começar',exact=True).count()==0)
+        page.get_by_role('button',name='Como usar',exact=True).click();page.keyboard.press('Escape')
+        ok(f'{width}: Escape devolve foco',page.get_by_role('button',name='Como usar').evaluate('(e)=>e===document.activeElement'))
+        ok(f'{width}: sem rolagem horizontal',page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
+        page.goto('http://127.0.0.1:8765/login/')
+        page.locator('#id_username').fill('passageiro_ensaio'); page.locator('#id_password').fill('SomenteEnsaio2026!')
+        page.locator('main form button[type=submit], main form button').filter(has_text='Entrar').click()
+        page.goto('http://127.0.0.1:8765/excursao/1/reservar/')
+        page.get_by_role('button',name='Como usar',exact=True).click()
+        ok(f'{width}: tutorial destaca embarque',page.locator('#sire-guia-titulo').inner_text()=='Confira a viagem')
+        page.get_by_role('button',name='Pular',exact=True).click()
+        page.locator('#id_ponto_embarque').select_option(index=1)
+        page.get_by_role('button',name='Confirmar reserva de uma vaga',exact=True).click()
+        page.goto('http://127.0.0.1:8765/minhas-reservas/')
+        ok(f'{width}: reserva consultável',page.locator('main').inner_text().find('Viagem fictícia')>=0)
+        ok(f'{width}: nenhum erro JavaScript',not errors)
+        page.close()
+    page=browser.new_page()
+    page.goto('http://127.0.0.1:8765/login/')
+    page.locator('#id_username').fill('agente_ensaio');page.locator('#id_password').fill('SomenteEnsaio2026!');page.locator('main form button').filter(has_text='Entrar').click()
+    page.goto('http://127.0.0.1:8765/agente/excursoes/')
+    page.get_by_role('button',name='Como usar',exact=True).click()
+    ok('Agente: perfil correto',page.locator('body').get_attribute('data-sire-role')=='agente')
+    page.get_by_role('button',name='Pular',exact=True).click()
+    page.get_by_role('link',name='Reservas',exact=True).click()
+    ok('Agente: reserva do passageiro visível', 'passageiro_ensaio' in page.locator('main').inner_text())
+    page.close()
+    page=browser.new_page()
+    page.add_init_script("Object.defineProperty(window,'localStorage',{get(){throw new Error('blocked')}});Object.defineProperty(window,'sessionStorage',{get(){throw new Error('blocked')}})")
+    page.goto('http://127.0.0.1:8765/')
+    page.get_by_role('button',name='Começar',exact=True).click();page.get_by_role('button',name='Pular',exact=True).click()
+    ok('Armazenamento indisponível não bloqueia guia',page.get_by_role('button',name='Como usar').is_visible())
+    browser.close()
+out.joinpath('resultados-navegador.json').write_text(json.dumps({'ambiente':'Chromium local, Django SQLite, dados sintéticos','checks':checks},ensure_ascii=False,indent=2))
+print(len(checks),'verificações aprovadas')
