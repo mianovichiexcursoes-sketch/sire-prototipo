@@ -1,0 +1,43 @@
+name: Tutorial no navegador
+on:
+  push:
+  pull_request:
+jobs:
+  tutorial:
+    runs-on: ubuntu-latest
+    env:
+      SIRE_SQLITE_PATH: /tmp/sire-tutorial-ci.sqlite3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: pip install -r requirements.txt playwright
+      - run: python -m playwright install --with-deps chromium
+      - name: Preparar dados sintéticos isolados
+        run: |
+          python manage.py migrate --noinput
+          python manage.py shell <<'PY'
+          from django.contrib.auth.models import User
+          from sire.models import Agencia, PerfilUsuario, Excursao, PontoEmbarque
+          from datetime import date, time, timedelta
+          a = Agencia.objects.create(nome='Agência Ensaio')
+          for nome, tipo in [('agente_ensaio', 'AGENTE'), ('passageiro_ensaio', 'PASSAGEIRO')]:
+              u = User.objects.create_user(nome, password='SomenteEnsaio2026!')
+              PerfilUsuario.objects.create(usuario=u, tipo=tipo, agencia=a if tipo=='AGENTE' else None)
+          e = Excursao.objects.create(titulo='Viagem fictícia', destino='Destino de ensaio', agencia=a, data_saida=date.today()+timedelta(days=30), valor=100, capacidade=2, status='PUBLICADA')
+          PontoEmbarque.objects.create(excursao=e, local='Terminal fictício', horario=time(8,0))
+          PY
+      - name: Conferir tutorial desktop/mobile e reserva real no banco descartável
+        run: |
+          python manage.py runserver 127.0.0.1:8765 --noreload > /tmp/sire-server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8765/ > /dev/null && break
+            sleep 1
+          done
+          python scripts/teste_tutorial_navegador.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidencia-tutorial
+          path: evidencias/2026-11-18_tutorial/
