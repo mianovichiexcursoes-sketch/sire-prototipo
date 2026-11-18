@@ -26,12 +26,10 @@ import secrets
 import subprocess
 import sys
 from datetime import date, datetime, time, timedelta
-from getpass import GetPassWarning, getpass
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
-import warnings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
@@ -49,9 +47,10 @@ def _render(url, chave):
 
 def carregar_credenciais():
     """Lê o grupo do Render para o ambiente DESTE processo (memória)."""
-    with warnings.catch_warnings():
-        warnings.simplefilter("error", GetPassWarning)
-        chave = getpass("RENDER_API_KEY (entrada oculta): ")
+    from scripts.autorizacao_drive import USAR_JANELA, segredo
+
+    USAR_JANELA[0] = True  # janela mascarada, com conferência do formato rnd_
+    chave = segredo("RENDER_API_KEY")
     itens = _render(
         "https://api.render.com/v1/env-groups?" + urlencode({"ownerId": WORKSPACE, "limit": "100"}),
         chave,

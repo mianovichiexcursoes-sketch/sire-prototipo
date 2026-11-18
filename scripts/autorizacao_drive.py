@@ -25,14 +25,86 @@ PORT = 8766
 REDIRECT = f"http://127.0.0.1:{PORT}/oauth/callback"
 
 
+# Formato esperado de cada segredo: confere se o valor colado é o certo
+# (por exemplo, o NOME da chave no lugar da chave) sem nunca exibi-lo.
+FORMATOS = {
+    "RENDER_API_KEY": (r"rnd_[A-Za-z0-9]{16,}", "a chave do Render começa com rnd_"),
+    "SIRE_DRIVE_CLIENT_ID": (
+        r"[0-9]+-[a-z0-9]+\.apps\.googleusercontent\.com",
+        "o ID do cliente termina com .apps.googleusercontent.com",
+    ),
+    "SIRE_DRIVE_CLIENT_SECRET": (r"GOCSPX-[A-Za-z0-9_-]{10,}", "a chave secreta começa com GOCSPX-"),
+}
+DESCRICOES = {
+    "RENDER_API_KEY": "Chave de API do Render (começa com rnd_)",
+    "SIRE_DRIVE_CLIENT_ID": "ID do cliente OAuth do Google (termina com .apps.googleusercontent.com)",
+    "SIRE_DRIVE_CLIENT_SECRET": "Chave secreta do cliente OAuth do Google (começa com GOCSPX-)",
+}
+USAR_JANELA = [False]  # ligado por main(); os testes usam só o terminal
+
+
+def _janela_segredo(nome):
+    """Campo mascarado (•) em uma janela local: a pessoa vê que colou algo,
+    e quantos caracteres, sem que o valor apareça na tela, no terminal ou em logs."""
+    import tkinter as tk
+
+    resultado = {"valor": None}
+    raiz = tk.Tk()
+    raiz.title("SIRE — " + nome)
+    raiz.attributes("-topmost", True)
+    raiz.resizable(False, False)
+    tk.Label(raiz, text=DESCRICOES.get(nome, nome), font=("Segoe UI", 11, "bold"),
+             padx=16, pady=(12)).pack(anchor="w")
+    tk.Label(raiz, text="Cole com Ctrl+V. O valor fica oculto (•••).",
+             padx=16).pack(anchor="w")
+    campo = tk.Entry(raiz, show="•", width=52, font=("Consolas", 12))
+    campo.pack(padx=16, pady=8)
+    aviso = tk.Label(raiz, text="0 caracteres", fg="#684957", padx=16)
+    aviso.pack(anchor="w")
+
+    def mudou(_evento=None):
+        aviso.config(text=f"{len(campo.get().strip())} caracteres", fg="#684957")
+
+    def confirmar(_evento=None):
+        valor = campo.get().strip()
+        padrao, dica = FORMATOS.get(nome, (r".+", ""))
+        if not re.fullmatch(padrao, valor):
+            aviso.config(text="Formato inesperado: " + dica + ". Confira e cole de novo.",
+                         fg="#9d2424")
+            campo.delete(0, "end")
+            return
+        resultado["valor"] = valor
+        raiz.destroy()
+
+    campo.bind("<KeyRelease>", mudou)
+    campo.bind("<Return>", confirmar)
+    tk.Button(raiz, text="Confirmar", command=confirmar, padx=12).pack(pady=(4, 14))
+    raiz.protocol("WM_DELETE_WINDOW", raiz.destroy)
+    raiz.after(200, lambda: (raiz.lift(), raiz.focus_force(), campo.focus_set()))
+    raiz.mainloop()
+    if not resultado["valor"]:
+        raise KeyboardInterrupt
+    return resultado["valor"]
+
+
 def segredo(nome):
     """Não usar fallback de getpass que possa ecoar a entrada."""
     valor = os.environ.get(nome, "")
     if valor:
         return valor
+    if USAR_JANELA[0]:
+        try:
+            print(f"Abrindo janela para {nome}...")
+            return _janela_segredo(nome)
+        except ImportError:
+            pass  # sem interface gráfica: segue para a entrada oculta do terminal
     with warnings.catch_warnings():
         warnings.simplefilter("error", GetPassWarning)
-        return getpass(f"{nome} (entrada oculta): ")
+        valor = getpass(f"{nome} (entrada oculta): ").strip()
+    padrao, dica = FORMATOS.get(nome, (r".+", ""))
+    if valor and not re.fullmatch(padrao, valor):
+        raise ValueError(f"O valor de {nome} não tem o formato esperado ({dica}).")
+    return valor
 
 
 def validar_tokens(tokens):
@@ -174,7 +246,10 @@ def main():
                         help="Criar grupo separado, sem vincular a nenhum serviço.")
     parser.add_argument("--permitir-novo-grupo", action="store_true",
                         help="Criar outro grupo mesmo que já exista um sire-drive-oauth-*.")
+    parser.add_argument("--sem-janela", action="store_true",
+                        help="Pedir os segredos no terminal em vez de janela mascarada.")
     args = parser.parse_args()
+    USAR_JANELA[0] = not args.sem_janela
     service_id = ""
     ETAPA[0] = "1/3 (Render)"
     print("Etapa 1/3: validar o destino seguro no Render.")

@@ -123,6 +123,22 @@ class OAuthDriveTests(TestCase):
             with self.subTest(rotulo), self._rede_grupos(grupos, detalhe), self.assertRaises(ValueError):
                 oauth.conferir_grupo('tea-ficticio', 'k', 'g')
 
+    def test_formato_recusa_valor_trocado_sem_exibir(self):
+        # Ex.: o NOME da chave colado no lugar da chave do Render.
+        casos = {
+            'RENDER_API_KEY': ('sire-drive-temporaria', 'rnd_' + 'A' * 24),
+            'SIRE_DRIVE_CLIENT_ID': ('GOCSPX-ficticio', '123-abc.apps.googleusercontent.com'),
+            'SIRE_DRIVE_CLIENT_SECRET': ('123-abc.apps.googleusercontent.com', 'GOCSPX-' + 'b' * 20),
+        }
+        for nome, (errado, certo) in casos.items():
+            with self.subTest(nome), patch.dict(oauth.os.environ, {}, clear=True):
+                with patch.object(oauth, 'getpass', return_value=errado):
+                    with self.assertRaises(ValueError) as erro:
+                        oauth.segredo(nome)
+                    self.assertNotIn(errado, str(erro.exception))
+                with patch.object(oauth, 'getpass', return_value=' ' + certo + ' '):
+                    self.assertEqual(oauth.segredo(nome), certo)
+
     def test_grupo_rejeita_segredos_extras_antes_da_rede(self):
         creds = {k: 'ficticio' for k in oauth.CHAVES_DRIVE}
         creds['RENDER_API_KEY'] = 'ficticio'
