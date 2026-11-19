@@ -64,7 +64,7 @@
   panel.className = 'sire-guia'; panel.hidden = true;
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'false');
   panel.setAttribute('aria-labelledby', 'sire-guia-titulo');
-  panel.innerHTML = '<p class="sire-guia-contador" aria-live="polite"></p><h2 id="sire-guia-titulo" tabindex="-1"></h2><p class="sire-guia-texto"></p><div class="sire-guia-acoes"><button type="button" data-action="anterior">Voltar</button><button type="button" data-action="proximo">Próximo</button><button type="button" class="secundario" data-action="pular">Pular</button></div>';
+  panel.innerHTML = '<p class="sire-guia-contador" aria-live="polite"></p><h2 id="sire-guia-titulo" tabindex="-1"></h2><p class="sire-guia-texto"></p><div class="sire-guia-acoes"><button type="button" data-action="anterior">Voltar</button><button type="button" data-action="proximo">Próximo</button><button type="button" class="secundario" data-action="pular">Pular</button><button type="button" class="secundario" data-action="fechar" aria-label="Fechar tutorial">Fechar</button></div>';
   document.body.append(panel);
   const heading = panel.querySelector('h2');
   const previous = panel.querySelector('[data-action="anterior"]');
@@ -106,7 +106,7 @@
   help.addEventListener('click', open);
   panel.addEventListener('click', event => {
     const action = event.target.closest('button')?.dataset.action;
-    if (action === 'pular') close();
+    if (action === 'pular' || action === 'fechar') close();
     else if (action === 'anterior' && index > 0) { index--; render(); }
     else if (action === 'proximo') { if (index === steps.length - 1) close(); else { index++; render(); } }
   });
