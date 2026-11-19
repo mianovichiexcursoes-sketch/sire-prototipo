@@ -26,3 +26,10 @@ Lidas em 18/11/2026 por ID: RN-01–41 (1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE0
 
 ## Rastreabilidade
 EVO-USO-01 / TUT-01 a TUT-05 -> base.html + tutorial-uso.js -> ensaios de navegador pendentes -> seção metodologia/avaliação da monografia pendente. TUT-06 depende de regressão de reservas e autorização entre agências. DOC-01 depende de conferência do diagrama e apêndice. AVAL-01 depende de retorno humano.
+
+## Rodada 19/11/2026 15h57 — verificação independente
+- **Concluído nesta rodada:** leitura direta das sete fontes oficiais pertinentes ao tutorial e registro de datas/versões, dependências e matriz em [EVO_USO_01_AUDITORIA_FONTES_20261119.md](EVO_USO_01_AUDITORIA_FONTES_20261119.md), commit `ff5c6dc1bb2f75d720eb8b766566c280987d6a93`.
+- **EVO-USO-01:** EM EXECUÇÃO; foram identificadas branches de correção de acessibilidade e viewport mobile posteriores à implementação inicial. Próxima ação: comparar diffs e executar ensaios sintéticos em navegador antes de qualquer integração. Nenhum teste ou deploy realizado nesta rodada.
+- **B/OAuth:** BLOQUEADO para ensaio REAL; pré-requisito: consentimento próprio do aplicativo e segredos protegidos no Render; responsável: autora/operador. Condição de retomada: autorização verificável em ambiente isolado. Não impede tutorial/documentação.
+- **DOC-01:** PENDENTE; apêndice UC01–UC14 e modelo relacional devem ser conferidos contra fontes e código, sem reescrever baseline.
+- **Concorrência:** esta branch é exclusivamente documental; não houve edição de modelos, migrations, templates, demo ou branches de outros agentes.
