@@ -49,3 +49,22 @@ Leitura da monografia, modelo IFSP, regulamento e inventário integral **não re
 4. Não mesclar esta branch documental automaticamente; comparar com a branch de checklist anterior e consolidar em uma única fonte de verdade antes do merge.
 
 **Sem deploy, testes locais ou avaliação do orientador executados nesta rodada.**
+
+
+## Rodada de reconciliação — 19/11/2026 (00h BRT)
+
+**Unidade documental independente, sem modificação de aplicação.** Leitura direta por ID das fontes oficiais: RN-01–41, documentação de desenvolvimento (histórico 2.1–2.6), guia, UC01–UC14, requisitos v3.0, CAT rev. 0.2 e registro de implementação. O plano EVO-USO-01 foi lido na branch documental. Não se afirma auditoria integral das fontes restantes nesta rodada.
+
+**Concorrência identificada:** [PR #15](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/15) já contém implementação inicial do tutorial, aberta e não mesclada; [PR #20](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/20) contém acessibilidade e depende da #15; [PR #21](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/21) contém testes Playwright sintéticos, sem confirmação de CI verde nesta consulta. [PR #31](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/31) contém critérios TUT; [PR #32](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/32) contém auditoria pontual acadêmica. Todas constavam abertas na consulta. **Não duplicar implementação** em templates compartilhados antes de reconciliar essas PRs.
+
+| Item | Status nesta rodada | Último SHA/evidência | Dependência e próxima ação |
+|---|---|---|---|
+| EVO-USO-01 código | Em execução; não aceito | #15, SHA `3f4549bfba35411b6e02918a8cfd6a1f6f4111d6` | Reconciliar #20, revisar alvo ausente, foco, Escape e perfis; sem merge/deploy |
+| EVO-USO-01 testes | Pendente de verificação | #21 (PR existente, CI não confirmado) | Conferir execução real Django/Playwright, desktop e celular; guardar logs e SHA |
+| EVO-USO-01 avaliação | Bloqueado por verificação e avaliação humana | Feedback de 17/11 transcrito pela autora; não equivale a aceite | Após testes, autora solicita nova avaliação ao orientador; não contatar diretamente |
+| G — auditoria global | Em execução | #32 (auditoria pontual aberta) | Inventariar pasta inteira, monografia, modelo IFSP e regulamento; não chamar auditoria pontual de global |
+| B — Drive real | Bloqueado para aceite | Sem evidência de OAuth próprio Django/Render nesta rodada | Responsável titular da conta/Render; autorização segura e ensaio sintético são pré-requisitos; não bloqueia tutorial |
+
+**Rastreabilidade EVO-USO-01:** fonte de mudança = feedback qualitativo de 17/11 + decisão da autora de 18/11; baseline UC01–UC14 e seis entidades permanecem históricas; incremento = #15/#20; critérios = #31; cenários = #21; evidência de navegador, regressão Django e avaliação humana = **pendentes**; atualização conclusiva da monografia = **pendente**. Não atribuir resultados de CI ou aceitação por inferência.
+
+**Próxima unidade elegível:** conferir diferenças efetivas #15/#20/#21 e integrar critérios TUT à suíte isolada; se houver conflito de templates, trabalhar apenas em testes/documentação não conflitantes. Nenhuma alteração na demo Render, credenciais, dados ou migrations foi feita nesta rodada.
