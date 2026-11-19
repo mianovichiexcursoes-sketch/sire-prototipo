@@ -116,3 +116,24 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 | G — auditoria acadêmica | **Pendente de auditoria global** | #14 `f20106a`; #30 `1e401bf` antes desta edição | Inventariar pasta Drive inteira, confrontar monografia/modelo IFSP/UC e registrar divergências; não declarar revisão completa |
 
 **Próxima ação independente:** comparar os patches de #15/#20/#33, preparar reconciliação isolada e validar os testes da #21; em paralelo, inventário documental sem alterar monografia antes da leitura integral. A demo Render e dados existentes não foram modificados.
+
+
+## Gate de fontes — 19/11/2026, 17h55 (Brasília)
+
+**Unidade executada:** leitura direta via Google Docs API dos sete documentos oficiais, pelos IDs exatos, antes de qualquer alteração de código. Registro de revisões retornadas pela API (identificadores técnicos, não datas de aprovação):
+
+| Documento | ID abreviado | Revisão consultada | Evidência/escopo |
+|---|---|---|---|
+| RN-01–41 | 1REAmrici | AHj4eMQguVGb | RN-01–05: vínculo, isolamento e privacidade; RN-06–16: excursões; RN-17 em diante: reservas |
+| Desenvolvimento/baseline | 19U5JhTH | AHj4eMTd3MUu | Histórico ER-SIRE 2.1 e evolução 2.6; não reescrever baseline |
+| Guia de implementação | 1QzjUnox | AHj4eMQaNMjG | Django ORM, seis entidades e SQLite original, PostgreSQL como incremento |
+| UC01–UC14 | 1h5T8l9 | AHj4eMR9ieG | Atores Visitante, Passageiro e Agente; UC01/UC02 conferidos |
+| Requisitos | 1RTgG9f | AHj4eMTi8Nvi | v3.0: distinção entre visão de produto e escopo de protótipo |
+| CAT/ficha | 1EKm59rE | AHj4eMTSU0RT | rev. 0.2: extensão opcional, filtro, fotos e migração aditiva |
+| Registro técnico | 1g3MnJfh | AHj4eMR_QOz9 | Rastreabilidade UC01–14 e verificações HTTP históricas |
+
+**Observação de integridade:** prefixos de revisão acima servem somente como índice de consulta; a revisão completa é obtida novamente na API para comparar alterações. Nesta unidade não houve teste Django, Chromium, CI novo, merge nem deploy. Os documentos restantes da auditoria global ainda não foram relidos nesta unidade; portanto não se declara gate integral da monografia satisfeito.
+
+**Conflito e dependências reavaliados:** PR #14 continua documental, draft, HEAD `f20106af511f5637787f2b450cd1468e53c25924` e lista expressamente #15/#20/#21/#33/#35 como incrementos não integrados. Checklist não existe em `main`; esta branch é fonte candidata e requer reconciliação antes de torná-la canônica. Não tocar no JS compartilhado enquanto os HEADs concorrentes não forem conciliados. OAuth `drive.file` não é pré-requisito para tutorial, mas é para aceite real da integração de fotos. Responsável pelo OAuth: titular Google/Render; condição de retomada: configuração autorizada e evidência de ensaio sintético persistente.
+
+**Status da unidade:** concluído somente o registro verificável de fontes/dependências. **Próxima ação:** comparar patches do tutorial, reconciliar em branch isolada e executar TUT com evidência; em paralelo inventariar documentos restantes e anexos da pasta TCC. Não confundir registro documental com entrega funcional.
