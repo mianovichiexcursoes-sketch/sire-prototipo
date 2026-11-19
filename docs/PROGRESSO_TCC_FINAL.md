@@ -62,3 +62,24 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Dependências/coordenação:** A permanece EM EXECUÇÃO, com código e testes em andamento por outro agente. Não editar `views.py`, `models.py`, migrações, templates nem a PR #2 enquanto não reconciliar PR #4/#5 e respectivos HEADs. B permanece BLOQUEADO pela autorização OAuth do aplicativo, com responsável autora/operador Google Cloud + Render; sem B não validar fotos reais ou persistência após deploy. C pode avançar de modo independente apenas em especificação de finalidade, minimização e política de acesso do CPF (RN-04/05 e UC01), sem coletar CPF real; implementação requer checagem de branches ativas. D/E seguem independentes de B, sujeitos a reconciliação de código. F parcialmente possível com Drive simulado; aceite real dependente de B. G mantém auditoria global pendente.
 
 **Próxima ação verificável:** comparar HEAD, status de CI e conteúdo das PRs #2/#4/#5; consolidar matriz CAT-RF-02/03/04 → migração 0007 / views / testes FOTO → evidências; só então revisar lacunas sem duplicar alterações. Em paralelo, preparar especificação EVO-CPF/LGPD em documento separado e sintético. **Nenhum teste, merge, deploy ou aprovação humana foi executado nesta rodada.**
+
+
+## Reconciliação independente — 19/11/2026, 09h04 (Brasília)
+
+**Leitura de fontes:** acesso direto via Google Drive aos IDs oficiais de RN-01–41, documentação ER-SIRE, guia, UC01–UC14, requisitos v3.0, complemento CAT rev. 0.2 e registro técnico. A revisão completa da monografia, modelo IFSP, regulamento e parecer de pré-banca **não foi executada nesta unidade**. Preservar baseline ER-SIRE 2.1, seis entidades e UC01–UC14.
+
+**Estado GitHub verificado:** PR #2 está **merged** (head `faa5ba3d60b7f292be09676b13f39e9276eacafb`); PR #24 e #28 também estão **merged**. PR #14 continua **open**, PR #35 (**mobile**, head `bf917708f09d01befb8c7576dfc43d9d2a1e8158`) e PR #36 (**gate**, head `7104b88e8e6363448ef5a441555bb2a4d19b1487`) estão **open**. Portanto, a linha antiga 'A em execução / PR #2 não mesclada' no início deste arquivo está **historicamente desatualizada**, não deve orientar nova alteração. O merge da PR #2 não comprova, por si só, OAuth, persistência pós-deploy ou aceite final.
+
+| Item | Estado em 19/11 | Evidência/último SHA observado | Dependência e próxima ação |
+|---|---|---|---|
+| A — ficha/fotos | INTEGRADO AO BRANCH-BASE, ACEITE PARCIAL | PR #2 merged; `faa5ba3` | Confirmar cobertura CAT-VF e integração real de fotos, sem inferir aceite de merge |
+| B — OAuth Drive `drive.file` | BLOQUEADO PARA ACEITE REAL | Nenhuma autorização própria do aplicativo comprovada nesta leitura | Responsável: autora/operador Google Cloud + Render; pré-requisito: autorização e segredos configurados fora do GitHub/chat; impacto: impede validar upload/exclusão/persistência real; retomar quando houver ensaio autenticado e evidência segura |
+| EVO-USO-01 tutorial | EM EXECUÇÃO, CONCORRENTE | PR #14, #35 e #36 abertas; `bf91770`, `7104b88` | Conciliar cadeia de bases, conflitos e testes; não alterar templates compartilhados nem publicar antes de revisão; avaliação do orientador pendente |
+| C — CPF | PENDENTE DE ACEITE DOCUMENTAL/TÉCNICO | RN-04/05 e UC01 consultados; estado de código não revalidado nesta unidade | Conferir PRs e política de minimização antes de tocar modelos/migrations; testes somente sintéticos |
+| D/E — UX/painéis | PENDENTE DE RECONCILIAÇÃO | Nenhuma nova execução nesta unidade | Identificar alterações existentes antes de programar |
+| F — suíte/aceite | PENDENTE DE VERIFICAÇÃO GLOBAL | PR #24 merged, mas sem reexecução nesta unidade | Conferir testes SQLite/PostgreSQL, autorização, responsividade, logs e persistência real; não inventar resultado |
+| G — monografia/auditoria global | PENDENTE | Fontes técnicas lidas parcialmente; auditoria integral não feita | Inventariar pasta TCC, verificar modelo IFSP, ABNT e todos os anexos; registrar divergências sem alterar histórico |
+
+**Rastreabilidade desta unidade:** RN-01–05 / UC01–UC14 / ER-SIRE 2.1 → documentos oficiais (IDs listados no início do checklist) → reconciliação de status GitHub das PRs #2/#14/#24/#28/#35/#36 → esta seção; não é execução de teste CAT-VF/TUT nem atualização da monografia.
+
+**Entrega verificável:** somente reconciliação documental em branch isolada. Nenhuma alteração de modelo, migração, template, dados, credenciais, demo ou deploy. Próxima rodada: reconciliar as PRs do tutorial, consultar CI pertinente e escolher lacuna TUT independente, ou avançar auditoria documental global se o código estiver em edição concorrente.
