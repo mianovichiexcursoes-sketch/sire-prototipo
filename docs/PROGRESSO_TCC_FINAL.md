@@ -87,3 +87,16 @@ Leitura da monografia, modelo IFSP, regulamento e inventário integral **não re
 **Rastreabilidade EVO-USO-01:** feedback da autora (17–18/11) → extensão de uso separada da baseline → JS/templates na #15 e correções na #20/#33 → cenários sintéticos na #21 e critérios na #31 → resultados de navegador e Django ainda não reconferidos nesta rodada → seção metodológica/avaliação da monografia pendente. A aprovação humana é uma dependência distinta dos testes técnicos.
 
 **Próxima unidade independente elegível:** revisar o diff da #33 contra #20 e adicionar testes de responsividade/teclado em branch de testes reconciliada; não tocar nos templates compartilhados até resolver precedência. Alternativamente inventariar documentos restantes da pasta TCC e elaborar relatório de divergências sem modificar a monografia. Nenhum item foi marcado concluído apenas com base em declaração de PR.
+
+
+## Unidade documental — 19/11/2026, 02h57 (Brasília)
+
+**Concluído nesta unidade:** descrição da [PR #14](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/14) corrigida para retirar a entrega de vídeo como requisito vigente e apontar tutorial interativo aprovado pela autora em 18/11. O texto original do plano permanece como histórico; nenhuma alteração de código ou da demo. Fonte da decisão: docs/PLANO_ESPIRAL_TUTORIAL_20261118.md, SHA de blob `929fd3414a401a04bf2b950bc734262e138cffe7` na branch docs/retorno-orientador-tutorial-20261118. Fontes oficiais relidas diretamente por IDs: RN, desenvolvimento, guia, UC, requisitos, CAT e registro técnico; versões identificadas: ER-SIRE 2.1 histórica, requisitos 3.0, CAT 0.2; demais versões não inferidas.
+
+| Item | Estado | Evidência verificável | Bloqueio/dependência e próxima ação |
+|---|---|---|---|
+| EVO-USO-01 — alinhamento de escopo #14 | **Concluído (metadados)** | [PR #14](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/14), atualizada 19/11/2026 05:57 UTC; último HEAD da PR `f20106a` não alterado | Revisar coerência de documentos acadêmicos antes da entrega |
+| EVO-USO-01 — aceite técnico | **Em execução** | PRs #15/#20/#21/#24/#33; ressalva de rodapé móvel da #24 | Dependência: conciliar diffs e executar testes de navegador e Django; responsável: desenvolvimento/revisão; retomar com HEAD reconciliado e evidência de testes |
+| OAuth Drive/persistência após deploy | **Bloqueado para aceite real sem evidência atual suficiente** | PR #18 relata testes locais, mas não confirma deploy/persistência na demo | Dependência: configuração segura no Render e ensaio autorizado; responsável: titular do aplicativo/Render; retomar após comprovar acesso, sem publicar segredos |
+
+**Testes nesta unidade:** não executados (edição documental). **Merge/deploy:** não realizados. **Próxima unidade independente:** inspeção e teste isolado da sobreposição móvel ou inventário de anexos acadêmicos, sem modificar templates concorrentes.
