@@ -53,7 +53,7 @@
     .sire-ajuda{cursor:pointer}.sire-guia{position:fixed;z-index:9999;bottom:1rem;right:1rem;width:min(24rem,calc(100vw - 2rem));box-sizing:border-box;max-height:70vh;overflow:auto;padding:1rem;background:#fff;color:#30212a;border:2px solid #97254e;border-radius:1rem;box-shadow:0 8px 28px #0003}
     .sire-guia[hidden]{display:none}.sire-guia h2{font-size:1.2rem;margin:.5rem 0}.sire-guia p{margin:.5rem 0}.sire-guia-acoes{display:flex;flex-wrap:wrap;gap:.5rem}.sire-guia button{min-height:44px}.sire-guia button:focus-visible,.sire-ajuda:focus-visible{outline:3px solid #8b4513;outline-offset:3px}.sire-guia-alvo{outline:4px solid #c36900!important;outline-offset:4px;scroll-margin:1rem}
     body.sire-guia-aberto{padding-bottom:var(--sire-guia-espaco,24rem)}
-    @media(max-width:500px){.sire-guia{bottom:.5rem;right:.5rem;width:calc(100vw - 1rem)}}
+    @media(max-width:500px){.sire-guia{bottom:.5rem;right:.5rem;width:calc(100vw - 1rem);max-height:min(45vh,22rem);max-height:min(45dvh,22rem)}body.sire-guia-aberto{scroll-padding-bottom:50vh}}
   `;
   document.head.append(style);
   const help = document.createElement('button');
