@@ -100,3 +100,19 @@ Leitura da monografia, modelo IFSP, regulamento e inventário integral **não re
 | OAuth Drive/persistência após deploy | **Bloqueado para aceite real sem evidência atual suficiente** | PR #18 relata testes locais, mas não confirma deploy/persistência na demo | Dependência: configuração segura no Render e ensaio autorizado; responsável: titular do aplicativo/Render; retomar após comprovar acesso, sem publicar segredos |
 
 **Testes nesta unidade:** não executados (edição documental). **Merge/deploy:** não realizados. **Próxima unidade independente:** inspeção e teste isolado da sobreposição móvel ou inventário de anexos acadêmicos, sem modificar templates concorrentes.
+
+
+## Inspeção de concorrência — 19/11/2026, 05h58 (Brasília)
+
+Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão explícita no texto inicial), desenvolvimento com baseline ER-SIRE 2.1 histórica, guia de implementação, especificação UC01–UC14, requisitos v3.0, catálogo/ficha rev. 0.2 e registro técnico. Os sete retornaram conteúdo legível. Esta unidade é de reconciliação documental, sem alteração do aplicativo, sem testes executados e sem deploy.
+
+**Mapa verificável de sobreposição de PRs:** #15 (HEAD `3f4549b`) modifica `sire/static/sire/js/tutorial-uso.js` e `sire/templates/sire/base.html`; #20 (HEAD `63f341a`) modifica o **mesmo JS** e acrescenta correções de acessibilidade; #33 (HEAD `8bd9670`) também modifica o **mesmo JS** para Fechar. #21 (HEAD `f977ab8`) adiciona `tests/test_tutorial_browser.py` e workflow próprio, sem editar JS/template. Logo, **não é seguro mesclar #20 e #33 independentemente sobre #15** sem reconciliação explícita do arquivo comum. A PR #14 é documental e não implementa o tutorial. Evidência: listas de arquivos alterados nas PRs #15/#20/#21/#33 consultadas nesta data.
+
+| Item | Status | Último commit consultado | Evidência e próxima ação |
+|---|---|---|---|
+| EVO-USO-01 — implementação | **Em execução** | #15 `3f4549b`, #20 `63f341a`, #33 `8bd9670` | Reconciliar alterações do JS em branch isolada, revisar base.html e executar testes TUT; sem afirmar aceite |
+| EVO-USO-01 — testes browser | **Pendente de execução no HEAD integrado** | #21 `f977ab8` | Workflow e arquivo de teste existem na PR; executar contra código reconciliado, registrar resultado real e responsividade |
+| A/B — fotos e Drive | **Bloqueado para aceite real** | #2 `faa5ba3` (HEAD histórico) | #2 encerrada/mesclada, mas ainda requer evidência de OAuth Django, fotos sintéticas, exclusão e persistência após deploy; responsável: titular Google/Render; retomar com credenciais somente em ambiente seguro |
+| G — auditoria acadêmica | **Pendente de auditoria global** | #14 `f20106a`; #30 `1e401bf` antes desta edição | Inventariar pasta Drive inteira, confrontar monografia/modelo IFSP/UC e registrar divergências; não declarar revisão completa |
+
+**Próxima ação independente:** comparar os patches de #15/#20/#33, preparar reconciliação isolada e validar os testes da #21; em paralelo, inventário documental sem alterar monografia antes da leitura integral. A demo Render e dados existentes não foram modificados.
