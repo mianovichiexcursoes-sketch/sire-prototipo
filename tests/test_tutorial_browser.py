@@ -117,5 +117,38 @@ class TutorialBrowserTests(unittest.TestCase):
         self.assertFalse(dialog.is_visible())
 
 
+    def test_tut08_320px_panel_stays_inside_viewport(self):
+        """At 320px, the tutorial panel must not overflow horizontally."""
+        page = self.page_for("passageiro")
+        page.set_viewport_size({"width": 320, "height": 640})
+        page.get_by_role("button", name="Começar").click()
+        dialog = page.get_by_role("dialog")
+        bounds = dialog.bounding_box()
+        self.assertIsNotNone(bounds)
+        self.assertGreaterEqual(bounds["x"], -1)
+        self.assertLessEqual(bounds["x"] + bounds["width"], 321)
+        self.assertLessEqual(
+            page.evaluate("document.documentElement.scrollWidth"), 320
+        )
+
+    def test_tut09_keyboard_escape_and_no_form_submit(self):
+        """Keyboard navigation and dismissal must never submit a reservation."""
+        page = self.page_for("passageiro")
+        page.evaluate("""() => {
+            window.__submitted = 0;
+            document.querySelector('form').addEventListener('submit', e => {
+                e.preventDefault();
+                window.__submitted += 1;
+            });
+        }""")
+        page.get_by_role("button", name="Começar").click()
+        dialog = page.get_by_role("dialog")
+        page.keyboard.press("Tab")
+        self.assertTrue(dialog.is_visible())
+        page.keyboard.press("Escape")
+        self.assertFalse(dialog.is_visible())
+        self.assertEqual(page.evaluate("window.__submitted"), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
