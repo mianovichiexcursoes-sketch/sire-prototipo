@@ -62,3 +62,35 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Dependências/coordenação:** A permanece EM EXECUÇÃO, com código e testes em andamento por outro agente. Não editar `views.py`, `models.py`, migrações, templates nem a PR #2 enquanto não reconciliar PR #4/#5 e respectivos HEADs. B permanece BLOQUEADO pela autorização OAuth do aplicativo, com responsável autora/operador Google Cloud + Render; sem B não validar fotos reais ou persistência após deploy. C pode avançar de modo independente apenas em especificação de finalidade, minimização e política de acesso do CPF (RN-04/05 e UC01), sem coletar CPF real; implementação requer checagem de branches ativas. D/E seguem independentes de B, sujeitos a reconciliação de código. F parcialmente possível com Drive simulado; aceite real dependente de B. G mantém auditoria global pendente.
 
 **Próxima ação verificável:** comparar HEAD, status de CI e conteúdo das PRs #2/#4/#5; consolidar matriz CAT-RF-02/03/04 → migração 0007 / views / testes FOTO → evidências; só então revisar lacunas sem duplicar alterações. Em paralelo, preparar especificação EVO-CPF/LGPD em documento separado e sintético. **Nenhum teste, merge, deploy ou aprovação humana foi executado nesta rodada.**
+
+
+## Reconciliação independente — 20/11/2026, 14h55 (Brasília)
+
+**Escopo desta unidade:** verificação de fontes e estado das integrações, sem alterar código, banco, migrations, demo ou artefatos de outro agente. Leitura direta nesta rodada dos IDs oficiais: regras RN-01–41, desenvolvimento ER-SIRE 2.1 (histórico 2.6), guia, UC01–UC14, requisitos v3.0, catálogo rev. 0.2 e registro técnico. Os documentos de monografia/IFSP e parecer permanecem **pendentes de releitura nesta unidade**, portanto não há aceite acadêmico.
+
+| Item | Estado nesta unidade | Último commit/evidência verificada | Próxima ação e pré-requisito |
+|---|---|---|---|
+| A — ficha/fotos | CONCLUÍDO quanto ao **merge da PR #2**, não quanto ao aceite de fotos reais | PR #2 fechada e mesclada na branch `etapa/postgresql-windows`, HEAD histórico da PR `faa5ba3d60b7f292be09676b13f39e9276eacafb` | Revalidar upload/exclusão/persistência somente após OAuth próprio e ambiente de teste |
+| B — Drive OAuth | BLOQUEADO para verificação real | Nenhuma autorização Django/Render ou prova de persistência verificada nesta unidade | Responsável: autora/operador da aplicação; pré-requisito: OAuth `drive.file` e segredos configurados com segurança; retomar após evidência sem revelar tokens |
+| EVO-USO-01 — tutorial | EM EXECUÇÃO em outras branches, **não concluído por esta unidade** | PR #14 aberta, HEAD `f20106af511f5637787f2b450cd1468e53c25924`; PR #35 aberta, HEAD `bf917708f09d01befb8c7576dfc43d9d2a1e8158` | Conciliar árvore das PRs de tutorial, executar testes TUT e revisão humana antes de integrar; não editar templates concorrentes |
+| C — CPF | PENDENTE | UC01, RN-04/05 consultados nesta rodada; nenhum teste/implementação novos | Implementar em branch independente com finalidade LGPD, somente CPF sintético, após comparar HEADs |
+| D/E — UX e painéis | PENDENTE de reconciliação | RN-03–05, UC consultados; nenhum resultado novo alegado | Inspecionar alterações existentes antes de propor diff |
+| F — regressão e aceite | PENDENTE | PR #24 e #28 estão mescladas; isto não equivale a repetir testes nesta unidade | Verificar CI, PostgreSQL/SQLite, browser e resultados efetivos por SHA, sem inferir aprovação |
+| G — monografia/auditoria | PENDENTE | Fontes de requisitos consultadas, não auditoria integral | Inventariar pasta, ler monografia/modelo/parecer integralmente e registrar divergências |
+
+**Dependências:** OAuth bloqueia somente ensaio real de Drive, não tutorial, CPF, UX ou documentação independente. Integração do tutorial depende de conciliar PRs #14/#35 e demais branches, regressões e revisão; a mera existência de PR não demonstra comportamento funcional. A demo permanece intocada. Não houve execução de testes, deploy, revisão do orientador ou alteração de documento acadêmico nesta unidade.
+
+**Rastreabilidade do incremento de orientação:** EVO-USO-01 → `docs/PLANO_ESPIRAL_TUTORIAL_20261118.md` na PR #14 → implementação nas branches de tutorial (arquivos e testes ainda a reconciliar) → cenários TUT-01–09 a confirmar por execução → seção de nova volta da espiral na documentação, ainda não validada. A baseline UC01–UC14 e seis entidades permanece histórica.
+
+**Próxima unidade independente concreta:** reconciliar código e testes do tutorial a partir das PRs abertas, registrar lacunas com SHA e executar cenários sintéticos em ambiente isolado. Se o código estiver ocupado por outro agente, avançar apêndice relacional/UC sem modificar os arquivos compartilhados.
+
+
+## Unidade independente — 20/11/2026, auditoria pontual de fontes acadêmicas
+
+| Item | Status | Último commit | Evidência | Próxima ação |
+|---|---|---|---|---|
+| G — confronto monografia/modelo/parecer | EM EXECUÇÃO (auditoria integral PENDENTE) | `a556fa9db6b7ddfbcf5bf662f646422127c47571` | [Auditoria pontual](AUDITORIA_FONTES_ACADEMICAS_20261120.md): leitura direta dos cinco documentos por IDs exatos, datas de modificação e divergência de título/subtítulo | Inventariar pasta completa, revisar monografia por seção, validar título com orientador |
+| EVO-USO-01 — aceite tutorial | PENDENTE de integração e testes | PR #15 `3f4549b`; PR #53 `3f46709` | PR #53 declara testes não executados por DNS; não comprova CI/Chromium | Conciliar branches e executar cenários sintéticos no SHA integrado |
+| B — Drive real | BLOQUEADO | Sem commit de autorização verificável | OAuth `drive.file` próprio do Django e configuração segura Render não confirmados | Autora/operador autoriza aplicação; retomar testes reais somente após configuração verificada |
+
+Esta unidade não executou testes, não alterou monografia, código ou demo, não fez merge/deploy e não obteve aceite humano. O parecer aponta risco de relato impreciso sobre IA; preservar histórico e submeter correção acadêmica à autora. Fontes originais e datas estão no relatório ligado acima.
