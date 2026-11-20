@@ -83,3 +83,14 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Rastreabilidade do incremento de orientação:** EVO-USO-01 → `docs/PLANO_ESPIRAL_TUTORIAL_20261118.md` na PR #14 → implementação nas branches de tutorial (arquivos e testes ainda a reconciliar) → cenários TUT-01–09 a confirmar por execução → seção de nova volta da espiral na documentação, ainda não validada. A baseline UC01–UC14 e seis entidades permanece histórica.
 
 **Próxima unidade independente concreta:** reconciliar código e testes do tutorial a partir das PRs abertas, registrar lacunas com SHA e executar cenários sintéticos em ambiente isolado. Se o código estiver ocupado por outro agente, avançar apêndice relacional/UC sem modificar os arquivos compartilhados.
+
+
+## Unidade independente — 20/11/2026, auditoria pontual de fontes acadêmicas
+
+| Item | Status | Último commit | Evidência | Próxima ação |
+|---|---|---|---|---|
+| G — confronto monografia/modelo/parecer | EM EXECUÇÃO (auditoria integral PENDENTE) | `a556fa9db6b7ddfbcf5bf662f646422127c47571` | [Auditoria pontual](AUDITORIA_FONTES_ACADEMICAS_20261120.md): leitura direta dos cinco documentos por IDs exatos, datas de modificação e divergência de título/subtítulo | Inventariar pasta completa, revisar monografia por seção, validar título com orientador |
+| EVO-USO-01 — aceite tutorial | PENDENTE de integração e testes | PR #15 `3f4549b`; PR #53 `3f46709` | PR #53 declara testes não executados por DNS; não comprova CI/Chromium | Conciliar branches e executar cenários sintéticos no SHA integrado |
+| B — Drive real | BLOQUEADO | Sem commit de autorização verificável | OAuth `drive.file` próprio do Django e configuração segura Render não confirmados | Autora/operador autoriza aplicação; retomar testes reais somente após configuração verificada |
+
+Esta unidade não executou testes, não alterou monografia, código ou demo, não fez merge/deploy e não obteve aceite humano. O parecer aponta risco de relato impreciso sobre IA; preservar histórico e submeter correção acadêmica à autora. Fontes originais e datas estão no relatório ligado acima.
