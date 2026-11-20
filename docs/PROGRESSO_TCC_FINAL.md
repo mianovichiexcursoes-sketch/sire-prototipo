@@ -79,3 +79,23 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 | Auditoria acadêmica global | PENDENTE | Baseline ER-SIRE 2.1, seis entidades e UC01–UC14 preservados como referências históricas | Inventariar todos os arquivos e conferir monografia/ABNT com fontes originais, sem fabricar VF/CAT-VF |
 
 **Conflito concreto:** cadeias #15/#20/#21 e #33/#35/#39 partem de bases distintas e alteram arquivos compartilhados. Não se deve afirmar que a soma das PRs está pronta, nem publicar a demo. **Último commit desta unidade:** consultar o SHA do commit que adicionou esta seção na branch `docs/rodada11-dependencias-20261120`; o próprio commit GitHub é a evidência, não um teste funcional. **Próxima ação independente:** comparar o JS final de cada cadeia e produzir reconciliação testável numa branch separada após conferência dos HEADs mais recentes.
+
+## Gate documental verificável — 20/11/2026, 09h55 BRT
+
+**Unidade independente:** leitura direta das sete fontes originais via Google Docs, por IDs exatos, com captura das revisões do provedor. Este registro complementa a reconciliação anterior e **não** atesta teste funcional, deploy, aceite nem edição da monografia.
+
+| Fonte oficial | ID abreviado | Revisão Google Docs observada (prefixo) | Conteúdo conferido |
+|---|---|---|---|
+| RN-01–41 | 1REAmrici | AHj4eMQguVGb | RN-01 vínculo, RN-02 responsabilidade, RN-03 isolamento, RN-04 proteção, RN-05 papéis |
+| Desenvolvimento / baseline | 19U5JhTH | AHj4eMTd3MUu | título e histórico; ER-SIRE 2.1 preservada |
+| Guia | 1QzjUnox | AHj4eMQaNMjG | escopo original SQLite e terceira iteração PostgreSQL |
+| UC01–UC14 | 1h5T8l9P | AHj4eMR9ieGd | atores Visitante, Passageiro e Agente e estrutura textual |
+| Requisitos | 1RTgG9f | AHj4eMTi8Nvi | versão 3.0 PFC2; fronteira produto/protótipo |
+| Catálogo/ficha | 1EKm59rE | AHj4eMTSU0RT | revisão 0.2; escopo CAT sem pagamentos/assentos |
+| Registro de implementação | 1g3MnJfh | AHj4eMR_QOz9 | baseline, ambiente histórico e rastreabilidade |
+
+**Dependência do EVO-USO-01:** tutorial de leitura/navegação é independente do OAuth. A verificação de integração depende de conciliar as branches já existentes `feat/evo-uso-01-tutorial-20261118`, `fix/tutorial-fechar-acessibilidade-20261119`, `fix/tutorial-mobile-viewport-20261119` e `test/evo-uso-01-browser-320-focus-20261119`; não editar template compartilhado antes dessa comparação. Evidência desta rodada: leitura documental, não execução de browser.
+
+**Bloqueio B:** falta confirmação verificável de autorização OAuth `drive.file` pertencente ao aplicativo e segredos configurados no Render. Responsável: autora/operador Google Cloud e Render. Impacto: impede aceite real de upload, exclusão e persistência de fotos. Retomar somente com confirmação segura da configuração e ensaio real; nenhuma credencial deve ser registrada aqui.
+
+**Próxima ação independente:** verificar no código e nas PRs a composição efetiva do tutorial, consolidar seus testes de teclado/Escape/fechar/320 px e atualizar a matriz TUT→arquivo→teste→evidência→monografia. Não marcar EVO-USO-01 como avaliado antes da nova tentativa do orientador.
