@@ -62,3 +62,28 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Dependências/coordenação:** A permanece EM EXECUÇÃO, com código e testes em andamento por outro agente. Não editar `views.py`, `models.py`, migrações, templates nem a PR #2 enquanto não reconciliar PR #4/#5 e respectivos HEADs. B permanece BLOQUEADO pela autorização OAuth do aplicativo, com responsável autora/operador Google Cloud + Render; sem B não validar fotos reais ou persistência após deploy. C pode avançar de modo independente apenas em especificação de finalidade, minimização e política de acesso do CPF (RN-04/05 e UC01), sem coletar CPF real; implementação requer checagem de branches ativas. D/E seguem independentes de B, sujeitos a reconciliação de código. F parcialmente possível com Drive simulado; aceite real dependente de B. G mantém auditoria global pendente.
 
 **Próxima ação verificável:** comparar HEAD, status de CI e conteúdo das PRs #2/#4/#5; consolidar matriz CAT-RF-02/03/04 → migração 0007 / views / testes FOTO → evidências; só então revisar lacunas sem duplicar alterações. Em paralelo, preparar especificação EVO-CPF/LGPD em documento separado e sintético. **Nenhum teste, merge, deploy ou aprovação humana foi executado nesta rodada.**
+
+
+## Reconciliação documental — 20/11/2026, 03h56 (America/Sao_Paulo)
+
+**Unidade independente versionada:** atualização do checklist histórico após leitura direta das sete fontes oficiais por IDs exatos no Google Drive e inspeção do README da branch de demonstração. Nenhum código, migration, template, dado real ou configuração do Render foi alterado. Não houve execução de teste, CI, deploy ou avaliação do orientador nesta unidade.
+
+**Fontes reabertas nesta unidade:** RN-01–RN-41 (ID `1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0`), desenvolvimento/baseline (ID `19U5JhTHfk8IbvWfdAAUg8Z81fwQ8wsji6m4vxTN9Ed8`), guia (ID `1QzjUnoxF9MBukMQEexTuzK1O16czpMIParG5QgSab8U`), UC01–14 (ID `1h5T8l9PPBGralJYaTqjG0K-czRBrGok6tzWRCHenWOY`), requisitos v3.0 (ID `1RTgG9fDY71_8hsncRQKWNd2cQGwRTQfo72xLAitwBaM`), catálogo rev. 0.2 (ID `1EKm59rEfdHFgK0Ze5EfxBc5AC1g4hwfx1UVogbXL7Is`) e registro técnico (ID `1g3MnJfhbMFsDE-x42HemvypzXbAOh0wi3GPK7rwMqaM`). Revisões retornadas pelo conector nesta consulta; datas de última edição não foram verificadas.
+
+**Divergência de estado identificada:** este checklist, atualizado originalmente em 17/11, descreve A como em execução e B como bloqueado, mas o README da branch `etapa/postgresql-windows` relata integração na PR #18, ensaio OAuth real em PostgreSQL local em 18/11, PRs #24/#28 e relatório de aceite. Portanto, os estados anteriores são **históricos, não a situação atual confirmada**. A verificação de deploy, persistência pós-redeploy no Render, CPF, aceite humano e avaliação do orientador continua pendente. Não reinterpretar teste local OAuth como comprovação de persistência no Render.
+
+| Item | Estado desta unidade | Evidência disponível | Próxima ação / dependência |
+|---|---|---|---|
+| A. Ficha e fotos | INTEGRADO SEGUNDO README; ACEITE PARCIAL | README na branch de demo cita PR #18, migration 0007 e PR #28 | Verificar PRs/SHAs e cenários CAT-VF, sem alterar arquivos concorrentes |
+| B. OAuth Drive | LOCAL RELATADO; RENDER NÃO VERIFICADO | README aponta `docs/OAUTH_EXECUCAO_REAL_2026-11-18.md` | Testar upload, exclusão e persistência após redeploy no ambiente autorizado; depende de credenciais seguras e janela de teste |
+| C. CPF | PENDENTE DE RECONCILIAÇÃO | Baseline UC01 e RN-04/05 verificadas; README não o declara implementado | Inspecionar branches de evolução antes de alterar modelos; só dados sintéticos |
+| D/E. UX e painéis | PENDENTE DE RECONCILIAÇÃO | README e fontes oficiais, sem teste desta unidade | Conferir funcionalidades efetivas, papéis e regressões |
+| EVO-USO-01 | IMPLEMENTADO SEGUNDO README; AVALIAÇÃO HUMANA PENDENTE | README cita tutorial contextual, PR #18, ressalva móvel e ausência de avaliação do orientador | Conferir testes de teclado, foco, Escape e responsividade; solicitar nova tentativa via autora após revisão |
+| F. Verificação | PARCIAL RELATADA, NÃO REEXECUTADA | README cita 32 capturas, PR #24 e PR #28, três ressalvas e um bloqueio | Validar logs, cenários faltantes e evidência pós-deploy |
+| G. Auditoria global | PENDENTE | Fontes acadêmicas da baseline verificadas; monografia completa não relida nesta unidade | Inventariar pasta TCC JULIA — SIRE e auditar monografia e anexos com modelo IFSP |
+
+**Rastreabilidade desta unidade:** RN-03/04/05 → permissões entre agências e dados pessoais → cenários de autorização ainda a reconferir → README/PR #28 → seção de segurança e limites da monografia; UC01–UC14 → `sire/views.py`, formulários e templates (mapeamento histórico no registro técnico) → VF01–VF16 → relatório de aceite citado pelo README → apêndice UC; EVO-USO-01 → `tutorial-uso.js` segundo README → TUT-01–06 → PR #18 e PR #28 → iteração da espiral a avaliar. Esses vínculos não equivalem a execução de testes nesta unidade.
+
+**Concorrência:** há branches específicas `feat/evo-uso-01-tutorial-20261118`, `fix/tutorial-mobile-viewport-20261119` e `docs/auditoria-integracao-tutorial-20261120-0304`; este commit altera somente o checklist em branch própria. Antes de integrar, comparar com a versão mais recente do checklist e reconciliar com o outro agente. A demo permanece intacta.
+
+**Próxima unidade:** inspecionar o estado atual das PRs #18/#24/#28 e a auditoria móvel, reconciliar o checklist com evidências reais, sem reimplementar tutorial ou OAuth local já relatados. Bloqueio externo: avaliação pelo orientador depende de revisão humana e comunicação autorizada pela autora.
