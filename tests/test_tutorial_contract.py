@@ -43,6 +43,21 @@ class TutorialContractTests(unittest.TestCase):
             self.assertIn(value, self.script)
         self.assertNotIn("localStorage.setItem('cpf'", self.script)
 
+    def test_mobile_layout_has_bounded_panel_and_touch_targets(self):
+        # Static guard only: does not prove visibility at 320px or 375x812.
+        self.assertIn("@media(max-width:500px)", self.script)
+        self.assertIn("width:calc(100vw - 1rem)", self.script)
+        self.assertIn("max-height:min(45dvh,22rem)", self.script)
+        self.assertIn("overflow:auto", self.script)
+        self.assertIn("min-height:44px", self.script)
+
+    def test_tutorial_does_not_claim_modal_or_trigger_navigation(self):
+        self.assertIn("panel.setAttribute('aria-modal', 'false')", self.script)
+        self.assertIn("help.setAttribute('aria-haspopup', 'dialog')", self.script)
+        self.assertNotIn("window.location =", self.script)
+        self.assertNotIn("location.href =", self.script)
+        self.assertNotIn(".click()", self.script)
+
 
 if __name__ == "__main__":
     unittest.main()
