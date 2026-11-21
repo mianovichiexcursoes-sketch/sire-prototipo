@@ -32,3 +32,9 @@ EVO-USO-01 / TUT-01 a TUT-05 -> base.html + tutorial-uso.js -> ensaios de navega
 - PR #15 aberta (head `3f4549bf`), PR #20 aberta (head `63f341ab`); tutorial ainda sem aceite em navegador e orientador. Não integrar sem reconciliação.
 - Fontes oficiais por ID relidas; monografia acessível, sem auditoria integral. OAuth do aplicativo não comprovado.
 - Próxima ação independente: confrontar diffs #15/#20, ensaiar TUT em navegador com dados sintéticos, documentar resultados reais. Sem deploy.
+
+## Unidade documental — 21/11/2026 (reconciliação de patches)
+- **Concluído:** comparação dos patches PR #15 (`3f4549bf`) e PR #20 (`63f341ab`), com arquivos compartilhados, dependências e critérios de integração em [RECONCILIACAO_TUTORIAL_DIFFS_20261121.md](RECONCILIACAO_TUTORIAL_DIFFS_20261121.md). Commit da unidade: `caa7fdaf59426ec6a001929f8637191f88fccc10`.
+- **Em execução, não validado:** EVO-USO-01. Pré-requisitos: conciliar branches concorrentes e executar ensaios de teclado, perfis sintéticos, navegador, regressão Django/SQLite/PostgreSQL. Responsável: revisão técnica; retomar com resultados e SHA dos testes.
+- **Bloqueado:** fotos em produção por OAuth `drive.file` próprio do aplicativo e ambiente autorizado não confirmados; responsável: autora/operador; condição: autorização segura e ensaio isolado de persistência. Independente do tutorial.
+- **Pendente:** avaliação humana, apêndice UC/modelo, auditoria global ABNT. Nenhum teste, merge, deploy ou edição da monografia nesta unidade.
