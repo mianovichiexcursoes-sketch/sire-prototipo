@@ -87,3 +87,14 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Concorrência:** há branches específicas `feat/evo-uso-01-tutorial-20261118`, `fix/tutorial-mobile-viewport-20261119` e `docs/auditoria-integracao-tutorial-20261120-0304`; este commit altera somente o checklist em branch própria. Antes de integrar, comparar com a versão mais recente do checklist e reconciliar com o outro agente. A demo permanece intacta.
 
 **Próxima unidade:** inspecionar o estado atual das PRs #18/#24/#28 e a auditoria móvel, reconciliar o checklist com evidências reais, sem reimplementar tutorial ou OAuth local já relatados. Bloqueio externo: avaliação pelo orientador depende de revisão humana e comunicação autorizada pela autora.
+
+
+## Verificação incremental — 21/11/2026 (20h56 Brasília)
+
+**Fontes efetivamente relidas por ID:** regras RN-01–41, baseline de desenvolvimento 2.1 (histórico até 2.6), guia de implementação, UC01–UC14, requisitos v3.0, catálogo revisão 0.2 e registro técnico. Não foi realizada nesta unidade leitura integral da monografia nem do modelo IFSP. Esta nota não equivale a auditoria global.
+
+**Achado verificável de código:** na branch de demo `etapa/postgresql-windows`, `sire/templates/sire/base.html` já inclui `sire/js/tutorial-uso.js` e atributo de perfil `data-sire-role`. O arquivo `sire/static/sire/js/tutorial-uso.js` já implementa passos por perfil, botão Como usar, orientação sem envio de formulários, indicação de que reserva não é pagamento e tratamento de indisponibilidade de armazenamento via try/catch. Portanto **não reimplementar tutorial** sem conciliar esta versão e as branches `feat/evo-uso-01-tutorial-20261118`, `fix/tutorial-mobile-viewport-20261119` e `test/tutorial-storage-indisponivel-20261120`. A presença do código não comprova funcionamento em navegador, acessibilidade, aceite humano ou deploy recente.
+
+**EVO-USO-01 — EM VERIFICAÇÃO:** fonte: feedback da autora de 18/11; implementação inspecionada: `base.html` e `tutorial-uso.js` na branch de demo; cenário pendente: abrir primeiro acesso por Visitante/Passageiro/Agente, navegar Anterior/Próximo/Pular/Fechar, Escape, foco e celular, sem disparar POST; evidência atual: inspeção estática do código; monografia: quadrantes da nova volta da espiral ainda sem avaliação humana comprovada. Próxima ação: confrontar o código com testes e PRs integradas, executar navegador em ambiente isolado e documentar resultado real.
+
+**Dependências reavaliadas:** OAuth do aplicativo não é dependência do tutorial; testes reais de persistência de fotos pós-redeploy continuam condicionados a autorização/ambiente verificáveis. A avaliação de uso depende do orientador, por intermédio da autora. Não houve testes executados, merge, deploy, alteração de dados, revisão do orientador ou atualização da monografia nesta unidade. A próxima rodada deve priorizar evidência de execução dos cenários TUT sem repetir implementação já existente.
