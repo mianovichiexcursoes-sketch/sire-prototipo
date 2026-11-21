@@ -186,3 +186,19 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 | G / auditoria global | Em execução, **não concluída** | Leitura textual direta das 11 fontes nesta rodada | Ler regulamento PDF, inventariar pasta completa, revisar monografia integral e confirmar alterações após salvar |
 
 **Entrega desta rodada:** atualização documental de rastreabilidade em branch já existente, sem alterar migrations, templates, dados ou demo. **Não executados:** suíte Django, Playwright/Chromium, deploy, upload real, merge ou avaliação humana. **Próxima rodada:** priorizar integração/testes do tutorial, sem produzir novo checklist paralelo. A ausência de acesso a arquivos locais não deve ser confundida com ausência de código no GitHub.
+
+
+## Rodada de 21/11/2026 — verificação direta de fontes e reconciliação sem integração
+
+**Fontes originais acessadas nesta rodada por ID exato no Google Drive:** RN-01–RN-41 (`1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0`), documentação baseline (`19U5JhTHfk8IbvWfdAAUg8Z81fwQ8wsji6m4vxTN9Ed8`), guia (`1QzjUnoxF9MBukMQEexTuzK1O16czpMIParG5QgSab8U`), UC01–UC14 (`1h5T8l9PPBGralJYaTqjG0K-czRBrGok6tzWRCHenWOY`), requisitos v3 (`1RTgG9fDY71_8hsncRQKWNd2cQGwRTQfo72xLAitwBaM`), CAT (`1EKm59rEfdHFgK0Ze5EfxBc5AC1g4hwfx1UVogbXL7Is`) e registro (`1g3MnJfhbMFsDE-x42HemvypzXbAOh0wi3GPK7rwMqaM`). Conferidos título, identificação e trechos iniciais de escopo; **não** equivale a leitura integral nem validação de requisitos específicos. Versões identificadas: baseline ER-SIRE 2.1 (histórica), requisitos 3.0, CAT revisão 0.2; demais versões/datas editoriais a confirmar no corpo. As demais fontes acadêmicas exigidas ainda não foram verificadas nesta rodada.
+
+**Checklist canônico:** este arquivo está na branch `docs/progresso-reconciliacao-20261118-1855`, PR #30 aberta/draft e base `main`; não foi localizado na branch padrão. PR #61 aberta/draft, HEAD `17bb3c304002f1d0e5854583091feecae33338f1`, contém outro registro de gate documental em branch distinta. **Não mesclar automaticamente** documentos paralelos. Preservar histórico e selecionar integração única após revisão.
+
+| Item | Status nesta rodada | Evidência verificável | Dependência / responsável / próxima ação |
+|---|---|---|---|
+| EVO-USO-01 | **em execução, aceite pendente** | PR #14 aberta/draft; PR #61 descreve branches concorrentes | Integrador técnico comparar HEADs/patches #15/#20/#21/#33/#35/#39 e executar TUT-01–09, teclado, celular, armazenamento indisponível; autora/orientador avaliar depois |
+| A — fotos | **em execução, aceite pendente** | PR #2 mesclada, SHA de merge `72a488beb518b4dcca275970afb81892b97f3d4b` documentado na PR #60 | Testes CAT, autorização entre agências e persistência após deploy, sem presumir funcionamento por merge |
+| B — OAuth Drive | **bloqueado para teste real** | Nenhuma evidência de autorização Django `drive.file` obtida nesta rodada | Pré-requisito: credenciais do próprio aplicativo configuradas com segurança; responsável: titular Google Cloud/Render; retomar somente com confirmação técnica, sem publicar segredos |
+| F/G — verificação e auditoria | **pendente** | Fontes iniciais consultadas; nenhum log novo de testes nesta rodada | Testes SQLite/PostgreSQL e navegador, inventário integral Drive, monografia e IFSP/ABNT com evidências |
+
+**Unidade entregue:** reconciliação factual e gate de fontes no checklist existente, sem alterar código, migration, dados, demo ou outra branch. **Não realizados nesta rodada:** CI, testes Django, navegador, merge, deploy, atualização da monografia e aceite do orientador. Próxima unidade independente: conferir diffs e ancestry do tutorial em branch de integração isolada; não tratar OAuth como bloqueio do tutorial.
