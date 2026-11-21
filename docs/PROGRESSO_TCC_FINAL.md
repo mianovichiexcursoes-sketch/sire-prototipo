@@ -137,3 +137,29 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 **Conflito e dependências reavaliados:** PR #14 continua documental, draft, HEAD `f20106af511f5637787f2b450cd1468e53c25924` e lista expressamente #15/#20/#21/#33/#35 como incrementos não integrados. Checklist não existe em `main`; esta branch é fonte candidata e requer reconciliação antes de torná-la canônica. Não tocar no JS compartilhado enquanto os HEADs concorrentes não forem conciliados. OAuth `drive.file` não é pré-requisito para tutorial, mas é para aceite real da integração de fotos. Responsável pelo OAuth: titular Google/Render; condição de retomada: configuração autorizada e evidência de ensaio sintético persistente.
 
 **Status da unidade:** concluído somente o registro verificável de fontes/dependências. **Próxima ação:** comparar patches do tutorial, reconciliar em branch isolada e executar TUT com evidência; em paralelo inventariar documentos restantes e anexos da pasta TCC. Não confundir registro documental com entrega funcional.
+
+
+## Rodada 20/11/2026 — fontes acadêmicas complementares
+
+**Entrega versionada:** `docs/AUDITORIA_FONTES_ACADEMICAS_20261120.md`, commit `b7806b82344374b97e2d16f222aac16fda09c368`. Cinco fontes originais adicionais acessadas diretamente por ID: monografia (`1SPpcP6b`, mod. 18/11), modelo IFSP (`1RQVZxph`, mod. 30/06), regulamento PFC (`1AEzHiDH`, mod. 28/09), parecer pré-banca (`1xhVM1WT`, mod. 23/10), histórico PROMPS (`1mpNI5u`, mod. 28/09). Datas de modificação fornecidas pelo Drive, não equivalem a aprovação.
+
+| Item | Status | Último commit/evidência | Dependência e próxima ação |
+|---|---|---|---|
+| G — divergência título/subtítulo/titulação | **Bloqueado para correção final** | `b7806b8`; [confronto documental](AUDITORIA_FONTES_ACADEMICAS_20261120.md) | Monografia omite “Escaláveis” no subtítulo, modelo inclui. Responsável: autora/orientador; retomar após confirmação do título oficial; não alterar históricos |
+| G — cinco fontes complementares | **Concluído: leitura inicial; auditoria integral pendente** | `b7806b8`; IDs, datas e achados no confronto | Inventariar pasta TCC inteira e revisar integralmente conteúdo, figuras, ABNT, anexos, citações, resultados e transparência IA |
+| EVO-USO-01 — tutorial | **Em execução, sem aceite** | PRs #15/#20/#21/#33/#35/#54 não integradas | Reconciliar JS/HEADs, executar TUT-01–09 e regressões no SHA integrado, depois avaliação humana |
+| B — OAuth fotos reais | **Bloqueado** | Sem comprovação de OAuth Django `drive.file`/persistência após deploy nesta rodada | Titular Google/Render: configurar autorização própria e segredos seguros; testar com fotos sintéticas, sem expor segredos |
+
+**Testes/CI/deploy nesta rodada:** não executados; nenhuma alteração em aplicação, migrações, dados, demo ou documentos Drive. Próxima unidade independente: inventário da pasta acadêmica e matriz de divergências, ou integração isolada do tutorial após reconciliar branches.
+
+
+## 20/11/2026 — inventário efetivo de evidências e documentos
+
+| Item | Estado | Último commit / evidência | Bloqueio e próxima ação |
+|---|---|---|---|
+| G — inventário da árvore Drive | **Concluído: listagem de metadados; auditoria de conteúdo pendente** | `76bf31428881bbcd7c39f027cb6e96e285ec41c6`; [inventário](INVENTARIO_DRIVE_TCC_20261120.md); 77 entradas em seis pastas listadas | Ler integralmente monografia, PDFs e relatórios; confrontar com modelos, figuras e normas IFSP/ABNT. Não declarar auditoria global concluída |
+| F — evidências históricas 18/11 | **Localizadas, não reexecutadas** | [relatório de aceite rev. 2](https://docs.google.com/document/d/1c0G1H1I-Y90KJrGMJuwUHXkRj_gjP41ran7ROKiR53g/edit), capturas L01–L21 e R01–R11; código declarado `e220974` | Distinguir 107 OK/3 ignorados reportados de testes atuais; repetir VF01/02/12, CAT parciais e TUT no HEAD integrado. Login Render bloqueado no relatório; autorização humana e acesso seguro necessários |
+| EVO-USO-01 — aceitação atual | **Em execução** | Relatório 18/11 registra tutorial por perfil e Escape no commit histórico `e220974`; ressalva móvel em 375 px | Conciliar PRs #15/#20/#33/#35 e testes #21/#54; executar em SHA integrado; avaliação orientador ainda não realizada |
+| B — OAuth fotos | **Bloqueado para aceite real** | Relatório histórico informa foto existente exibida, mas nenhum upload novo e nenhuma persistência pós-deploy demonstrada nesta rodada | Responsável: titular Google/Render; pré-requisito: OAuth `drive.file` próprio configurado sem segredos no Git/chat; retomar com ensaio sintético e persistência verificada |
+
+**Unidade desta rodada:** leitura direta das sete fontes oficiais, listagem Drive e leitura do relatório de aceite; commit documental `76bf314`. **Não houve execução de testes, CI, merge, deploy, alteração da demo ou aceite humano.** Próxima unidade elegível: auditoria textual integral de um documento final ou reconciliação isolada do tutorial, sem modificar templates compartilhados antes de resolver HEADs.
