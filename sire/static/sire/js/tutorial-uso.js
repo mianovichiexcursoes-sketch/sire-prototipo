@@ -10,6 +10,12 @@
     ["Publicar", "Publicação é uma ação sua; este guia nunca publica."],
     ["Reservas", "Consulte reservas vinculadas à sua agência."],
     ["Passageiros", "Consulte os passageiros autorizados."]
+  ] : role === "passageiro" ? [
+    ["Catálogo", "Encontre excursões e abra os detalhes."],
+    ["Detalhes da excursão", "Confira destino, datas, preço, vagas e embarques."],
+    ["Selecionar embarque e reservar", "Escolha um ponto de embarque. Sem vagas, não é possível reservar."],
+    ["Confirmar reserva de uma vaga", "Confirme apenas quando estiver pronto. Reserva não é pagamento."],
+    ["Minhas reservas", "Acompanhe suas reservas após entrar."]
   ] : [
     ["Catálogo", "Encontre excursões e abra os detalhes. Se não houver opções, tente novamente depois."],
     ["Entrar", "Entre na conta; o cadastro público é para Passageiro."],
