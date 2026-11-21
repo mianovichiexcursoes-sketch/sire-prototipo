@@ -166,3 +166,23 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 **Rastreabilidade:** requisito acadêmico de consistência de título → capas/folhas de rosto dos dois documentos acima → comparação textual efetivamente feita nesta rodada → evidência: links pelos IDs → seções pré-textuais da monografia. EVO-USO-01 permanece **em execução**: PRs #15/#20/#21/#33/#35/#39 ainda exigem reconciliação de JS, template e CSS, testes TUT-01–09 e avaliação humana. OAuth próprio continua **bloqueado** para aceite real de fotos, sem impedir tutorial. PR #30 é draft; não considerar checklist integrado à branch principal.
 
 **Próxima ação independente:** conciliar os HEADs do tutorial em branch isolada, executar Django/Chromium e regressões; para a auditoria, inventariar a pasta inteira e cotejar regulamento PFC com a monografia, preservando títulos até manifestação do orientador. Nenhum teste, merge ou deploy realizado nesta unidade.
+
+
+## Verificação independente — 21/11/2026, 09h BRT
+
+**Fontes efetivamente abertas por ID nesta rodada:** regras RN-01–41, documentação de desenvolvimento (133.468 caracteres), guia (15.633), casos UC01–UC14 (18.934), requisitos v3.0 (36.473), complemento CAT rev. 0.2 (17.590), registro de implementação (48.074), monografia principal (101.657), modelo IFSP (84.437), parecer de pré-banca (16.962) e histórico PROMPS TCC (30.920). Esses números representam extensão do texto retornado pelo conector, **não** validação de todas as páginas, formatação, anexos ou referências. Regulamento PFC em PDF ainda requer leitura específica. Fontes por URL e IDs constam no enunciado e seções anteriores deste checklist; datas editoriais não equivalem a aprovação.
+
+**Correção factual A:** PR #2 consta **closed/merged** em 18/11/2026 às 14:05 UTC, merge SHA `72a488beb518b4dcca275970afb81892b97f3d4b`, HEAD da PR `faa5ba3d60b7f292be09676b13f39e9276eacafb`. Portanto **não** descrevê-la como aguardando merge. A descrição da própria PR mantém pendente a autorização OAuth própria do Django/Render e ensaios reais de fotos, sem afirmar deploy.
+
+**EVO-USO-01:** PR #14 segue aberta/draft, HEAD `f20106af511f5637787f2b450cd1468e53c25924`, com dependências explícitas #15/#20/#21/#33/#35/#39 e conflitos sobre `tutorial-uso.js`. O JS lido na branch #15 possui ações Anterior/Próximo/Pular, Escape, destaque e oferta inicial, mas **não comprova** integração de Fechar separado, responsividade, fluxo entre páginas, testes executados ou aceite. Próxima ação executável: construir árvore integrada em branch isolada a partir de ancestry real, verificar JS/template e executar Django + Chromium; não sobrescrever branches concorrentes.
+
+**Matriz e dependências atualizadas:**
+
+| Item | Status | Evidência / último SHA conhecido | Próxima ação e condição de aceite |
+|---|---|---|---|
+| A / CAT | Em execução (merge feito; aceite pendente) | PR #2 merge `72a488b` | CAT-VF01–06, permissões, migração 0007 e persistência real após deploy; OAuth necessário somente para operações Drive |
+| B / Drive | Bloqueado para ensaio OAuth real, estado de credenciais não confirmado | PR #2 descreve configuração pendente | Titular Google/Render autorizar aplicativo `drive.file` e configurar segredos fora do Git; ensaiar upload/exclusão sintéticos |
+| EVO-USO-01 | Em execução, **não verificado** | PR #14 `f20106a`; JS da #15 SHA blob `41039cd` | Reconciliar #15/#20/#21/#33/#35/#39, testes TUT e avaliação da autora/orientador |
+| G / auditoria global | Em execução, **não concluída** | Leitura textual direta das 11 fontes nesta rodada | Ler regulamento PDF, inventariar pasta completa, revisar monografia integral e confirmar alterações após salvar |
+
+**Entrega desta rodada:** atualização documental de rastreabilidade em branch já existente, sem alterar migrations, templates, dados ou demo. **Não executados:** suíte Django, Playwright/Chromium, deploy, upload real, merge ou avaliação humana. **Próxima rodada:** priorizar integração/testes do tutorial, sem produzir novo checklist paralelo. A ausência de acesso a arquivos locais não deve ser confundida com ausência de código no GitHub.
