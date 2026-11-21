@@ -185,3 +185,8 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 ## Unidade 21/11/2026 01h05 BRT — matriz TUT (sem execução de testes)
 
 **Status EVO-USO-01:** em execução; aceite técnico pendente. **Último commit:** ver `docs/EVO_USO_MATRIZ_ACEITE_20261121.md` nesta branch; **evidência:** matriz TUT-01–09 com fonte, implementação a inspecionar, ensaio e prova requerida. **Próxima ação:** conciliar PRs de tutorial e executar suíte isolada no SHA integrado; não modificar demo. **Bloqueio OAuth B:** autorização própria Django/Render e teste real ainda não comprovados; responsável titular Google/Render; retomar com credenciais seguras e evidências, sem impedir testes independentes. Nenhum resultado de teste, deploy ou avaliação humana foi produzido nesta unidade.
+
+
+## Unidade 21/11/2026, 02h BRT — gates de merge e aceite
+
+**Concluído (auditoria documental, não aceite):** `docs/AUDITORIA_GATES_20261121.md`, commit `132ce13b96b0fc60b017b20bf3e4590f7238e696`. Fontes oficiais RN, ER-SIRE, guia, UC, requisitos, CAT e registro relidas por IDs. PR #2 está mesclada desde 18/11, mas **testes de fotos, OAuth Django e persistência no Render não foram comprovados nesta unidade**. PR #15 e #56 permanecem abertas/draft; tutorial não aceito. **Bloqueio B:** titular do app/Render precisa autorizar OAuth `drive.file` e disponibilizar ambiente seguro para ensaio com imagens sintéticas; impacto restrito ao aceite de mídia, sem impedir testes locais do tutorial. **Próxima ação independente:** conciliar PRs #15/#20/#21/#33/#35/#39/#53/#54 e executar testes TUT com logs/SHA; não mesclar nem publicar antes do gate. Nenhum teste, deploy, merge ou alteração acadêmica realizado nesta unidade.
