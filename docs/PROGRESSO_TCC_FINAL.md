@@ -4,7 +4,7 @@ Este checklist acompanha a branch isolada feat/evo-uso-01-tutorial-20261118. A l
 
 | Item | Estado | Último commit | Evidência | Próxima ação |
 |---|---|---|---|---|
-| A — PR #2, ficha e fotos | Em execução em PR independente | faa5ba3 (referência histórica) | PR #2; CI 44097899889 | Revisão e testes reais de fotos após OAuth |
+| A — PR #2, ficha e fotos | Merge concluído; aceite funcional pendente | faa5ba3 (head histórico) | PR #2 merged; CI 44097899889 não substitui ensaio real | Validar persistência, permissões e fotos após OAuth |
 | B — OAuth drive.file | Bloqueado: autorização própria do app/ambiente de ensaio não confirmados | 2a354a7 (PR #9) | PR #9 e CI 44145474063 (somente fotos simuladas) | Autora configura ambiente isolado, sem divulgar segredos |
 | C — CPF/LGPD | Pendente, branch independente | — | — | Revisar estado da PR dedicada e testes sintéticos |
 | D — UX de reserva | Pendente | — | — | Implementar após reconciliação das branches |
@@ -26,3 +26,9 @@ Lidas em 18/11/2026 por ID: RN-01–41 (1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE0
 
 ## Rastreabilidade
 EVO-USO-01 / TUT-01 a TUT-05 -> base.html + tutorial-uso.js -> ensaios de navegador pendentes -> seção metodologia/avaliação da monografia pendente. TUT-06 depende de regressão de reservas e autorização entre agências. DOC-01 depende de conferência do diagrama e apêndice. AVAL-01 depende de retorno humano.
+
+## Atualização verificável de 21/11/2026
+- Gate de integração e matriz de bloqueios: `docs/GATE_INTEGRACAO_SIRE_20261121.md`, commit `18b26f3c3d79fe03e0b2cce37a173de31f74b2b0`.
+- PR #15 aberta (head `3f4549bf`), PR #20 aberta (head `63f341ab`); tutorial ainda sem aceite em navegador e orientador. Não integrar sem reconciliação.
+- Fontes oficiais por ID relidas; monografia acessível, sem auditoria integral. OAuth do aplicativo não comprovado.
+- Próxima ação independente: confrontar diffs #15/#20, ensaiar TUT em navegador com dados sintéticos, documentar resultados reais. Sem deploy.
