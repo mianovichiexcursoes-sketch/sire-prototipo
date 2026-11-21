@@ -163,3 +163,20 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 | B — OAuth fotos | **Bloqueado para aceite real** | Relatório histórico informa foto existente exibida, mas nenhum upload novo e nenhuma persistência pós-deploy demonstrada nesta rodada | Responsável: titular Google/Render; pré-requisito: OAuth `drive.file` próprio configurado sem segredos no Git/chat; retomar com ensaio sintético e persistência verificada |
 
 **Unidade desta rodada:** leitura direta das sete fontes oficiais, listagem Drive e leitura do relatório de aceite; commit documental `76bf314`. **Não houve execução de testes, CI, merge, deploy, alteração da demo ou aceite humano.** Próxima unidade elegível: auditoria textual integral de um documento final ou reconciliação isolada do tutorial, sem modificar templates compartilhados antes de resolver HEADs.
+
+
+## Conferência incremental — 21/11/2026, 00h BRT
+
+**Unidade executada:** releitura direta, por IDs exatos, das sete fontes essenciais (RN-01–41; desenvolvimento ER-SIRE 2.1; guia; UC01–UC14; requisitos 3.0; CAT rev. 0.2; registro técnico) e inspeção das PRs #2, #14, #53, #54 e #55, além do JavaScript inicial do tutorial na branch #15. Esta é uma atualização documental de rastreabilidade; **não houve execução de suíte, merge, deploy, edição da monografia ou validação humana**. Não declarar sucesso de testes citados por PRs anteriores como reexecução.
+
+| ID | Status | Último SHA/evidência observada | Próxima ação/dependência |
+|---|---|---|---|
+| A / CAT | **integrado, aceite real pendente** | #2 merged em 18/11, merge `72a488b` | Confirmar CAT-VF, autorizações e foto real em ambiente seguro; não reimplementar #2 |
+| B / Drive | **bloqueado para aceite da integração real** | #2 explicita OAuth próprio do aplicativo; nenhuma credencial nem ensaio Render comprovados nesta conferência | Responsável: titular Google/Render. Pré-requisito: consentimento `drive.file`, configuração segura e ambiente isolado; retomar upload/exclusão/persistência com fotos sintéticas; não bloqueia tutorial |
+| EVO-USO-01 | **em execução; não aceito** | #14 draft, #15 JS inicial `3f4549b`; #53 `3f46709` e #54 `9531e5c` são testes adicionais em bases distintas | Reconciliar #15/#20/#21/#33/#35/#39/#53/#54 numa árvore isolada; executar Django + Chromium com foco, Escape, storage indisponível, 320px e perfis; aprovação humana antes de publicar |
+| G / auditoria | **em execução** | #55 HEAD observado `3fd620b`; inventário em `docs/INVENTARIO_DRIVE_TCC_20261120.md` | Auditar monografia integral, IFSP, ABNT, evidências e título com orientador; não confundir inventário com aceite |
+| F / verificações | **pendente** | #53/#54 declaram expressamente testes não executados | Executar suíte na árvore efetivamente integrada e anexar logs com SHA; PostgreSQL e fotos pós-deploy exigem ambiente apropriado |
+
+**Risco de concorrência:** #53 deriva de branch de contratos estáticos, #54 deriva da implementação #15 e #55 deriva da branch de checklist; não são uma única árvore pronta. O arquivo JS inicial usa busca textual de alvos e localStorage protegido por try/catch; isso é **inspeção de código**, não prova de usabilidade, segurança, acessibilidade ou cobertura do tutorial. Não alterar o mesmo JS em paralelo sem reconciliar HEADs.
+
+**Rastreabilidade:** EVO-USO-01 → `sire/static/sire/js/tutorial-uso.js` (#15) → testes de navegador propostos (#21/#54) → evidência de execução **pendente** → nova volta da espiral e seção de resultados **pendentes de atualização conclusiva**. ER-SIRE 2.1/UC01–UC14 e seis entidades preservadas como baseline; RN-31–41 permanecem visão futura. Nenhuma mudança de domínio ou migration nesta unidade.
