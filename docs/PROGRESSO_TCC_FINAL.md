@@ -180,3 +180,8 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 **Risco de concorrência:** #53 deriva de branch de contratos estáticos, #54 deriva da implementação #15 e #55 deriva da branch de checklist; não são uma única árvore pronta. O arquivo JS inicial usa busca textual de alvos e localStorage protegido por try/catch; isso é **inspeção de código**, não prova de usabilidade, segurança, acessibilidade ou cobertura do tutorial. Não alterar o mesmo JS em paralelo sem reconciliar HEADs.
 
 **Rastreabilidade:** EVO-USO-01 → `sire/static/sire/js/tutorial-uso.js` (#15) → testes de navegador propostos (#21/#54) → evidência de execução **pendente** → nova volta da espiral e seção de resultados **pendentes de atualização conclusiva**. ER-SIRE 2.1/UC01–UC14 e seis entidades preservadas como baseline; RN-31–41 permanecem visão futura. Nenhuma mudança de domínio ou migration nesta unidade.
+
+
+## Unidade 21/11/2026 01h05 BRT — matriz TUT (sem execução de testes)
+
+**Status EVO-USO-01:** em execução; aceite técnico pendente. **Último commit:** ver `docs/EVO_USO_MATRIZ_ACEITE_20261121.md` nesta branch; **evidência:** matriz TUT-01–09 com fonte, implementação a inspecionar, ensaio e prova requerida. **Próxima ação:** conciliar PRs de tutorial e executar suíte isolada no SHA integrado; não modificar demo. **Bloqueio OAuth B:** autorização própria Django/Render e teste real ainda não comprovados; responsável titular Google/Render; retomar com credenciais seguras e evidências, sem impedir testes independentes. Nenhum resultado de teste, deploy ou avaliação humana foi produzido nesta unidade.
