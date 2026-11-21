@@ -190,3 +190,14 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 ## Unidade 21/11/2026, 02h BRT — gates de merge e aceite
 
 **Concluído (auditoria documental, não aceite):** `docs/AUDITORIA_GATES_20261121.md`, commit `132ce13b96b0fc60b017b20bf3e4590f7238e696`. Fontes oficiais RN, ER-SIRE, guia, UC, requisitos, CAT e registro relidas por IDs. PR #2 está mesclada desde 18/11, mas **testes de fotos, OAuth Django e persistência no Render não foram comprovados nesta unidade**. PR #15 e #56 permanecem abertas/draft; tutorial não aceito. **Bloqueio B:** titular do app/Render precisa autorizar OAuth `drive.file` e disponibilizar ambiente seguro para ensaio com imagens sintéticas; impacto restrito ao aceite de mídia, sem impedir testes locais do tutorial. **Próxima ação independente:** conciliar PRs #15/#20/#21/#33/#35/#39/#53/#54 e executar testes TUT com logs/SHA; não mesclar nem publicar antes do gate. Nenhum teste, deploy, merge ou alteração acadêmica realizado nesta unidade.
+
+
+## Unidade 21/11/2026 02h55 BRT — confronto documental de título
+
+| Item | Estado | Último commit / evidência | Próxima ação e dependência |
+|---|---|---|---|
+| G / TIT-01–03 | **Concluído: confronto pontual; auditoria global pendente** | `191f08c`; [auditoria de título](AUDITORIA_TITULO_MONOGRAFIA_20261121.md); monografia, modelo PFC e parecer lidos diretamente | Confirmar título/subtítulo e titulação com orientador antes de editar; responsável autora/orientador; auditar metodologia, resultados e referências em unidade independente |
+| EVO-USO-01 | **Em execução, sem aceite** | PRs de tutorial ainda exigem conciliação, testes TUT e avaliação humana | Reconciliar HEADs e executar navegador/suíte com SHA integrado, sem publicação antecipada |
+| B / OAuth `drive.file` | **Bloqueado para aceite real** | Nenhum ensaio de autorização Django e persistência Render comprovado nesta unidade | Responsável titular Google/Render; pré-requisito consentimento próprio, segredos seguros e ambiente isolado; retomar com fotos sintéticas |
+
+**Conflito confirmado:** a monografia omite “Escaláveis” do subtítulo que aparece no modelo PFC. Não alterar título sem orientação; impacto: identificação formal e possíveis promessas de desempenho. **Testes/CI/deploy nesta unidade:** não executados. **Alterações:** apenas arquivos documentais nesta branch; nenhum modelo, migration, template, demo ou documento Drive modificado. Fontes consultadas por IDs exatos e registradas no relatório. Próxima unidade independente: auditoria das alegações de resultados/IA na monografia ou integração isolada do tutorial com testes.
