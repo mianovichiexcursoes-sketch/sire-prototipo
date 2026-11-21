@@ -151,3 +151,15 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 | B — OAuth fotos reais | **Bloqueado** | Sem comprovação de OAuth Django `drive.file`/persistência após deploy nesta rodada | Titular Google/Render: configurar autorização própria e segredos seguros; testar com fotos sintéticas, sem expor segredos |
 
 **Testes/CI/deploy nesta rodada:** não executados; nenhuma alteração em aplicação, migrações, dados, demo ou documentos Drive. Próxima unidade independente: inventário da pasta acadêmica e matriz de divergências, ou integração isolada do tutorial após reconciliar branches.
+
+
+## 20/11/2026 — inventário efetivo de evidências e documentos
+
+| Item | Estado | Último commit / evidência | Bloqueio e próxima ação |
+|---|---|---|---|
+| G — inventário da árvore Drive | **Concluído: listagem de metadados; auditoria de conteúdo pendente** | `76bf31428881bbcd7c39f027cb6e96e285ec41c6`; [inventário](INVENTARIO_DRIVE_TCC_20261120.md); 77 entradas em seis pastas listadas | Ler integralmente monografia, PDFs e relatórios; confrontar com modelos, figuras e normas IFSP/ABNT. Não declarar auditoria global concluída |
+| F — evidências históricas 18/11 | **Localizadas, não reexecutadas** | [relatório de aceite rev. 2](https://docs.google.com/document/d/1c0G1H1I-Y90KJrGMJuwUHXkRj_gjP41ran7ROKiR53g/edit), capturas L01–L21 e R01–R11; código declarado `e220974` | Distinguir 107 OK/3 ignorados reportados de testes atuais; repetir VF01/02/12, CAT parciais e TUT no HEAD integrado. Login Render bloqueado no relatório; autorização humana e acesso seguro necessários |
+| EVO-USO-01 — aceitação atual | **Em execução** | Relatório 18/11 registra tutorial por perfil e Escape no commit histórico `e220974`; ressalva móvel em 375 px | Conciliar PRs #15/#20/#33/#35 e testes #21/#54; executar em SHA integrado; avaliação orientador ainda não realizada |
+| B — OAuth fotos | **Bloqueado para aceite real** | Relatório histórico informa foto existente exibida, mas nenhum upload novo e nenhuma persistência pós-deploy demonstrada nesta rodada | Responsável: titular Google/Render; pré-requisito: OAuth `drive.file` próprio configurado sem segredos no Git/chat; retomar com ensaio sintético e persistência verificada |
+
+**Unidade desta rodada:** leitura direta das sete fontes oficiais, listagem Drive e leitura do relatório de aceite; commit documental `76bf314`. **Não houve execução de testes, CI, merge, deploy, alteração da demo ou aceite humano.** Próxima unidade elegível: auditoria textual integral de um documento final ou reconciliação isolada do tutorial, sem modificar templates compartilhados antes de resolver HEADs.
