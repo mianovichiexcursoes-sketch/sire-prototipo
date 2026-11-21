@@ -78,3 +78,13 @@ Leitura direta via Google Drive dos documentos nativos, IDs abaixo. `revisionId`
 1. Reavaliar PRs #2/#4/#5 e CI, comparar commits para não conflitar com outro agente; verificar se OAuth B1 foi realmente configurado.
 2. Se B1 seguir bloqueado, iniciar **C1**: especificação de CPF com finalidade, minimização e matriz LGPD em documento separado, sem migração ainda; depois C2 apenas com requisitos de proteção aprovados.
 3. Repetir testes, salvar links verificáveis, atualizar cada status/commit; não declarar TCC finalizado.
+
+## Rodada 21/11/2026 12h55 — preparação de apêndice UC (sem alterar demo)
+
+| ID | Status | Último commit / evidência | Próxima ação |
+|---|---|---|---|
+| EVO-USO-01 / G-UC | **em execução — índice documental concluído, apêndice pendente** | `59eae07de1fc713729760143a82b7ebac7d2a327`; [índice oficial](UC01_UC14_INDICE_APENDICE_20261121.md); [UC original](https://docs.google.com/document/d/1h5T8l9PPBGralJYaTqjG0K-czRBrGok6tzWRCHenWOY/edit) | Confrontar modelos/migrations, transcrever especificações integrais no documento autorizado, revisar sumário; não confundir índice com apêndice pronto |
+| EVO-USO-01 / TUT | **pendente de integração e verificação** | PRs de tutorial paralelas #15/#20/#21/#33/#35/#39 e testes #42; nenhuma suíte executada nesta unidade | Reconciliar HEADs, testar TUT-01–09, acessibilidade e regressões antes de merge/deploy |
+| B1/B2 | **bloqueado: OAuth do Django não comprovado** | Drive do ChatGPT não autoriza o aplicativo | Titular da conta configurar OAuth `drive.file` e segredos seguros no Render; só então testar fotos reais e persistência |
+
+Fontes diretamente consultadas nesta rodada por IDs originais: RN-01–41 `1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0`, baseline `19U5JhTHfk8IbvWfdAAUg8Z81fwQ8wsji6m4vxTN9Ed8` (histórico 2.6 de 12/11, baseline 2.1 preservada), guia `1QzjUnoxF9MBukMQEexTuzK1O16czpMIParG5QgSab8U`, UC `1h5T8l9PPBGralJYaTqjG0K-czRBrGok6tzWRCHenWOY`, requisitos v3.0 `1RTgG9fDY71_8hsncRQKWNd2cQGwRTQfo72xLAitwBaM`, CAT revisão 0.2 `1EKm59rEfdHFgK0Ze5EfxBc5AC1g4hwfx1UVogbXL7Is`, registro `1g3MnJfhbMFsDE-x42HemvypzXbAOh0wi3GPK7rwMqaM`. Datas de modificação do Drive não foram verificadas nesta unidade. PR #2 consta mesclada em evidência anterior, mas o estado histórico acima permanece intacto até reconciliação. Nenhum teste, merge, deploy ou alteração de monografia nesta unidade.
