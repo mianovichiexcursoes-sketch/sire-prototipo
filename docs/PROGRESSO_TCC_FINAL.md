@@ -1,6 +1,6 @@
 # SIRE — Progresso final rastreável
 
-Atualizado em 2026-11-17. Registro de planejamento e leitura de fontes; **não equivale a aceite funcional**. Branch de trabalho: `etapa/ficha-fotos-sire`; demo preservada em `etapa/postgresql-windows`. Não alterar baseline ER-SIRE 2.1, UC01–UC14 nem as seis entidades históricas.
+Atualizado em 2026-11-22 (reconciliação documental; histórico anterior preservado). Registro de planejamento e leitura de fontes; **não equivale a aceite funcional**. Branch de trabalho: `etapa/ficha-fotos-sire`; demo preservada em `etapa/postgresql-windows`. Não alterar baseline ER-SIRE 2.1, UC01–UC14 nem as seis entidades históricas.
 
 ## Fontes oficiais verificadas nesta rodada
 
@@ -25,7 +25,7 @@ Leitura direta pelo conector Google Drive em 17/11/2026, por ID exato (conteúdo
 
 | Etapa | Estado | Último commit / evidência | Próxima ação e dependência |
 |---|---|---|---|
-| A. PR #2 ficha, textos, fotos, migração 0007 | EM EXECUÇÃO | [PR #2](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/2); código e roteiro em `docs/INCREMENTO_FICHA_FOTOS_DRIVE.md`; testes desta rodada **não executados** | Conferir diffs, CI e testes em ambiente isolado, reconciliando com qualquer edição concorrente do Work; não mesclar |
+| A. PR #2 ficha, textos, fotos, migração 0007 | CÓDIGO MESCLADO; ACEITE PENDENTE | [PR #2](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/2); código e roteiro em `docs/INCREMENTO_FICHA_FOTOS_DRIVE.md`; testes desta rodada **não executados** | PR #2 mesclada em 18/11; conferir CI e testes de upload/persistência, sem inferir deploy |
 | B. OAuth Drive e fotos reais | BLOQUEADO | Script `scripts/autorizacao_drive.py`; nenhum token nem upload real verificado nesta rodada | Pré-requisito: autorização OAuth própria do Django e três segredos no Render; responsável: autora/operador com acesso Google Cloud e Render. Impacto: impede ensaio real de upload, exclusão e persistência após deploy. Retomar após configuração e evidência de autenticação, sem publicar credenciais |
 | C. CPF minimizado e sintético | PENDENTE | RN-04, RN-05 e UC01 lidos; sem implementação comprovada | Definir finalidade e política LGPD; implementar isoladamente após confirmar estado das branches do Work, com testes de dígitos verificadores e dados fictícios |
 | D. UX de reserva | PENDENTE | UC de reserva e RN-17–30 como fontes | Melhorar resumo, embarque e confirmação sem simular pagamento; requer conciliação com branch ativa |
@@ -62,3 +62,39 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Dependências/coordenação:** A permanece EM EXECUÇÃO, com código e testes em andamento por outro agente. Não editar `views.py`, `models.py`, migrações, templates nem a PR #2 enquanto não reconciliar PR #4/#5 e respectivos HEADs. B permanece BLOQUEADO pela autorização OAuth do aplicativo, com responsável autora/operador Google Cloud + Render; sem B não validar fotos reais ou persistência após deploy. C pode avançar de modo independente apenas em especificação de finalidade, minimização e política de acesso do CPF (RN-04/05 e UC01), sem coletar CPF real; implementação requer checagem de branches ativas. D/E seguem independentes de B, sujeitos a reconciliação de código. F parcialmente possível com Drive simulado; aceite real dependente de B. G mantém auditoria global pendente.
 
 **Próxima ação verificável:** comparar HEAD, status de CI e conteúdo das PRs #2/#4/#5; consolidar matriz CAT-RF-02/03/04 → migração 0007 / views / testes FOTO → evidências; só então revisar lacunas sem duplicar alterações. Em paralelo, preparar especificação EVO-CPF/LGPD em documento separado e sintético. **Nenhum teste, merge, deploy ou aprovação humana foi executado nesta rodada.**
+
+## Reconciliação de 22/11/2026 — evidência consultada diretamente
+
+- **A:** PR #2 está `closed`, `merged=true` (consulta GitHub 22/11). Código integrado não equivale a validação de fotos no Render. Último commit específico do merge: consultar histórico antes de registrar SHA; nenhuma execução nova nesta rodada.
+- **EVO-USO-01:** PRs #15, #20, #64 e #65 estão `open`, `draft=true`, `merged=false` na consulta de 22/11. #65 teve atualização em 22/11 às 01:57 UTC; possível concorrência recente. Não integrar ou alterar JS/templates compartilhados antes de reconciliar diffs. Evidência: links `/pull/15`, `/pull/20`, `/pull/64`, `/pull/65` do repositório.
+- **B BLOQUEADO:** falta evidência de OAuth `drive.file` concedido ao aplicativo Django e configuração segura no Render. Responsável: autora/operador Google Cloud e Render. Impacto: não declarar upload, exclusão e persistência real de fotos aceitos. Retomar com autorização e testes rastreáveis, sem divulgar segredos.
+- **F PENDENTE:** testes de SQLite/PostgreSQL, navegador, teclado, mobile e TUT ainda não executados nesta reconciliação; testes e deploy não presumidos a partir de PRs.
+- **G PENDENTE:** apêndice UC01–14, modelo legível, inventário integral da pasta e auditoria ABNT continuam sem aceite verificado.
+- **Próxima ação independente:** reconciliar a cadeia de PRs do tutorial e executar ensaios sintéticos em ambiente isolado; em paralelo, inventariar documentos acadêmicos sem reescrever baseline. Não criar PRs documentais repetidas para a mesma matriz.
+
+### Gate de fontes desta reconciliação
+Leitura direta em 22/11/2026: RN-01–41, baseline/documentação de desenvolvimento, guia, UC01–14, requisitos v3.0, complemento CAT rev.0.2 e registro técnico, todos pelos IDs da tabela inicial. Não foi feita revisão integral da monografia nesta rodada. Preservados ER-SIRE 2.1, seis entidades e UC01–14.
+
+### Matriz mínima de dependências
+| Item | Código/artefato | Cenário | Evidência desta rodada | Seção acadêmica |
+|---|---|---|---|---|
+| EVO-USO-01 / UC01–14 | PRs #15/#20/#64; JS e templates a reconciliar | TUT-01–10 por perfil, teclado e ausência de submissão | PRs abertas; testes não executados | metodologia espiral e avaliação pendentes |
+| CAT / RN-03–05 | PR #2, migração 0007 e fotos | permissões entre agências, 6 fotos, persistência pós-deploy | merge verificado; OAuth e teste real não verificados | evolução separada da baseline |
+| G / DOC-01 | documentação ER-SIRE e especificação UC | modelo e apêndice legíveis no PDF | fontes lidas; PDF não validado | apêndices e rastreabilidade pendentes |
+
+## Evidência documental nova — mapeamento UC → tutorial (22/11/2026)
+
+Fonte primária consultada diretamente pelo ID `1h5T8l9PPBGralJYaTqjG0K-czRBrGok6tzWRCHenWOY` (Especificação de Casos de Uso – SIRE). Os títulos abaixo são os títulos efetivos do documento, não casos de uso novos. **Status: mapeamento documental concluído; implementação e testes TUT ainda pendentes.**
+
+| Perfil/etapa orientada | UC histórico confirmado | Alvo/ação a conferir no tutorial | Gate de verificação |
+|---|---|---|---|
+| Visitante: catálogo e busca | UC03 Consultar catálogo; UC04 Pesquisar excursões | catálogo, pesquisa e filtros sem disparo automático | TUT navegador, alvo presente/ausente |
+| Visitante: detalhes | UC05 Consultar detalhes da excursão | ficha da excursão sem criar reserva | TUT navegação e ausência de submissão |
+| Visitante: criar acesso | UC01 Cadastrar passageiro; UC02 Autenticar usuário | instrução de cadastro apenas ao visitante; autenticação conforme perfil | regressão da PR #64, TUT-02 |
+| Passageiro: reserva e embarque | UC10 Realizar reserva; UC11 Selecionar ponto de embarque | explicar escolha de embarque e confirmação, sem submissão pelo tutorial | teste com dados sintéticos, sem vagas e sem pagamento |
+| Passageiro: acompanhar | UC12 Consultar minhas reservas | consulta apenas do próprio passageiro | teste de autorização |
+| Agente: excursões | UC06 Cadastrar excursão; UC07 Editar excursão | criação/edição sem salvar ou publicar automaticamente | teste de perfil e ausência de POST |
+| Agente: embarque e publicação | UC08 Cadastrar ponto de embarque; UC09 Publicar excursão | apontar campos e ação manual de publicação | teste de não publicação involuntária |
+| Agente: consultas | UC13 Consultar reservas da excursão; UC14 Consultar passageiros da excursão | consultas restritas à agência | RN-03, teste entre agências |
+
+**Dependências explícitas:** o tutorial não depende do OAuth Drive; validação real de fotos depende de OAuth próprio `drive.file`, armazenamento e ensaio pós-deploy. A matriz acima não comprova testes TUT, autorização entre agências nem aceite do orientador. **Próxima ação:** reconciliar os HEADs de #15/#20/#33/#35/#64, executar testes de navegador/teclado/mobile e Django em branch isolada; registrar SHA e saídas antes de integrar. Nenhum merge/deploy foi realizado nesta unidade.
