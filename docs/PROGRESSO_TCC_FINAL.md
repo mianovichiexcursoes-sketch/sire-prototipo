@@ -77,3 +77,18 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 | G — auditoria acadêmica | **pendente** | Fontes oficiais acima lidas; monografia inteira e inventário global não auditados nesta rodada | Inventariar pasta e conferir ABNT/IFSP, título, IA, modelo e anexos preservando histórico |
 
 **Correção de rastreabilidade:** o checklist anterior contém informações datadas de 17/11 e referências a PR #2 como aberta; são registros históricos, não estado atual. O merge da PR #2 e da PR #28 é um fato de GitHub, mas não comprova que o código está publicado no Render, nem que o Drive OAuth esteja operacional. Nenhuma alteração à baseline ER-SIRE 2.1, UC01–UC14 ou às seis entidades históricas foi feita nesta unidade. Próxima unidade independente: reconciliar os PRs de tutorial e produzir verificação estática/dinâmica isolada, sem sobrescrever trabalho concorrente.
+
+
+## Revalidação de dependências — 22/11/2026, 13h55 BRT
+
+Leitura direta das sete fontes oficiais (RN, baseline, guia, UC, requisitos, CAT e registro) pelos IDs originais nesta execução. A RN-04 exige proteção dos dados do passageiro, RN-03/05 limitam papéis/agências, RN-17–30 tratam reserva e concorrência; RN-31–41 são visão ampliada, não autorização de pagamento ou assentos. O documento de desenvolvimento registra ER-SIRE 2.1 como baseline histórica e terceira iteração técnica em 12/11; não renumerar a volta EVO-USO-01 sem conciliação.
+
+| ID | Status verificado | Último commit/evidência | Dependência e próxima ação |
+|---|---|---|---|
+| A1 | **merge concluído, aceite funcional pendente** | PR #2 merged em 18/11, SHA `72a488beb518b4dcca275970afb81892b97f3d4b` | Conferir migração 0007 e execução integrada; não confundir merge com Render |
+| EVO-USO-01 | **em execução em branches concorrentes** | PR #64 HEAD `1f8741a1343054dce8b7678186483987680908be`; PR #71 HEAD `d4c2d844186fca10bc30af6418c985abba966f84` | Reconciliar #15/#20/#33/#35/#64, executar TUT no navegador e regressão; não sobrescrever JS/templates concorrentes |
+| B1/B2 | **bloqueado — OAuth do aplicativo não comprovado** | PR #2 explicita ausência de credenciais próprias; nenhuma prova nova de Render nesta execução | Responsável: autora/administrador Google Cloud e Render. Pré-requisito: autorização `drive.file` e secrets no ambiente. Impacto: sem aceite de fotos reais; retomar com ensaio sintético e logs sem segredos |
+| F | **pendente — execução integrada** | PR #64 cita CI isolado #434 sucesso; não equivale a TUT Playwright, PostgreSQL integrado ou deploy | Validar HEAD reconciliado em SQLite/PostgreSQL, permissões e desktop/mobile; registrar logs e SHA |
+| G | **pendente** | Fontes técnicas consultadas, monografia e modelo IFSP não auditados integralmente nesta execução | Inventariar pasta, consolidar UC01–UC14 e modelo relacional, revisar monografia e transparência de IA |
+
+**Conflito de checklist:** o arquivo não existe na branch padrão (404 verificado nesta execução), existe na branch histórica `docs/progresso-tcc-final-20261117` (blob `9cdc17d213f0256633aa8865a2e126128173c7c5`) e nesta PR #70; a versão histórica ainda diz que PR #2 está aberta. Este registro na PR #70 corrige o estado sem reescrever o histórico. **Próximo passo:** revisão e reconciliação das PRs documentais #66/#70 e do tutorial; não fazer merge automático. Nenhum teste, deploy ou aceite humano executado nesta execução.
