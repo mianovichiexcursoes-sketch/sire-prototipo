@@ -119,3 +119,21 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **B — BLOQUEADO para teste real de Drive:** falta evidência de OAuth `drive.file` próprio do aplicativo e configuração segura no Render; impacto: upload/exclusão/persistência pós-deploy não podem ser aceitos; responsável: titular do aplicativo/Render; retomar após autorização verificável, sem divulgar segredos. Continuar tarefas independentes de tutorial/documentação.
 
 **Próxima ação independente:** criar patch mínimo em branch isolada a partir do HEAD mais recente da demo, após conferir PRs e template; testar antes de propor integração. Checklist nesta branch documental, não na demo; reconciliar com PRs #66/#70 antes de merge.
+
+
+## Verificação de dependências e artefatos — 22/11/2026, 20h56 (Brasília)
+
+**Leitura direta nesta rodada:** sete fontes oficiais por ID exato: RN-01–RN-41 (documento `1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE09kQ0`), baseline ER-SIRE 2.1 (`19U5JhTHfk8IbvWfdAAUg8Z81fwQ8wsji6m4vxTN9Ed8`), guia (`1QzjUnoxF9MBukMQEexTuzK1O16czpMIParG5QgSab8U`), UC01–UC14 (`1h5T8l9PPBGralJYaTqjG0K-czRBrGok6tzWRCHenWOY`), requisitos v3.0 (`1RTgG9fDY71_8hsncRQKWNd2cQGwRTQfo72xLAitwBaM`), CAT rev. 0.2 (`1EKm59rEfdHFgK0Ze5EfxBc5AC1g4hwfx1UVogbXL7Is`) e registro (`1g3MnJfhbMFsDE-x42HemvypzXbAOh0wi3GPK7rwMqaM`). Acesso ao conteúdo confirmado; datas de modificação não consultadas. Monografia e regulamento IFSP não auditados nesta unidade.
+
+**Correção factual importante:** `docs/PROGRESSO_TCC_FINAL.md` **existe** na branch da demo `etapa/postgresql-windows` (blob `ddab6696c56fd072a8e5c3486698ef87947881f6`), e também nesta branch documental (blob anterior `0305228cfb42b3fc343b9a98416597317cf93c80`). Ausência na `main` não significa ausência na demo. Reconciliar ambos antes de publicar qualquer checklist único.
+
+**Arquivos e HEAD de conteúdo lidos nesta rodada:** `sire/static/sire/js/tutorial-uso.js` na demo: blob `aac1a7b4e13f5a401d75eb6887cd9c191a2d0776`; na branch `fix/tutorial-mobile-viewport-20261119`: blob `baab4e37fb0f110076455cd502f832d1f75bed57`. `sire/templates/sire/base.html` é idêntico nas duas branches, blob `7dfff230ebb346a007cdf2e65533c9bc4e84c483`. Assim, **a divergência inspecionada se concentra no JavaScript**, não no template base dessas duas refs. Isto não exclui alterações concorrentes posteriores nem prova testes.
+
+| ID | Estado | Evidência / último commit | Pré-requisito e próxima ação |
+|---|---|---|---|
+| EVO-USO-01 | EM EXECUÇÃO; verificação pendente | Blobs JS `aac1a7b` / `baab4e3`, template `7dfff23`; nenhum teste nesta rodada | Reconciliar com PRs #33/#35/#64, criar patch mínimo em branch isolada e testar TUT teclado, Escape, foco, perfis, 320/375px e ausência de POST |
+| B OAuth e persistência de fotos | BLOQUEADO para aceite Render | Sem evidência nova de OAuth Django autorizado no Render; relato histórico de ensaio local não substitui prova pós-deploy | Responsável: titular do aplicativo/Render; retomar após autorização segura e janela de teste; não divulgar credenciais |
+| F Testes integrados | PENDENTE | Não houve execução nesta rodada | Preparar ambiente isolado e dados sintéticos, verificar SQLite/PostgreSQL e testes de navegador |
+| G Auditoria acadêmica | PENDENTE | Fontes técnicas relidas, sem monografia integral | Inventariar pasta, comparar modelo IFSP e documentos após integração técnica |
+
+**Critérios verificáveis para a próxima unidade:** registrar SHA de branch antes/depois, diff pontual do JS, comandos de teste e saída real; nenhuma submissão automática, nenhum dado pessoal real, nenhum merge/deploy antes da revisão. Não reabrir implementação alternativa completa se o patch móvel já resolver a diferença. A demo não foi modificada nesta unidade.
