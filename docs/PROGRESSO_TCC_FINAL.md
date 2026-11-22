@@ -98,3 +98,24 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **EVO-USO-01 — EM VERIFICAÇÃO:** fonte: feedback da autora de 18/11; implementação inspecionada: `base.html` e `tutorial-uso.js` na branch de demo; cenário pendente: abrir primeiro acesso por Visitante/Passageiro/Agente, navegar Anterior/Próximo/Pular/Fechar, Escape, foco e celular, sem disparar POST; evidência atual: inspeção estática do código; monografia: quadrantes da nova volta da espiral ainda sem avaliação humana comprovada. Próxima ação: confrontar o código com testes e PRs integradas, executar navegador em ambiente isolado e documentar resultado real.
 
 **Dependências reavaliadas:** OAuth do aplicativo não é dependência do tutorial; testes reais de persistência de fotos pós-redeploy continuam condicionados a autorização/ambiente verificáveis. A avaliação de uso depende do orientador, por intermédio da autora. Não houve testes executados, merge, deploy, alteração de dados, revisão do orientador ou atualização da monografia nesta unidade. A próxima rodada deve priorizar evidência de execução dos cenários TUT sem repetir implementação já existente.
+
+
+## Auditoria incremental de código — 22/11/2026, 20h (Brasília)
+
+**Fontes oficiais lidas nesta unidade por ID exato:** RN-01–41, Desenvolvimento SIRE (baseline ER-SIRE 2.1), Guia do Protótipo, UC01–UC14, Requisitos v3.0, CAT revisão 0.2 e Registro de Implementação. Não equivale a leitura integral da monografia ou auditoria ABNT. Preservar seis entidades e UC históricos; EVO-USO-01 é extensão separada.
+
+**Comparação reprodutível de blobs GitHub** de `sire/static/sire/js/tutorial-uso.js` (leitura, sem execução):
+
+| Ref | SHA do blob | Evidência estática | Estado |
+|---|---|---|---|
+| `etapa/postgresql-windows` | `aac1a7b4e13f5a401d75eb6887cd9c191a2d0776` | Já contém tutorial por perfil, Escape, foco, `getClientRects`, local/sessionStorage protegidos; não contém ação textual `Fechar` | Implementado parcialmente; aceite navegador pendente |
+| `fix/tutorial-mobile-viewport-20261119` | `baab4e37fb0f110076455cd502f832d1f75bed57` | Em relação ao JS da demo, acrescenta `max-height:min(45dvh,22rem)`, botão `data-action=fechar` e tratamento de fechar | Correção candidata; não integrar sem reconciliar HEAD/template |
+| `feat/evo-uso-01-tutorial-20261118` | `41039cd9f6d464cd746e70ee33656d97f26f4946` | Implementação alternativa com `Anterior` e `Fechar`, mas sem `getClientRects` e sem sessionStorage textual | Linhagem divergente; não aplicar por substituição integral |
+
+**Verificação negativa limitada:** nenhuma das três versões contém as sequências literais `submit(`, `requestSubmit(` ou `click(` no JS lido. Isto **não** demonstra ausência de submissão por todos os caminhos, nem valida comportamento em navegador. O botão `Voltar` na versão mobile atende à navegação anterior em termos de rótulo, sujeito a teste funcional.
+
+**EVO-USO-01 — EM EXECUÇÃO:** primeiro reconciliar o JS da demo com as correções pontuais da versão mobile e verificar `base.html`/outras PRs; executar testes de teclado, Escape, Fechar, Voltar, Próximo, Pular, foco, 320/375px, perfis e ausência de POST com dados sintéticos. OAuth próprio do Django **não é dependência** desses testes. Responsável pelo aceite humano: autora/orientador após evidências. Sem teste, CI, merge, deploy ou aprovação realizados nesta unidade.
+
+**B — BLOQUEADO para teste real de Drive:** falta evidência de OAuth `drive.file` próprio do aplicativo e configuração segura no Render; impacto: upload/exclusão/persistência pós-deploy não podem ser aceitos; responsável: titular do aplicativo/Render; retomar após autorização verificável, sem divulgar segredos. Continuar tarefas independentes de tutorial/documentação.
+
+**Próxima ação independente:** criar patch mínimo em branch isolada a partir do HEAD mais recente da demo, após conferir PRs e template; testar antes de propor integração. Checklist nesta branch documental, não na demo; reconciliar com PRs #66/#70 antes de merge.
