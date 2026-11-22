@@ -202,3 +202,23 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 | F/G — verificação e auditoria | **pendente** | Fontes iniciais consultadas; nenhum log novo de testes nesta rodada | Testes SQLite/PostgreSQL e navegador, inventário integral Drive, monografia e IFSP/ABNT com evidências |
 
 **Unidade entregue:** reconciliação factual e gate de fontes no checklist existente, sem alterar código, migration, dados, demo ou outra branch. **Não realizados nesta rodada:** CI, testes Django, navegador, merge, deploy, atualização da monografia e aceite do orientador. Próxima unidade independente: conferir diffs e ancestry do tutorial em branch de integração isolada; não tratar OAuth como bloqueio do tutorial.
+
+
+## Reconciliação independente — 22/11/2026, 04h BRT
+
+**Entrega desta rodada:** verificação direta dos documentos-fonte (IDs exatos) e do grafo de PRs, sem editar código compartilhado, migrações, Render ou dados. Esta seção registra somente fatos consultados nesta rodada; não é teste de navegador, CI ou aceite.
+
+| Item | Status | Evidência verificada em 22/11 | Dependência e próxima ação |
+|---|---|---|---|
+| A — ficha/fotos | **Em execução — aceite pendente** | PR #2 **closed/merged**; HEAD histórico `faa5ba3d60b7f292be09676b13f39e9276eacafb` | Validar migração 0007, limites, autorização e foto real apenas com OAuth próprio; não interpretar merge como teste |
+| B — Drive `drive.file` | **Bloqueado para integração real** | PR #2 declara falta de credenciais OAuth do aplicativo no Render; nenhuma autorização nova comprovada nesta rodada | Responsável: titular da conta/Render. Pré-requisito: OAuth seguro próprio do Django; retomar ensaio de upload/exclusão/persistência com fotos sintéticas após comprovação |
+| EVO-USO-01 — código | **Em execução; integração pendente** | #15 `3f4549b` (base `etapa/postgresql-windows`); #20 `63f341a` (base #15); #33 `8bd9670` (base demo); #35 `bf91770` (base #33); todas abertas | Comparar patches/arquivos e construir integração isolada, sem aplicar sequencialmente branches incompatíveis ou sobrescrever Claude |
+| EVO-USO-01 — testes | **Pendente de aceite** | #21 `f977ab8` (base #20); #31 `bf56a97` (critérios); #34 `a832ec7` (roteiro); #36 `7104b88` (gate); abertas | Rodar Django + Chromium com perfis, Escape/Fechar/Pular, teclado, 320px/375px, armazenamento indisponível e não submissão; registrar resultados reais e SHA |
+| EVO-USO-01 — orientação | **Bloqueado por verificação e avaliação humana** | #14 aberta, `f20106a`; decisão de 18/11 substitui vídeo por tutorial | Após integração e testes, solicitar pela autora nova avaliação do orientador; não inventar aprovação |
+| G — auditoria global | **Pendente** | Documentação original ER-SIRE modificada em 18/11, requisitos v3.0 em 23/10, UC em 22/10; leitura da monografia inteira não realizada nesta rodada | Inventário completo da pasta e comparação com modelo IFSP, mantendo baseline 2.1, UC01–14 e seis entidades históricos |
+
+**Fontes originais efetivamente abertas por ID nesta rodada:** RN-01–41 (modificação 28/09/2026), Desenvolvimento SIRE (18/11/2026), Guia (12/11/2026), UC01–14 (22/10/2026), Requisitos v3.0 (23/10/2026), CAT rev. 0.2 (18/11/2026), Registro técnico (18/11/2026). As datas são metadados de modificação, não aprovação acadêmica. Plano tutorial lido na branch da #14. Demais fontes (monografia, modelo IFSP, regulamento, parecer e PROMPS) **não foram lidas nesta rodada** e permanecem obrigatórias antes da auditoria acadêmica final.
+
+**Matriz de dependências:** EVO-USO-01 -> UC01–14/RN-03–05 -> PRs #15/#20/#33/#35 -> testes #21 + critérios #31/#34 -> evidência CI/navegador -> revisão humana -> merge/deploy -> avaliação do orientador. Drive real -> autorização OAuth própria -> teste sintético -> aceite de fotos; não é dependência do tutorial. Sem executar testes ou deploy nesta rodada; nenhuma PR de implementação foi integrada.
+
+**Próxima unidade não bloqueada:** reconciliação de diffs e testes do tutorial em branch isolada, começando por comparar #15/#20 com #33/#35, para evitar conflito de templates. Em paralelo, inventariar documentação acadêmica sem declarar resultados inexistentes.
