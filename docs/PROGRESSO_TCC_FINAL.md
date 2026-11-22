@@ -26,3 +26,9 @@ Lidas em 18/11/2026 por ID: RN-01–41 (1REAmrici0i-JKgP8N78OlN4lVsLUs4blV8A0fE0
 
 ## Rastreabilidade
 EVO-USO-01 / TUT-01 a TUT-05 -> base.html + tutorial-uso.js -> ensaios de navegador pendentes -> seção metodologia/avaliação da monografia pendente. TUT-06 depende de regressão de reservas e autorização entre agências. DOC-01 depende de conferência do diagrama e apêndice. AVAL-01 depende de retorno humano.
+
+## Rodada 21/11/2026 — unidade documental independente
+- **Concluído:** matriz de verificação TUT-01–10 criada em `docs/EVO_USO_01_MATRIZ_VERIFICACAO_20261121.md`, commit `200d3b69670a4bc2891a15f993f1a9fa4cce51b3`. Inspeção estática de `tutorial-uso.js` e `base.html`; não se declarou teste de navegador.
+- **Estado EVO-USO-01:** EM EXECUÇÃO. Evidência de planejamento verificável, mas TUT-01–10 pendentes de execução; avaliação humana pendente.
+- **Bloqueio B:** autorização OAuth do aplicativo ainda não verificada nesta rodada; responsável autora/operador Google Cloud/Render; impacto apenas sobre fotos reais, não sobre tutorial. Retomar com credenciais configuradas fora do GitHub/chat e teste real documentado.
+- **Próxima ação:** reconciliar branches de correções de tutorial, executar TUT-01–08 com contas sintéticas e anexar capturas/logs; preservar demo. Monografia e documento do projeto não alterados nesta rodada.
