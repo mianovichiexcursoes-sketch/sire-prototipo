@@ -81,3 +81,20 @@ Leitura direta em 22/11/2026: RN-01–41, baseline/documentação de desenvolvim
 | EVO-USO-01 / UC01–14 | PRs #15/#20/#64; JS e templates a reconciliar | TUT-01–10 por perfil, teclado e ausência de submissão | PRs abertas; testes não executados | metodologia espiral e avaliação pendentes |
 | CAT / RN-03–05 | PR #2, migração 0007 e fotos | permissões entre agências, 6 fotos, persistência pós-deploy | merge verificado; OAuth e teste real não verificados | evolução separada da baseline |
 | G / DOC-01 | documentação ER-SIRE e especificação UC | modelo e apêndice legíveis no PDF | fontes lidas; PDF não validado | apêndices e rastreabilidade pendentes |
+
+## Evidência documental nova — mapeamento UC → tutorial (22/11/2026)
+
+Fonte primária consultada diretamente pelo ID `1h5T8l9PPBGralJYaTqjG0K-czRBrGok6tzWRCHenWOY` (Especificação de Casos de Uso – SIRE). Os títulos abaixo são os títulos efetivos do documento, não casos de uso novos. **Status: mapeamento documental concluído; implementação e testes TUT ainda pendentes.**
+
+| Perfil/etapa orientada | UC histórico confirmado | Alvo/ação a conferir no tutorial | Gate de verificação |
+|---|---|---|---|
+| Visitante: catálogo e busca | UC03 Consultar catálogo; UC04 Pesquisar excursões | catálogo, pesquisa e filtros sem disparo automático | TUT navegador, alvo presente/ausente |
+| Visitante: detalhes | UC05 Consultar detalhes da excursão | ficha da excursão sem criar reserva | TUT navegação e ausência de submissão |
+| Visitante: criar acesso | UC01 Cadastrar passageiro; UC02 Autenticar usuário | instrução de cadastro apenas ao visitante; autenticação conforme perfil | regressão da PR #64, TUT-02 |
+| Passageiro: reserva e embarque | UC10 Realizar reserva; UC11 Selecionar ponto de embarque | explicar escolha de embarque e confirmação, sem submissão pelo tutorial | teste com dados sintéticos, sem vagas e sem pagamento |
+| Passageiro: acompanhar | UC12 Consultar minhas reservas | consulta apenas do próprio passageiro | teste de autorização |
+| Agente: excursões | UC06 Cadastrar excursão; UC07 Editar excursão | criação/edição sem salvar ou publicar automaticamente | teste de perfil e ausência de POST |
+| Agente: embarque e publicação | UC08 Cadastrar ponto de embarque; UC09 Publicar excursão | apontar campos e ação manual de publicação | teste de não publicação involuntária |
+| Agente: consultas | UC13 Consultar reservas da excursão; UC14 Consultar passageiros da excursão | consultas restritas à agência | RN-03, teste entre agências |
+
+**Dependências explícitas:** o tutorial não depende do OAuth Drive; validação real de fotos depende de OAuth próprio `drive.file`, armazenamento e ensaio pós-deploy. A matriz acima não comprova testes TUT, autorização entre agências nem aceite do orientador. **Próxima ação:** reconciliar os HEADs de #15/#20/#33/#35/#64, executar testes de navegador/teclado/mobile e Django em branch isolada; registrar SHA e saídas antes de integrar. Nenhum merge/deploy foi realizado nesta unidade.
