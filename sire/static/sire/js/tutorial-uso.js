@@ -53,7 +53,7 @@
     .sire-ajuda{cursor:pointer}.sire-guia{position:fixed;z-index:9999;bottom:1rem;right:1rem;width:min(24rem,calc(100vw - 2rem));box-sizing:border-box;max-height:70vh;overflow:auto;padding:1rem;background:#fff;color:#30212a;border:2px solid #97254e;border-radius:1rem;box-shadow:0 8px 28px #0003}
     .sire-guia[hidden]{display:none}.sire-guia h2{font-size:1.2rem;margin:.5rem 0}.sire-guia p{margin:.5rem 0}.sire-guia-acoes{display:flex;flex-wrap:wrap;gap:.5rem}.sire-guia button{min-height:44px}.sire-guia button:focus-visible,.sire-ajuda:focus-visible{outline:3px solid #8b4513;outline-offset:3px}.sire-guia-alvo{outline:4px solid #c36900!important;outline-offset:4px;scroll-margin:1rem}
     body.sire-guia-aberto{padding-bottom:var(--sire-guia-espaco,24rem)}
-    @media(max-width:500px){.sire-guia{bottom:.5rem;right:.5rem;width:calc(100vw - 1rem)}}
+    @media(max-width:500px){.sire-guia{bottom:.5rem;right:.5rem;width:calc(100vw - 1rem);max-height:min(45vh,22rem);max-height:min(45dvh,22rem)}body.sire-guia-aberto{scroll-padding-bottom:50vh}}
   `;
   document.head.append(style);
   const help = document.createElement('button');
@@ -64,7 +64,7 @@
   panel.className = 'sire-guia'; panel.hidden = true;
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'false');
   panel.setAttribute('aria-labelledby', 'sire-guia-titulo');
-  panel.innerHTML = '<p class="sire-guia-contador" aria-live="polite"></p><h2 id="sire-guia-titulo" tabindex="-1"></h2><p class="sire-guia-texto"></p><div class="sire-guia-acoes"><button type="button" data-action="anterior">Voltar</button><button type="button" data-action="proximo">Próximo</button><button type="button" class="secundario" data-action="pular">Pular</button></div>';
+  panel.innerHTML = '<p class="sire-guia-contador" aria-live="polite"></p><h2 id="sire-guia-titulo" tabindex="-1"></h2><p class="sire-guia-texto"></p><div class="sire-guia-acoes"><button type="button" data-action="anterior">Voltar</button><button type="button" data-action="proximo">Próximo</button><button type="button" class="secundario" data-action="pular">Pular</button><button type="button" class="secundario" data-action="fechar" aria-label="Fechar tutorial">Fechar</button></div>';
   document.body.append(panel);
   const heading = panel.querySelector('h2');
   const previous = panel.querySelector('[data-action="anterior"]');
@@ -106,11 +106,21 @@
   help.addEventListener('click', open);
   panel.addEventListener('click', event => {
     const action = event.target.closest('button')?.dataset.action;
-    if (action === 'pular') close();
+    if (action === 'pular' || action === 'fechar') close();
     else if (action === 'anterior' && index > 0) { index--; render(); }
     else if (action === 'proximo') { if (index === steps.length - 1) close(); else { index++; render(); } }
   });
   document.addEventListener('keydown', event => {
+    if (!panel.hidden && event.key === 'Tab') {
+      const controls = [...panel.querySelectorAll('button:not(:disabled)')];
+      if (controls.length) {
+        const first = controls[0], last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        else if (!panel.contains(document.activeElement)) { event.preventDefault(); first.focus(); }
+      }
+      return;
+    }
     if (event.key !== 'Escape') return;
     if (!panel.hidden) { event.preventDefault(); close(); }
     else if (offer) { offer.remove(); offer = null; write('localStorage', key, 'seen'); help.focus(); }
