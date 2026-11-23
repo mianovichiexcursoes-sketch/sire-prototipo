@@ -83,3 +83,11 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 - **G / auditoria final — PENDENTE:** leitura integral, inventário de pasta e confronto com monografia e modelo IFSP ainda não concluídos; não declarar TCC finalizado.
 
 **Evidências de referência:** [PR #2](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/2), [PR #77](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/77), [PR #76](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/76). Fontes oficiais reabertas nesta rodada pelos sete IDs exatos: RN-01–41, documentação baseline, guia, UC01–14, requisitos, CAT e registro. Sem alteração de demo, migrações ou dados reais.
+
+
+## Verificação independente de logs e artefato — 23/11/2026, 12h35 BRT
+
+- **EVO-USO-01 — EM EXECUÇÃO, teste automatizado parcial confirmado.** No job Playwright/Chromium `137574612817` do [run #45139772375](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/45139772375), o log bruto confirma aplicação de migrações `sire.0001`–`0007` em SQLite temporário, execução de `python scripts/teste_tutorial_navegador.py` e saída `37 verificações aprovadas`. Um `curl` inicial recusado precedeu a subida do servidor e não impediu o job de concluir.
+- **Evidência arquivada:** [artifact evidencia-tutorial #14800618896](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/actions/runs/45139772375/artifacts/14800618896), 166668 bytes, digest SHA256 `2497563be21d421c7bbb283297e2e7cb939771473c1456f75e3f311d46cb879f`, válido segundo metadata até 21/02/2027. O log confirma três arquivos enviados; **conteúdo visual não inspecionado**.
+- **Limite:** `37 verificações` é contagem agregada do script, não prova individual de TUT-01–12, foco, 320/375 px ou aceite visual; não comprova PostgreSQL neste job, OAuth Drive real, merge ou deploy. SHA da execução: `f5bfd6a1a95dd3e5e55156497bf3243d40c63e54`, anterior ao HEAD da PR #77 observado nesta rodada (`8903e8b79e24712b9768b8fb5f606a1a7b952a75`); **reexecutar para HEAD atual**.
+- **Próxima ação:** inspecionar `scripts/teste_tutorial_navegador.py` e os três arquivos do artifact, mapear asserts a TUT-01–12, rodar no HEAD atual, revisar capturas e responsividade manualmente. Não integrar/publicar antes disso e do aceite da autora.
