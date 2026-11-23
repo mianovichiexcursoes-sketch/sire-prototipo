@@ -62,3 +62,12 @@ Auditar diff e testes de A sem tocar na demo. Se outro agente estiver alterando 
 **Dependências/coordenação:** A permanece EM EXECUÇÃO, com código e testes em andamento por outro agente. Não editar `views.py`, `models.py`, migrações, templates nem a PR #2 enquanto não reconciliar PR #4/#5 e respectivos HEADs. B permanece BLOQUEADO pela autorização OAuth do aplicativo, com responsável autora/operador Google Cloud + Render; sem B não validar fotos reais ou persistência após deploy. C pode avançar de modo independente apenas em especificação de finalidade, minimização e política de acesso do CPF (RN-04/05 e UC01), sem coletar CPF real; implementação requer checagem de branches ativas. D/E seguem independentes de B, sujeitos a reconciliação de código. F parcialmente possível com Drive simulado; aceite real dependente de B. G mantém auditoria global pendente.
 
 **Próxima ação verificável:** comparar HEAD, status de CI e conteúdo das PRs #2/#4/#5; consolidar matriz CAT-RF-02/03/04 → migração 0007 / views / testes FOTO → evidências; só então revisar lacunas sem duplicar alterações. Em paralelo, preparar especificação EVO-CPF/LGPD em documento separado e sintético. **Nenhum teste, merge, deploy ou aprovação humana foi executado nesta rodada.**
+
+
+## Rodada 22/11/2026 — EVO-USO-01, matriz de teste independente
+
+- **Estado:** EM EXECUÇÃO (planejamento de verificação, não aceite). **Último commit:** `905be96c5f6df90da9ea61f295ab36176fab256a`.
+- **Evidência:** [matriz TUT-01–12](docs/EVO_USO_01_MATRIZ_TUT_20261122.md). Fontes oficiais RN, baseline, guia, UC, requisitos, CAT e registro reabertas diretamente por seus IDs nesta rodada. A versão da demo não foi modificada.
+- **Bloqueio:** integração do tutorial exige conciliar código efetivo e branches concorrentes #15/#20/#33/#35/#64; não há execução comprovada dos TUT, Django ou navegador nesta rodada. Responsável: agente de integração; condição de retomada: comparação de HEAD/diffs e candidato isolado.
+- **OAuth Drive:** BLOQUEADO para ensaio real de fotos por ausência de autorização própria Django e configuração segura verificadas. Responsável: autora/operador Google Cloud/Render. Não bloqueia testes independentes TUT.
+- **Próxima ação:** conferir HEADs e alterações recentes, executar matriz TUT com fixtures sintéticas e regressões SQLite/PostgreSQL, anexar logs e SHA. Preservar ER-SIRE 2.1, UC01–UC14, seis entidades e demo.
