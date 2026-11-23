@@ -48,7 +48,7 @@ A [PR #24](https://github.com/mianovichiexcursoes-sketch/sire-prototipo/pull/24)
 
 O OAuth Google Drive `drive.file` e 13 verificações de fotos foram exercitados em **PostgreSQL local**, conforme [relatório de Drive real](docs/OAUTH_EXECUCAO_REAL_2026-11-18.md). A galeria de uma excursão foi visualizada no Render, mas **nenhum novo upload nem persistência pós-redeploy no Render foram demonstrados nessa última rodada**. A concorrência foi ensaiada anteriormente em PostgreSQL e não repetida no último teste SQLite. O professor ainda não avaliou o tutorial; a apresentação móvel possui ressalva de sobreposição do painel.
 
-A [monografia em PDF](https://drive.google.com/file/d/1jeciw6ftt-ESq3d6NhZYIzcawjeirhH0/view) (61 páginas), a [documentação de desenvolvimento em PDF](https://drive.google.com/file/d/18VHWoS8TOXs_76lOk-3hS0cfjTRkftVh/view) (99 páginas, com UC01–UC14 no Apêndice A) e o [índice do pacote de revisão](https://drive.google.com/file/d/1RA5TaencNLAJ6-B382KPJCpqTwoiZdeJ/view) estão organizados para conferência. **Não houve envio ao orientador**. Não tratar CPF, pagamentos, assentos ou escalabilidade como funcionalidades comprovadas.
+A [monografia em PDF](https://drive.google.com/file/d/1jeciw6ftt-ESq3d6NhZYIzcawjeirhH0/view) (54 páginas, revisão editorial de 23/11/2026), a [documentação de desenvolvimento em PDF](https://drive.google.com/file/d/18VHWoS8TOXs_76lOk-3hS0cfjTRkftVh/view) (99 páginas, com UC01–UC14 no Apêndice A) e o [índice do pacote de revisão](https://drive.google.com/file/d/1RA5TaencNLAJ6-B382KPJCpqTwoiZdeJ/view) estão organizados para conferência. **Não houve envio ao orientador**. Não tratar CPF, pagamentos, assentos ou escalabilidade como funcionalidades comprovadas.
 
 ## Executar no Windows
 
