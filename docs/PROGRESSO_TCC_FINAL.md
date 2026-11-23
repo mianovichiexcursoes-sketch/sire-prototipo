@@ -222,3 +222,24 @@ Leitura direta dos documentos oficiais por ID: regras RN-01–41 (sem versão ex
 **Matriz de dependências:** EVO-USO-01 -> UC01–14/RN-03–05 -> PRs #15/#20/#33/#35 -> testes #21 + critérios #31/#34 -> evidência CI/navegador -> revisão humana -> merge/deploy -> avaliação do orientador. Drive real -> autorização OAuth própria -> teste sintético -> aceite de fotos; não é dependência do tutorial. Sem executar testes ou deploy nesta rodada; nenhuma PR de implementação foi integrada.
 
 **Próxima unidade não bloqueada:** reconciliação de diffs e testes do tutorial em branch isolada, começando por comparar #15/#20 com #33/#35, para evitar conflito de templates. Em paralelo, inventariar documentação acadêmica sem declarar resultados inexistentes.
+
+
+## Rodada de 23/11/2026 — reconciliação verificável de dependências do tutorial
+
+**Unidade concluída nesta rodada: auditoria de precedência de branches (somente documentação).** Consultadas diretamente as fontes oficiais RN-01–41, baseline ER-SIRE 2.1/documentação histórica 2.6, guia de implementação, UC01–UC14, requisitos, especificação CAT e registro técnico, por seus IDs originais. Consultadas as PRs #14, #15, #20, #30, #33, #35 e #36. Não foram executados testes, integração ou deploy nesta unidade.
+
+| Incremento | Estado | HEAD consultado | Base real e condição para integrar |
+|---|---|---|---|
+| Tutorial inicial #15 | **Em execução** | `3f4549bfba35411b6e02918a8cfd6a1f6f4111d6` | Base `etapa/postgresql-windows`; reconciliar com main antes de integrar |
+| Acessibilidade #20 | **Pendente de reconciliação** | `63f341ab9769436c252c5cf71151a976ea9498ec` | Base `feat/evo-uso-01-tutorial-20261118` (#15); não aplicar sem tutorial inicial |
+| Fechar #33 | **Pendente de reconciliação** | `8bd96705e19afc0b5d0a89671270ae8232bbf175` | Base `etapa/postgresql-windows`; comparar alterações de tutorial com #20 antes de escolher implementação |
+| Ajuste móvel #35 | **Pendente de reconciliação** | `bf917708f09d01befb8c7576dfc43d9d2a1e8158` | Base `fix/tutorial-fechar-acessibilidade-20261119` (#33); depende desse ancestral |
+| Critérios e aceite TUT | **Pendente** | #14 e #36 abertas | Testar comportamento final no Django e navegador; avaliação do orientador somente após verificação |
+| OAuth Drive do aplicativo | **Bloqueado para ensaio real** | Nenhuma autorização própria do aplicativo verificada nesta rodada | Responsável: titular Google/Render; condição: configurar credenciais seguras no ambiente do app e autorizar `drive.file`, depois executar upload/exclusão/persistência sintéticos |
+| Auditoria acadêmica integral | **Pendente** | Fontes técnicas acima lidas; monografia/modelo IFSP/regulamento não relidos nesta rodada | Inventariar pasta, ler originais e revisar sem alterar baseline ou atribuir testes fictícios |
+
+**Resultado técnico desta reconciliação:** existem duas cadeias diferentes de implementação, #15 → #20 e #33 → #35. A segunda não deriva da primeira; portanto a simples ordem numérica das PRs **não** é ordem segura de merge. Antes de modificar templates/CSS/JS, comparar arquivos e commits de ambas as cadeias contra o HEAD atual de `main`, resolver sobreposições numa branch nova, então executar TUT-01–09 e regressões com evidências. A possibilidade de mudanças locais invisíveis do Claude exige revisão de diffs, mas não bloqueia documentação independente.
+
+**Rastreabilidade parcial:** EVO-USO-01 → RN-03–05 (perfis e privacidade), UC01–UC14 (navegação histórica) → PRs #15/#20/#33/#35 → critérios #31/#34 e testes propostos #21 → evidência de navegador/CI **ainda pendente** → seção de nova volta da espiral **pendente**. Sem novo requisito de pagamento, assento ou alteração nas seis entidades históricas.
+
+**Próxima ação executável:** obter patches completos e comparar `base.html`, JS e CSS das duas cadeias; consolidar somente numa branch de integração isolada e verificar regressões. Nenhum resultado de teste ou deploy foi inferido desta auditoria.
