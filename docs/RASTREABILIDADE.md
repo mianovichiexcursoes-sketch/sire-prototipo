@@ -34,6 +34,10 @@ estão em `sire/urls.py`, os forms em `sire/forms.py` e os templates na pasta
 | UC13 Consultar reservas da excursão | RF020 | reservas_excursao | reservas_excursao.html | VF15 |
 | UC14 Consultar passageiros da excursão | RF021 | passageiros_excursao | passageiros_excursao.html | VF16 |
 
+## Evidências em vídeo
+
+A execução prática dos casos de uso UC01–UC14 foi registrada em vídeo. A correspondência entre cada caso de uso e seu arquivo está versionada em [`videos/casos-de-uso/README.md`](../videos/casos-de-uso/README.md), com acesso aos arquivos MP4 mantidos no conjunto de evidências do projeto no Google Drive.
+
 `agente_excursoes` organiza o acesso aos UC06–UC09 e UC13–UC14; não representa
 um novo caso de uso. Não existe página independente para UC11.
 
