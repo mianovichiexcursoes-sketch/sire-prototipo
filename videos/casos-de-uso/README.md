@@ -2,7 +2,7 @@
 
 Esta pasta mantém no próprio GitHub **cópias compactas em MP4** das gravações dos casos de uso UC01–UC14, para que a evidência permaneça vinculada ao código e à rastreabilidade do projeto.
 
-As gravações principais, em maior qualidade, permanecem no Google Drive. As cópias do GitHub foram reduzidas para viabilizar o versionamento no repositório e servem como referência visual do fluxo; para avaliação detalhada, utilize a versão do Drive.
+As gravações principais, em maior qualidade, permanecem no Google Drive. As cópias do GitHub foram reduzidas e mantidas sem áudio para viabilizar o versionamento no repositório; elas servem como referência visual do fluxo. Para avaliação detalhada, utilize a versão do Drive.
 
 **Pasta oficial no Google Drive:**  
 https://drive.google.com/drive/folders/1RD2fPtXLsTsMfXYoih7L0n-4r4zcp0WO
