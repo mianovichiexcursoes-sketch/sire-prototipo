@@ -146,6 +146,7 @@ secundária e depende de um provedor configurado.
 | `docs/CICLO_LOGIN_E_RECUPERACAO.md` | Ciclos do login e da recuperação de senha |
 | `docs/ANDAMENTO.md`, `docs/REVISAO_20-10-2026.md` | Registro da primeira entrega |
 | `evidencias/` | Saída bruta dos ensaios e capturas de tela |
+| `videos/casos-de-uso/README.md` | Vídeos dos casos de uso UC01–UC14 e vínculo com as evidências no Drive |
 
 Os documentos de outubro descrevem o estado daquela data e foram mantidos como
 registro histórico.
