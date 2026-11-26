@@ -17,6 +17,9 @@ with sync_playwright() as p:
         ok(f'{width}: convite inicial',page.get_by_role('button',name='Começar',exact=True).is_visible())
         page.get_by_role('button',name='Como usar',exact=True).click()
         ok(f'{width}: ajuda remove convite sobreposto',page.get_by_role('button',name='Começar',exact=True).count()==0)
+        ok(f'{width}: seleção predefinida presente',page.locator('#id_destino_catalogo').is_visible())
+        ok(f'{width}: tipo do pacote presente',page.locator('#id_tipo_pacote').is_visible())
+        ok(f'{width}: sem filtro de duração',page.locator('[name=duracao]').count()==0)
         seen=[]
         while page.get_by_role('dialog').is_visible():
             title=page.locator('#sire-guia-titulo').inner_text(); seen.append(title)
@@ -24,7 +27,9 @@ with sync_playwright() as p:
             a=page.locator('.sire-guia-alvo').bounding_box(); b=page.get_by_role('dialog').bounding_box()
             overlap=a['x']<b['x']+b['width'] and a['x']+a['width']>b['x'] and a['y']<b['y']+b['height'] and a['y']+a['height']>b['y']
             ok(f'{width}: alvo descoberto {title}',not overlap)
-            if len(seen)==1: page.screenshot(path=str(out/f'tutorial-{width}.png'),full_page=True)
+            if len(seen)==1:
+                ok(f'{width}: tutorial destaca seletor de destino',page.locator('#id_destino_catalogo.sire-guia-alvo').count()==1)
+                page.screenshot(path=str(out/f'tutorial-{width}.png'),full_page=True)
             page.locator('[data-action=proximo]').click()
         ok(f'{width}: somente etapas presentes',len(seen)>=3)
         page.reload(); ok(f'{width}: convite não se repete',page.get_by_role('button',name='Começar',exact=True).count()==0)
