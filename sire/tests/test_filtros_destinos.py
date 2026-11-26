@@ -12,6 +12,7 @@ class FiltrosDestinos(CasoSire):
         self.a, self.ponto = criar_excursao(self.agencia, titulo="Passeio de lancha")
         self.a.destino = "Capitolio MG"
         self.a.valor = 200
+        self.a.tipo_pacote = TipoPacote.COM_HOSPEDAGEM
         self.a.data_retorno = self.a.data_saida + timedelta(days=2)
         self.a.save()
         self.b, _ = criar_excursao(self.agencia, titulo="Praia")
@@ -45,11 +46,13 @@ class FiltrosDestinos(CasoSire):
     def test_filtros_combinados(self):
         resposta = self.buscar(destino_catalogo="Capitólio - MG",
                                embarque=self.ponto.local, palavra_chave="lancha",
-                               duracao="2_3")
+                               tipo_pacote=TipoPacote.COM_HOSPEDAGEM)
         self.assertEqual(list(resposta.context["excursoes"]), [self.a])
 
-    def test_duracao_bate_volta_sem_retorno(self):
-        self.assertEqual(list(self.buscar(duracao="1").context["excursoes"]), [self.b])
+    def test_tipo_bate_volta_ou_hospedagem(self):
+        self.assertEqual(list(self.buscar(tipo_pacote=TipoPacote.BATE_VOLTA).context["excursoes"]), [self.b])
+        self.assertEqual(list(self.buscar(tipo_pacote=TipoPacote.COM_HOSPEDAGEM).context["excursoes"]), [self.a])
+        self.assertNotIn("duracao", self.buscar().context["filtros"].fields)
 
     def test_ordena_preco(self):
         self.assertEqual(list(self.buscar(ordem="preco").context["excursoes"]), [self.b, self.a])

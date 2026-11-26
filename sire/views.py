@@ -1,7 +1,6 @@
 """Views do SIRE. Correspondência com os UC em docs/RASTREABILIDADE.md."""
 
 import logging
-from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -10,7 +9,7 @@ from django.contrib.auth.views import PasswordChangeView, PasswordResetView
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import OperationalError, transaction
-from django.db.models import DurationField, ExpressionWrapper, F, Q
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -27,7 +26,7 @@ from .forms import (
     RecuperacaoPorCodigoForm,
     ReservaForm,
 )
-from .models import Excursao, FotoExcursao, Reserva, StatusExcursao, TipoPacote, TipoPerfil
+from .models import Excursao, FotoExcursao, Reserva, StatusExcursao, TipoPerfil
 
 logger = logging.getLogger("sire.recuperacao")
 
@@ -421,20 +420,6 @@ def catalogo(request):
             )
         if dados["embarque"]:
             excursoes = excursoes.filter(pontos_embarque__local=dados["embarque"]).distinct()
-        if dados["duracao"]:
-            excursoes = excursoes.annotate(intervalo=ExpressionWrapper(
-                F("data_retorno") - F("data_saida"), output_field=DurationField()
-            ))
-            if dados["duracao"] == "1":
-                excursoes = excursoes.filter(
-                    Q(intervalo=timedelta(0)) |
-                    Q(data_retorno__isnull=True, tipo_pacote=TipoPacote.BATE_VOLTA)
-                )
-            elif dados["duracao"] == "2_3":
-                excursoes = excursoes.filter(intervalo__gte=timedelta(days=1),
-                                             intervalo__lte=timedelta(days=2))
-            else:
-                excursoes = excursoes.filter(intervalo__gte=timedelta(days=3))
         if dados["ordem"] == "preco":
             excursoes = excursoes.order_by("valor", "data_saida", "id")
         elif dados["ordem"] == "preco_desc":

@@ -202,11 +202,6 @@ class FiltroCatalogoForm(forms.Form):
         widget=forms.TextInput(attrs={"placeholder": "Nome ou roteiro da viagem"}),
     )
     embarque = forms.ChoiceField(label="Onde quer embarcar?", required=False)
-    duracao = forms.ChoiceField(
-        label="Quanto tempo quer viajar?", required=False,
-        choices=[("", "Qualquer duração"), ("1", "1 dia"), ("2_3", "2 a 3 dias"),
-                 ("4", "4 dias ou mais")],
-    )
     ordem = forms.ChoiceField(
         label="Ordenar por", required=False,
         choices=[("", "Data de saída"), ("preco", "Menor preço"),
