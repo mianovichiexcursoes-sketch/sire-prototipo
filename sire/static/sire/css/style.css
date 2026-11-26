@@ -390,3 +390,21 @@ textarea:focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
 .campo-amplo { grid-column: span 2; }
 .resultado-filtros { color: var(--texto-discreto); font-weight: 600; }
 @media (max-width: 520px) { .campo-amplo { grid-column: 1 / -1; } }
+
+/* Catálogo compacto e faixa de preço — extensão pós-baseline. */
+.busca {grid-template-columns:repeat(3,minmax(0,1fr));}
+.filtros-adicionais {grid-column:1/-1; border:1px solid var(--borda);border-radius:10px;padding:12px 14px;min-width:0;}
+.filtros-adicionais summary {cursor:pointer;font-weight:600;color:var(--destaque);}
+.filtros-adicionais summary:focus-visible {outline:3px solid var(--foco);outline-offset:4px;}
+.filtro-dica {font-size:12px;color:var(--texto-discreto);font-weight:400;margin-left:8px;}
+.grade-filtros-avancados {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px;}
+.faixa-preco {grid-column:1/-1;min-width:0;border:0;padding:0;margin:0;}
+.faixa-preco legend {font-weight:700;margin-bottom:12px;}
+.precos-duplos {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.preco-deslizante {margin-top:12px;}
+.preco-deslizante input {padding:0;accent-color:var(--destaque);}
+.porque-sire {margin-top:48px;padding:28px;border-top:1px solid var(--borda);background:var(--superficie);border-radius:12px;}
+.grade-beneficios {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.grade-beneficios>div {border:1px solid var(--borda);border-radius:10px;padding:18px;}
+.grade-beneficios h3 {margin:0 0 8px;}
+@media(max-width:700px){.busca,.grade-filtros-avancados,.grade-beneficios {grid-template-columns:minmax(0,1fr);} .filtro-dica {display:block;margin-left:0;} .porque-sire {padding:18px;}}

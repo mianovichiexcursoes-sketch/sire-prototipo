@@ -20,6 +20,8 @@ with sync_playwright() as p:
         ok(f'{width}: seleção predefinida presente',page.locator('#id_destino_catalogo').is_visible())
         ok(f'{width}: tipo do pacote presente',page.locator('#id_tipo_pacote').is_visible())
         ok(f'{width}: sem filtro de duração',page.locator('[name=duracao]').count()==0)
+        ok(f'{width}: categoria visível',page.locator('#id_categoria').is_visible())
+        ok(f'{width}: preço inicialmente recolhido',not page.locator('#id_preco_max').is_visible())
         seen=[]
         while page.get_by_role('dialog').is_visible():
             title=page.locator('#sire-guia-titulo').inner_text(); seen.append(title)
@@ -32,6 +34,14 @@ with sync_playwright() as p:
                 page.screenshot(path=str(out/f'tutorial-{width}.png'),full_page=True)
             page.locator('[data-action=proximo]').click()
         ok(f'{width}: somente etapas presentes',len(seen)>=3)
+        page.locator('.filtros-adicionais summary').click()
+        ok(f'{width}: faixa de preço acessível',page.locator('#id_preco_max').is_visible())
+        page.locator('#id_preco_max').fill('0')
+        page.get_by_role('button',name='Pesquisar',exact=True).click()
+        ok(f'{width}: filtro de preço preservado',page.locator('#id_preco_max').input_value()=='0')
+        ok(f'{width}: página sem rolagem horizontal',page.evaluate('document.documentElement.scrollWidth<=innerWidth'))
+        page.get_by_role('link',name='Limpar filtros').click()
+        ok(f'{width}: seção institucional',page.locator('#porque-sire').count()==1)
         page.reload(); ok(f'{width}: convite não se repete',page.get_by_role('button',name='Começar',exact=True).count()==0)
         page.get_by_role('button',name='Como usar',exact=True).click();page.keyboard.press('Escape')
         ok(f'{width}: Escape devolve foco',page.get_by_role('button',name='Como usar').evaluate('(e)=>e===document.activeElement'))

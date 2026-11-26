@@ -18,6 +18,7 @@
     {% endif %}
     <article>
         <dl>
+            {% if excursao.categoria %}<dt>Categoria da viagem</dt><dd>{{ excursao.get_categoria_display }}</dd>{% endif %}
             {% if excursao.tipo_pacote %}
                 <dt>Tipo de pacote</dt>
                 <dd>{{ excursao.get_tipo_pacote_display }}</dd>

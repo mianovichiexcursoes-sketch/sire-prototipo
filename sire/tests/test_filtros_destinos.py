@@ -2,7 +2,7 @@
 from datetime import timedelta
 from django.urls import reverse
 from sire.destinos import padronizar_destino
-from sire.models import TipoPacote
+from sire.models import CategoriaViagem, TipoPacote
 from .base import CasoSire, criar_agencia, criar_excursao, criar_agente, dados_excursao
 
 class FiltrosDestinos(CasoSire):
@@ -12,12 +12,14 @@ class FiltrosDestinos(CasoSire):
         self.a, self.ponto = criar_excursao(self.agencia, titulo="Passeio de lancha")
         self.a.destino = "Capitolio MG"
         self.a.valor = 200
+        self.a.categoria = CategoriaViagem.CACHOEIRA
         self.a.tipo_pacote = TipoPacote.COM_HOSPEDAGEM
         self.a.data_retorno = self.a.data_saida + timedelta(days=2)
         self.a.save()
         self.b, _ = criar_excursao(self.agencia, titulo="Praia")
         self.b.destino = "Guarujá"
         self.b.valor = 100
+        self.b.categoria = CategoriaViagem.PRAIA
         self.b.tipo_pacote = TipoPacote.BATE_VOLTA
         self.b.save()
         self.rascunho, ponto = criar_excursao(self.agencia, titulo="Segredo", publicada=False)
@@ -74,3 +76,30 @@ class FiltrosDestinos(CasoSire):
                                    dados_excursao(destino="capitolio"))
         self.assertEqual(resposta.status_code, 302)
         self.assertTrue(self.agencia.excursao_set.filter(destino="Capitólio - MG").exists())
+
+    def test_categoria_e_preco_combinados(self):
+        self.assertEqual(list(self.buscar(categoria="PRAIA", preco_min="100", preco_max="100").context["excursoes"]), [self.b])
+        self.assertFalse(self.buscar(categoria="PRAIA", preco_min="101").context["excursoes"].exists())
+        self.assertEqual(list(self.buscar(preco_max="150").context["excursoes"]), [self.b])
+        self.assertFalse(self.buscar(preco_max="0").context["excursoes"].exists())
+
+    def test_preco_invalido_e_categoria_invalida(self):
+        for dados in ({"preco_min":"200","preco_max":"100"}, {"preco_min":"-1"}, {"categoria":"INVALIDA"}):
+            resposta = self.buscar(**dados)
+            self.assertTrue(resposta.context["filtros"].errors)
+            self.assertFalse(resposta.context["excursoes"].exists())
+
+    def test_categoria_opcional_e_sem_expor_rascunhos(self):
+        self.rascunho.categoria = CategoriaViagem.PRAIA
+        self.rascunho.save()
+        self.assertEqual(list(self.buscar(categoria="PRAIA").context["excursoes"]), [self.b])
+        self.a.categoria = ""
+        self.a.save()
+        self.assertIn(self.a, list(self.buscar().context["excursoes"]))
+
+    def test_agente_define_categoria(self):
+        agente = criar_agente("agente_categoria", self.agencia)
+        self.client.force_login(agente)
+        resposta = self.client.post(reverse("sire:cadastrar_excursao"), dados_excursao(destino="Guarujá", categoria="PRAIA"))
+        self.assertEqual(resposta.status_code, 302)
+        self.assertTrue(self.agencia.excursao_set.filter(destino="Guarujá - SP", categoria="PRAIA").exists())

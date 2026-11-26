@@ -12,7 +12,7 @@ from django.utils.safestring import mark_safe
 
 from . import recuperacao
 from .destinos import DESTINOS, padronizar_destino
-from .models import Excursao, PerfilUsuario, PontoEmbarque, TipoPacote, TipoPerfil
+from .models import CategoriaViagem, Excursao, PerfilUsuario, PontoEmbarque, TipoPacote, TipoPerfil
 
 
 class LoginSireForm(AuthenticationForm):
@@ -197,6 +197,14 @@ class FiltroCatalogoForm(forms.Form):
         choices=[("", "Todos os tipos"), *TipoPacote.choices],
     )
 
+    categoria = forms.ChoiceField(
+        label="Categoria da viagem", required=False,
+        choices=[("", "Todas as categorias"), *CategoriaViagem.choices],
+    )
+    preco_min = forms.DecimalField(label="Preço mínimo (R$)", required=False,
+                                  min_value=0, max_digits=10, decimal_places=2)
+    preco_max = forms.DecimalField(label="Preço máximo (R$)", required=False,
+                                  min_value=0, max_digits=10, decimal_places=2)
     palavra_chave = forms.CharField(
         label="Palavra-chave", required=False, max_length=150,
         widget=forms.TextInput(attrs={"placeholder": "Nome ou roteiro da viagem"}),
@@ -224,6 +232,9 @@ class FiltroCatalogoForm(forms.Form):
             self.add_error(
                 "saida_ate", "A data final deve ser igual ou posterior à data inicial."
             )
+        minimo, maximo = dados.get("preco_min"), dados.get("preco_max")
+        if minimo is not None and maximo is not None and minimo > maximo:
+            self.add_error("preco_max", "O preço máximo deve ser igual ou superior ao mínimo.")
         return dados
 
 
@@ -245,6 +256,7 @@ class ExcursaoForm(forms.ModelForm):
             "titulo",
             "destino",
             "tipo_pacote",
+            "categoria",
             "descricao",
             "roteiro",
             "inclusos",
@@ -254,6 +266,7 @@ class ExcursaoForm(forms.ModelForm):
             "capacidade",
         )
         help_texts = {
+            "categoria": "Opcional. Selecione a categoria principal da viagem.",
             "tipo_pacote": "Opcional. Deixe em branco para manter sem classificação.",
             "descricao": "Opcional. Apresente os principais detalhes do pacote.",
             "roteiro": "Opcional. Informe os horários e paradas do roteiro.",

@@ -69,6 +69,19 @@ class TipoPacote(models.TextChoices):
     COM_HOSPEDAGEM = "COM_HOSPEDAGEM", "Com hospedagem"
 
 
+class CategoriaViagem(models.TextChoices):
+    PRAIA = "PRAIA", "Praias"
+    CACHOEIRA = "CACHOEIRA", "Cachoeiras"
+    MONTANHA = "MONTANHA", "Montanhas e serra"
+    TRILHA = "TRILHA", "Trilhas e aventura"
+    GRUTA = "GRUTA", "Cavernas e grutas"
+    PARQUE = "PARQUE", "Parques e diversão"
+    CULTURA = "CULTURA", "Cultura e gastronomia"
+    RELAXAR = "RELAXAR", "Relaxamento e natureza"
+    RELIGIOSO = "RELIGIOSO", "Turismo religioso"
+    EVENTO = "EVENTO", "Eventos e shows"
+
+
 class Excursao(models.Model):
     titulo = models.CharField(max_length=200)
     destino = models.CharField(max_length=150)
@@ -78,6 +91,10 @@ class Excursao(models.Model):
         choices=TipoPacote.choices,
         blank=True,
         null=True,
+    )
+    categoria = models.CharField(
+        "categoria da viagem", max_length=20, choices=CategoriaViagem.choices,
+        blank=True, default="",
     )
     descricao = models.TextField("Descrição do pacote", blank=True, default="")
     roteiro = models.TextField("Roteiro da viagem", blank=True, default="")

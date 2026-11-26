@@ -9,7 +9,7 @@ from django.contrib.auth.views import PasswordChangeView, PasswordResetView
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import OperationalError, transaction
-from django.db.models import Q
+from django.db.models import Max, Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -394,6 +394,7 @@ def catalogo(request):
     excursoes = Excursao.objects.filter(status=StatusExcursao.PUBLICADA).select_related(
         "agencia"
     ).prefetch_related("fotos")
+    valor_teto = excursoes.aggregate(teto=Max('valor'))['teto']
     destinos = grupos_destinos(excursoes.order_by().values_list("destino", flat=True).distinct())
     embarques = sorted(set(excursoes.order_by().exclude(
         pontos_embarque__isnull=True
@@ -406,10 +407,15 @@ def catalogo(request):
             "data_saida__gte": dados["saida_de"],
             "data_saida__lte": dados["saida_ate"],
             "tipo_pacote": dados["tipo_pacote"],
+            "categoria": dados["categoria"],
         }
         excursoes = excursoes.filter(
             **{campo: valor for campo, valor in criterios.items() if valor}
         )
+        if dados["preco_min"] is not None:
+            excursoes = excursoes.filter(valor__gte=dados["preco_min"])
+        if dados["preco_max"] is not None:
+            excursoes = excursoes.filter(valor__lte=dados["preco_max"])
         if dados["destino_catalogo"]:
             excursoes = excursoes.filter(destino__in=destinos[dados["destino_catalogo"]])
         if dados["palavra_chave"]:
@@ -426,9 +432,13 @@ def catalogo(request):
             excursoes = excursoes.order_by("-valor", "data_saida", "id")
     elif filtros.is_bound:
         excursoes = excursoes.none()
-    return render(
-        request, "sire/catalogo.html", {"excursoes": excursoes, "filtros": filtros}
-    )
+    avancados = ("destino", "palavra_chave", "saida_de", "saida_ate", "embarque",
+                 "ordem", "preco_min", "preco_max")
+    abrir_avancados = any(request.GET.get(c) or c in filtros.errors for c in avancados)
+    return render(request, "sire/catalogo.html", {
+        "excursoes": excursoes, "filtros": filtros, "abrir_avancados": abrir_avancados,
+        "valor_teto": valor_teto,
+    })
 
 
 def buscar_excursoes(request):
