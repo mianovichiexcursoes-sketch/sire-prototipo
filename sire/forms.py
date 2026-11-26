@@ -11,6 +11,7 @@ from django.db import transaction
 from django.utils.safestring import mark_safe
 
 from . import recuperacao
+from .destinos import DESTINOS, padronizar_destino
 from .models import Excursao, PerfilUsuario, PontoEmbarque, TipoPacote, TipoPerfil
 
 
@@ -169,12 +170,15 @@ class CadastroPassageiroForm(UserCreationForm):
 
 
 class FiltroCatalogoForm(forms.Form):
+    destino_catalogo = forms.ChoiceField(
+        label="Qual destino?", required=False,
+    )
     destino = forms.CharField(
-        label="Destino",
+        label="Busca livre por destino",
         required=False,
         max_length=150,
         widget=forms.TextInput(
-            attrs={"id": "destino", "placeholder": "Para onde você quer ir?"}
+            attrs={"id": "destino", "placeholder": "Digite um destino"}
         ),
     )
     saida_de = forms.DateField(
@@ -193,6 +197,26 @@ class FiltroCatalogoForm(forms.Form):
         choices=[("", "Todos os tipos"), *TipoPacote.choices],
     )
 
+    palavra_chave = forms.CharField(
+        label="Palavra-chave", required=False, max_length=150,
+        widget=forms.TextInput(attrs={"placeholder": "Nome ou roteiro da viagem"}),
+    )
+    embarque = forms.ChoiceField(label="Onde quer embarcar?", required=False)
+    ordem = forms.ChoiceField(
+        label="Ordenar por", required=False,
+        choices=[("", "Data de saída"), ("preco", "Menor preço"),
+                 ("preco_desc", "Maior preço")],
+    )
+
+    def __init__(self, *args, destinos=(), embarques=(), **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["destino_catalogo"].choices = [("", "Todos os destinos")] + [
+            (d, d) for d in destinos
+        ]
+        self.fields["embarque"].choices = [("", "Todos os embarques")] + [
+            (e, e) for e in embarques
+        ]
+
     def clean(self):
         dados = super().clean()
         inicio, fim = dados.get("saida_de"), dados.get("saida_ate")
@@ -204,6 +228,17 @@ class FiltroCatalogoForm(forms.Form):
 
 
 class ExcursaoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.destinos_predefinidos = DESTINOS
+        self.fields["destino"].widget.attrs.update({"list": "destinos-predefinidos"})
+        self.fields["destino"].help_text = (
+            "Selecione uma sugestão ou informe um destino ainda não listado."
+        )
+
+    def clean_destino(self):
+        return padronizar_destino(self.cleaned_data["destino"])
+
     class Meta:
         model = Excursao
         fields = (

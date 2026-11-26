@@ -11,6 +11,9 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+        <datalist id="destinos-predefinidos">
+            {% for destino in form.destinos_predefinidos %}<option value="{{ destino }}"></option>{% endfor %}
+        </datalist>
         <button>
             Salvar excursão
         </button>

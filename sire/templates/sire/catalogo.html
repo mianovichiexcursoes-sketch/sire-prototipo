@@ -6,9 +6,11 @@
     <h1>
         Encontre sua próxima excursão
     </h1>
+    <p>Escolha seu destino ou combine os filtros para encontrar a próxima viagem.</p>
     <form method="get" action="{% url 'sire:buscar_excursoes' %}" class="busca" role="search" aria-label="Filtrar excursões">
+        <h2 class="titulo-filtros">Encontre sua viagem</h2>
         {% for campo in filtros %}
-            <div class="campo-filtro">
+            <div class="campo-filtro{% if campo.name == 'palavra_chave' %} campo-amplo{% endif %}">
                 {{ campo.label_tag }}
                 {{ campo }}
                 {{ campo.errors }}
@@ -22,6 +24,7 @@
     {% if filtros.errors %}
         <p role="alert">Confira os filtros indicados e pesquise novamente.</p>
     {% else %}
+        <p class="resultado-filtros" role="status">{{ excursoes|length }} resultado{{ excursoes|length|pluralize }}</p>
         <div class="grade">
             {% for excursao in excursoes %}
                 <article>
