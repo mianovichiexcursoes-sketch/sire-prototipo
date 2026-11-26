@@ -383,3 +383,10 @@ textarea:focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
 /* Aviso imediato quando o arquivo escolhido não é uma foto aceita */
 .aviso-arquivo { margin: 6px 0 0; padding: 10px 14px; border-left: 4px solid var(--erro);
     background: #fff0ec; color: var(--erro); font-weight: 600; }
+
+/* Evolução da pesquisa multiagência: seleção de destino e filtros combináveis. */
+.titulo-filtros { grid-column: 1 / -1; margin: 0; font-size: 20px; }
+.campo-filtro { min-width: 0; }
+.campo-amplo { grid-column: span 2; }
+.resultado-filtros { color: var(--texto-discreto); font-weight: 600; }
+@media (max-width: 520px) { .campo-amplo { grid-column: 1 / -1; } }
