@@ -20,7 +20,8 @@ with sync_playwright() as p:
         ok(f'{width}: seleção predefinida presente',page.locator('#id_destino_catalogo').is_visible())
         ok(f'{width}: tipo do pacote presente',page.locator('#id_tipo_pacote').is_visible())
         ok(f'{width}: sem filtro de duração',page.locator('[name=duracao]').count()==0)
-        ok(f'{width}: categoria visível',page.locator('#id_categoria').is_visible())
+        ok(f'{width}: datas principais visíveis',page.locator('#id_saida_de').is_visible() and page.locator('#id_saida_ate').is_visible())
+        ok(f'{width}: categoria inicialmente recolhida',not page.locator('#id_categoria').is_visible())
         ok(f'{width}: preço inicialmente recolhido',not page.locator('#id_preco_max').is_visible())
         seen=[]
         while page.get_by_role('dialog').is_visible():
@@ -36,6 +37,7 @@ with sync_playwright() as p:
         ok(f'{width}: somente etapas presentes',len(seen)>=3)
         page.locator('.filtros-adicionais summary').click()
         ok(f'{width}: faixa de preço acessível',page.locator('#id_preco_max').is_visible())
+        ok(f'{width}: categoria acessível',page.locator('#id_categoria').is_visible())
         page.locator('#id_preco_max').fill('0')
         page.get_by_role('button',name='Pesquisar',exact=True).click()
         ok(f'{width}: filtro de preço preservado',page.locator('#id_preco_max').input_value()=='0')

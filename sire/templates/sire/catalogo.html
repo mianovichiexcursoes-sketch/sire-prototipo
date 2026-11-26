@@ -10,13 +10,17 @@
     <p>Escolha seu destino ou combine os filtros para encontrar a próxima viagem.</p>
     <form method="get" action="{% url 'sire:buscar_excursoes' %}" class="busca" role="search" aria-label="Filtrar excursões">
         <h2 class="titulo-filtros">Encontre sua viagem</h2>
-        {% for campo in filtros %}
-            {% if campo.name == 'destino_catalogo' or campo.name == 'categoria' or campo.name == 'tipo_pacote' %}
-                <div class="campo-filtro">{{ campo.label_tag }}{{ campo }}{{ campo.errors }}</div>
-            {% endif %}
-        {% endfor %}
+        <div class="campo-filtro">{{ filtros.destino_catalogo.label_tag }}{{ filtros.destino_catalogo }}{{ filtros.destino_catalogo.errors }}</div>
+        <fieldset class="periodo-principal">
+            <legend>Período da viagem</legend>
+            <div class="datas-principais">
+                <div class="campo-filtro">{{ filtros.saida_de.label_tag }}{{ filtros.saida_de }}{{ filtros.saida_de.errors }}</div>
+                <div class="campo-filtro">{{ filtros.saida_ate.label_tag }}{{ filtros.saida_ate }}{{ filtros.saida_ate.errors }}</div>
+            </div>
+        </fieldset>
+        <div class="campo-filtro">{{ filtros.tipo_pacote.label_tag }}{{ filtros.tipo_pacote }}{{ filtros.tipo_pacote.errors }}</div>
         <details class="filtros-adicionais" {% if abrir_avancados %}open{% endif %}>
-            <summary><span aria-hidden="true">☷</span> Mais filtros <span class="filtro-dica">Preço, período e embarque</span></summary>
+            <summary><span aria-hidden="true">☷</span> Mais filtros <span class="filtro-dica">Categoria, preço e embarque</span></summary>
             <div class="grade-filtros-avancados">
                 <fieldset class="faixa-preco">
                     <legend>Faixa de preço por pessoa</legend>
@@ -33,7 +37,7 @@
                     {% endif %}
                 </fieldset>
                 {% for campo in filtros %}
-                    {% if campo.name != 'destino_catalogo' and campo.name != 'categoria' and campo.name != 'tipo_pacote' and campo.name != 'preco_min' and campo.name != 'preco_max' %}
+                    {% if campo.name != 'destino_catalogo' and campo.name != 'saida_de' and campo.name != 'saida_ate' and campo.name != 'tipo_pacote' and campo.name != 'preco_min' and campo.name != 'preco_max' %}
                         <div class="campo-filtro">{{ campo.label_tag }}{{ campo }}{{ campo.errors }}</div>
                     {% endif %}
                 {% endfor %}

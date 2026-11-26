@@ -432,7 +432,7 @@ def catalogo(request):
             excursoes = excursoes.order_by("-valor", "data_saida", "id")
     elif filtros.is_bound:
         excursoes = excursoes.none()
-    avancados = ("destino", "palavra_chave", "saida_de", "saida_ate", "embarque",
+    avancados = ("destino", "palavra_chave", "categoria", "embarque",
                  "ordem", "preco_min", "preco_max")
     abrir_avancados = any(request.GET.get(c) or c in filtros.errors for c in avancados)
     return render(request, "sire/catalogo.html", {

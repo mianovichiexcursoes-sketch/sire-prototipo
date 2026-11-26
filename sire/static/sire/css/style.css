@@ -408,3 +408,12 @@ textarea:focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
 .grade-beneficios>div {border:1px solid var(--borda);border-radius:10px;padding:18px;}
 .grade-beneficios h3 {margin:0 0 8px;}
 @media(max-width:700px){.busca,.grade-filtros-avancados,.grade-beneficios {grid-template-columns:minmax(0,1fr);} .filtro-dica {display:block;margin-left:0;} .porque-sire {padding:18px;}}
+
+/* Três grupos principais: destino, período de saída e tipo de pacote. */
+.busca {grid-template-columns:minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);align-items:start;}
+.periodo-principal {min-width:0;border:0;padding:0;margin:0;}
+.periodo-principal legend {font-weight:600;padding:0;margin-bottom:6px;}
+.datas-principais {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.datas-principais label {font-size:12px;}
+@media(max-width:900px){.busca {grid-template-columns:minmax(0,1fr);} }
+@media(max-width:400px){.datas-principais {grid-template-columns:minmax(0,1fr);}}
