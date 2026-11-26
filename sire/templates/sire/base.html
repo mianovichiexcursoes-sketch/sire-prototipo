@@ -27,6 +27,7 @@
                     <a href="{% url 'sire:catalogo' %}">
                         Catálogo
                     </a>
+                    <a href="{% url 'sire:catalogo' %}#porque-sire">Por que o SIRE?</a>
                     {% if user.is_authenticated %}
                         {% if user.perfil.tipo == 'PASSAGEIRO' %}
                             <a href="{% url 'sire:minhas_reservas' %}">

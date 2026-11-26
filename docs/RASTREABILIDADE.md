@@ -83,3 +83,7 @@ Não há camada de services/repositories ou alteração dos diagramas aprovados.
 ## Evolução dos filtros (26/11/2026)
 
 Extensão do catálogo, sem substituir ER-SIRE 2.1: CAT-RF-01 (RF013/RF014) → UC03/UC04 → `FiltroCatalogoForm`, `catalogo`, `buscar_excursoes`, `grupos_destinos`, `catalogo.html` → CAT-VF-01 e `test_filtros_destinos.py`. CAT-RF-05 (padronização no cadastro) → UC06/UC07 → `ExcursaoForm.clean_destino`, `destinos.py`, `excursao_form.html` → CAT-VF-07 e teste de cadastro. Sem mudança de esquema. Tipo de pacote: bate e volta ou com hospedagem; sem filtro de duração. O tutorial destaca o seletor, não todo o formulário. Evidências históricas em vídeo não foram alteradas.
+
+## Proposta de evolução: categorias, faixa de preço e apresentação do SIRE (26/11/2026)
+
+CAT-RF-01 (extensão de RF013/RF014) → UC03/UC04 → categoria, preço mínimo e máximo inclusivos; destino, período de saída e tipo de pacote em destaque; categoria e filtros adicionais recolhidos → `FiltroCatalogoForm`, `catalogo`, `catalogo.html`, `filtro-preco.js`, `test_filtros_destinos.py`. CAT-RF-06 (novo complemento) → UC06/UC07/UC05 → categoria principal opcional no cadastro/edição/ficha → `Excursao.categoria`, `ExcursaoForm`, migration 0008. Legados permanecem sem classificação até edição autorizada. Seção Por que o SIRE? é conteúdo informativo, não caso de uso independente. Preserva a baseline e os vídeos históricos. Aprovação e publicação dependem dos testes e da integração da PR.

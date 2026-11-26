@@ -1,4 +1,5 @@
 {% extends 'sire/base.html' %}
+{% load static l10n %}
 {% block conteudo %}
     <p class="sobretitulo">
         EXCURSÕES DE DIFERENTES AGÊNCIAS
@@ -9,13 +10,40 @@
     <p>Escolha seu destino ou combine os filtros para encontrar a próxima viagem.</p>
     <form method="get" action="{% url 'sire:buscar_excursoes' %}" class="busca" role="search" aria-label="Filtrar excursões">
         <h2 class="titulo-filtros">Encontre sua viagem</h2>
-        {% for campo in filtros %}
-            <div class="campo-filtro{% if campo.name == 'palavra_chave' %} campo-amplo{% endif %}">
-                {{ campo.label_tag }}
-                {{ campo }}
-                {{ campo.errors }}
+        <div class="campo-filtro">{{ filtros.destino_catalogo.label_tag }}{{ filtros.destino_catalogo }}{{ filtros.destino_catalogo.errors }}</div>
+        <fieldset class="periodo-principal">
+            <legend>Período da viagem</legend>
+            <div class="datas-principais">
+                <div class="campo-filtro">{{ filtros.saida_de.label_tag }}{{ filtros.saida_de }}{{ filtros.saida_de.errors }}</div>
+                <div class="campo-filtro">{{ filtros.saida_ate.label_tag }}{{ filtros.saida_ate }}{{ filtros.saida_ate.errors }}</div>
             </div>
-        {% endfor %}
+        </fieldset>
+        <div class="campo-filtro">{{ filtros.tipo_pacote.label_tag }}{{ filtros.tipo_pacote }}{{ filtros.tipo_pacote.errors }}</div>
+        <details class="filtros-adicionais" {% if abrir_avancados %}open{% endif %}>
+            <summary><span aria-hidden="true">☷</span> Mais filtros <span class="filtro-dica">Categoria, preço e embarque</span></summary>
+            <div class="grade-filtros-avancados">
+                <fieldset class="faixa-preco">
+                    <legend>Faixa de preço por pessoa</legend>
+                    <div class="precos-duplos">
+                        <div>{{ filtros.preco_min.label_tag }}{{ filtros.preco_min }}{{ filtros.preco_min.errors }}</div>
+                        <div>{{ filtros.preco_max.label_tag }}{{ filtros.preco_max }}{{ filtros.preco_max.errors }}</div>
+                    </div>
+                    {% if valor_teto %}
+                        <div class="preco-deslizante" hidden>
+                            <label for="teto-preco">Ajustar preço máximo</label>
+                            <input id="teto-preco" type="range" min="0" max="{{ valor_teto|unlocalize }}" step="0.01" value="{{ valor_teto|unlocalize }}">
+                            <small>Use os campos acima para informar um valor exato ou deixar sem limite.</small>
+                        </div>
+                    {% endif %}
+                </fieldset>
+                {% for campo in filtros %}
+                    {% if campo.name != 'destino_catalogo' and campo.name != 'saida_de' and campo.name != 'saida_ate' and campo.name != 'tipo_pacote' and campo.name != 'preco_min' and campo.name != 'preco_max' %}
+                        <div class="campo-filtro">{{ campo.label_tag }}{{ campo }}{{ campo.errors }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </details>
+        <script src="{% static 'sire/js/filtro-preco.js' %}" defer></script>
         <div class="acoes-filtro">
             <button type="submit">Pesquisar</button>
             <a href="{% url 'sire:catalogo' %}">Limpar filtros</a>
@@ -42,6 +70,7 @@
                     <p>
                         {{ excursao.destino }} · {{ excursao.data_saida|date:'d/m/Y' }}
                     </p>
+                    {% if excursao.categoria %}<p><span class="etiqueta">{{ excursao.get_categoria_display }}</span></p>{% endif %}
                     {% if excursao.tipo_pacote %}
                         <p><span class="etiqueta">{{ excursao.get_tipo_pacote_display }}</span></p>
                     {% endif %}
@@ -59,4 +88,16 @@
             {% endfor %}
         </div>
     {% endif %}
+    <section class="porque-sire" id="porque-sire" aria-labelledby="titulo-porque-sire">
+        <p class="sobretitulo">CONHEÇA O PROJETO</p>
+        <h2 id="titulo-porque-sire">Por que o SIRE?</h2>
+        <p>Um catálogo de excursões de diferentes agências, desenvolvido para facilitar a pesquisa e a organização de reservas rodoviárias.</p>
+        <div class="grade-beneficios">
+            <div><h3>Explore destinos</h3><p>Compare viagens por destino, categoria, datas, tipo de pacote e orçamento.</p></div>
+            <div><h3>Escolha com clareza</h3><p>Consulte o roteiro, o preço, a agência responsável, os embarques e as vagas disponíveis.</p></div>
+            <div><h3>Reserve e acompanhe</h3><p>Selecione seu embarque e consulte suas reservas pela sua conta.</p></div>
+            <div><h3>Para as agências</h3><p>Cadastre e publique excursões, organize embarques e consulte reservas da própria agência.</p></div>
+        </div>
+        <p class="sobretitulo">PROTÓTIPO ACADÊMICO · IFSP SERTÃOZINHO</p>
+    </section>
 {% endblock %}

@@ -14,7 +14,7 @@
   const add = (el, title, text) => { if (visible(el)) steps.push({el, title, text}); };
   const button = (label, text) => add(exact(label), label, text);
   const field = (selector, title, text) => add(main.querySelector(selector), title, text);
-  field('[role="search"] #id_destino_catalogo', 'Encontre uma excursão', 'Escolha um destino, embarque, período ou tipo de pacote. Use a busca livre, combine filtros, ordene os resultados e clique em Pesquisar.');
+  field('[role="search"] #id_destino_catalogo', 'Encontre uma excursão', 'Escolha destino, período de saída ou tipo de pacote. Abra Mais filtros para ajustar categoria, preço, embarque ou busca livre; clique em Pesquisar.');
   button('Ver detalhes', 'Abra a viagem que deseja conhecer. Na próxima página você verá datas, valor, vagas e pontos de embarque.');
   if (main.querySelector('dl')) field('dl', 'Confira a viagem', 'Leia destino, datas, valor e vagas antes de reservar. Confira também os pontos de embarque abaixo.');
   if (role === 'visitante') {
